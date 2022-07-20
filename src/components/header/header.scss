@@ -1,0 +1,17 @@
+@use "../../scss/" as *;
+
+.header {
+  background-color: $header-bg;
+  height: 70px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 25px;
+  &__username {
+    color: white;
+    font-size: 20px;
+  }
+}
