@@ -8,6 +8,8 @@ import HomePage from './pages/HomePage';
 import ManageAssignmentPage from './pages/ManageAssignmentPage';
 import RequestPage from './pages/RequestPage';
 import ReportPage from './pages/ReportPage';
+import CreateUser from './pages/CreateUser/CreateUser';
+
 
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
               element={<RequestPage></RequestPage>}
             />
             <Route path="/report" element={<ReportPage></ReportPage>} />
+            <Route path="/create-user" element={<CreateUser></CreateUser>} />
           </Route>
         </Routes>
       </Suspense>
