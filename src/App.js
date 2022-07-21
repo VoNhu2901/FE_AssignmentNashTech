@@ -2,13 +2,15 @@ import './App.css';
 import { Fragment, Suspense } from 'react';
 import { Route, Routes } from "react-router-dom";
 import Main from './components/layout/Main';
-import ManageUser from './pages/ManageUserPage';
 import ManageAsset from './pages/ManageAssetPage';
 import HomePage from './pages/HomePage';
 import ManageAssignmentPage from './pages/ManageAssignmentPage';
 import RequestPage from './pages/RequestPage';
 import ReportPage from './pages/ReportPage';
 
+import {ManageUser} from './pages'
+
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
