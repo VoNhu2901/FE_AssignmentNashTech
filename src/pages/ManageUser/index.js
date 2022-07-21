@@ -8,7 +8,8 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import "./style.scss";
 
-const data = [
+// mock data to view
+const list = [
   {
     id: "SD1901",
     fullname: "An Nguyen Thuy",
@@ -17,283 +18,73 @@ const data = [
     type: "Staff",
   },
   {
-    id: "SD1902",
-    fullname: "An Nguyen Thuy",
+    id: "AD1902",
+    fullname: "Ban Nguyen Thuy",
     username: "annt",
-    joinedDate: "20/06/2019",
+    joinedDate: "21/06/2019",
     type: "Staff",
   },
   {
     id: "SD1903",
-    fullname: "An Nguyen Thuy",
+    fullname: "Can Nguyen Thuy",
     username: "annt",
     joinedDate: "20/06/2019",
     type: "Admin",
   },
   {
     id: "SD1904",
-    fullname: "An Nguyen Thuy",
+    fullname: "Y Nguyen Thuy",
     username: "annt",
     joinedDate: "20/06/2019",
     type: "Admin",
   },
   {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
+    id: "SD1905",
+    fullname: "Z Nguyen Thuy",
     username: "annt",
     joinedDate: "20/06/2019",
     type: "Admin",
   },
   {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
+    id: "SD1906",
+    fullname: "Go Nguyen Thuy",
     username: "annt",
     joinedDate: "20/06/2019",
     type: "Admin",
   },
   {
-    id: "SD1901",
+    id: "SD1907",
     fullname: "An Nguyen Thuy",
+    username: "annt",
+    joinedDate: "20/05/2019",
+    type: "Admin",
+  },
+  {
+    id: "SD1908",
+    fullname: "",
     username: "annt",
     joinedDate: "20/06/2019",
     type: "Admin",
   },
   {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
+    id: "SD1909",
+    fullname: "B",
     username: "annt",
     joinedDate: "20/06/2019",
     type: "Admin",
   },
   {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
+    id: "SD1910",
+    fullname: "A",
     username: "annt",
-    joinedDate: "20/06/2019",
+    joinedDate: "18/06/2019",
     type: "Admin",
   },
   {
-    id: "SD1901",
+    id: "SD1911",
     fullname: "An Nguyen Thuy",
     username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Admin",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
+    joinedDate: "19/06/2019",
     type: "Staff",
   },
 ];
@@ -302,22 +93,34 @@ const ManageUser = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [userList, setUserList] = useState([]);
+  const [data, setData] = useState([]);
   const [filterBy, setFilterBy] = useState("All");
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
   const userPerPage = 20;
 
+  /**
+   * Handle when init page and when page change
+   */
   useEffect(() => {
     // todo: get data from backend
+    setData(list);
 
     let len = data.length;
-    let _numPage = Math.ceil(len / 20);
+    let _numPage = Math.ceil(len / userPerPage); // calculate a number of page
     setNumPage(_numPage);
 
+    // sort name ascending by default
+    data.sort((a, b) => a.fullname.localeCompare(b.fullname));
+
+    //paging
     const _data = data.slice((page - 1) * userPerPage, page * userPerPage);
     setUserList(_data);
-  }, [page]);
+  }, [data, page]);
 
+  /**
+   * Handle for filter
+   */
   useEffect(() => {
     if (filterBy === "All") {
       const _data = data.slice((page - 1) * userPerPage, page * userPerPage);
@@ -328,20 +131,57 @@ const ManageUser = () => {
 
       let len = _data.length;
       let _numPage = Math.ceil(len / 20);
-      console.log(_numPage, len);
       setNumPage(_numPage);
 
       setUserList(result);
     }
-  }, [filterBy, page]);
+  }, [data, filterBy, page]);
 
   const searchUserHandle = () => {
     // search function here
     alert(search);
   };
 
-  const sortByCol = (sortBy) => {};
+  const sortByCol = (sortBy) => {
+    switch (sortBy) {
+      case "code":
+        sortBy === currentCol
+          ? userList.sort((a, b) => a.id.localeCompare(b.id))
+          : userList.sort((a, b) => b.id.localeCompare(a.id));
+        break;
 
+      case "name":
+        sortBy === currentCol
+          ? userList.sort((a, b) => a.fullname.localeCompare(b.fullname))
+          : userList.sort((a, b) => b.fullname.localeCompare(a.fullname));
+        break;
+
+      case "date":
+        sortBy === currentCol
+          ? userList.sort((a, b) => a.joinedDate.localeCompare(b.joinedDate))
+          : userList.sort((a, b) => b.joinedDate.localeCompare(a.joinedDate));
+        break;
+
+      case "type":
+        sortBy === currentCol
+          ? userList.sort((a, b) => a.type.localeCompare(b.type))
+          : userList.sort((a, b) => b.type.localeCompare(a.type));
+        break;
+
+      default:
+        break;
+    }
+    if (sortBy === currentCol) {
+      setCurrentCol("");
+    } else {
+      setCurrentCol(sortBy);
+    }
+  };
+
+  /**
+   * Paging 
+   * @returns html: code for paging
+   */
   const getPaging = () => {
     const handleNext = () => {
       let temp = page + 1;
@@ -502,7 +342,7 @@ const ManageUser = () => {
                 Staff Code{" "}
                 <button
                   className="btn btn-outline-light"
-                  onClick={(e) => sortByCol("code")}
+                  onClick={() => sortByCol("code")}
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -521,7 +361,7 @@ const ManageUser = () => {
                 Joined Date{" "}
                 <button
                   className="btn btn-outline-light"
-                  onClick={(e) => sortByCol("date")}
+                  onClick={() => sortByCol("date")}
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -538,7 +378,7 @@ const ManageUser = () => {
             </tr>
           </thead>
           <tbody>
-            {userList.map((ele) => (
+            {(userList || []).map((ele) => (
               <>
                 <tr
                   data-bs-toggle="modal"
