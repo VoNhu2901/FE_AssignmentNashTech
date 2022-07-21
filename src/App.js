@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import ManageAssignmentPage from './pages/ManageAssignmentPage';
 import RequestPage from './pages/RequestPage';
 import ReportPage from './pages/ReportPage';
+import LoginPage from './pages/LoginPage';
 
 import {ManageUser} from './pages'
 
@@ -31,6 +32,7 @@ function App() {
             />
             <Route path="/report" element={<ReportPage></ReportPage>} />
           </Route>
+          <Route path="/login" element={<LoginPage></LoginPage>} />
         </Routes>
       </Suspense>
     </Fragment>
