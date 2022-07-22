@@ -90,7 +90,6 @@ const list = [
 ];
 
 const ManageUser = () => {
-  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [userList, setUserList] = useState([]);
   const [data, setData] = useState([]);
@@ -137,11 +136,6 @@ const ManageUser = () => {
     }
   }, [data, filterBy, page]);
 
-  const searchUserHandle = () => {
-    // search function here
-    alert(search);
-  };
-
   const sortByCol = (sortBy) => {
     switch (sortBy) {
       case "code":
@@ -179,7 +173,7 @@ const ManageUser = () => {
   };
 
   /**
-   * Paging 
+   * Paging
    * @returns html: code for paging
    */
   const getPaging = () => {
@@ -236,6 +230,20 @@ const ManageUser = () => {
   // handle edit user here
   const editUser = (code) => {
     alert(code);
+  };
+
+  const searchHandle = (e) => {
+    let content = e.target.value;
+    if (content) {
+      let reg = new RegExp(content, "i");
+      let _data = data.filter((user) => {
+        return user.id.match(reg) !== null || user.fullname.match(reg) !== null;
+      });
+      setUserList(_data);
+      console.log(typeof reg);
+    } else {
+      setUserList(data);
+    }
   };
 
   return (
@@ -313,15 +321,11 @@ const ManageUser = () => {
         <div className="right-board">
           <div className="search">
             <div className="input">
-              <input
-                type="text"
-                onChange={(e) => setSearch(e.target.value)}
-                value={search}
-              />
+              <input type="text" onChange={searchHandle} />
             </div>
 
             <div>
-              <button className="btn btn-light" onClick={searchUserHandle}>
+              <button className="btn btn-light">
                 <SearchIcon />
               </button>
             </div>
@@ -351,7 +355,7 @@ const ManageUser = () => {
                 Full Name{" "}
                 <button
                   className="btn btn-outline-light"
-                  onClick={(e) => sortByCol("name")}
+                  onClick={() => sortByCol("name")}
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -370,7 +374,7 @@ const ManageUser = () => {
                 Type{" "}
                 <button
                   className="btn btn-outline-light"
-                  onClick={(e) => sortByCol("type")}
+                  onClick={() => sortByCol("type")}
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -391,11 +395,11 @@ const ManageUser = () => {
                   <td className="border-bottom">{ele.type}</td>
                   <td>
                     <button className="btn btn-outline-secondary border-0">
-                      <EditIcon onClick={(e) => editUser(ele.id)} />
+                      <EditIcon onClick={() => editUser(ele.id)} />
                     </button>
                     <button
                       className="btn btn-outline-danger border-0"
-                      onClick={(e) => deleteUser(ele.id)}
+                      onClick={() => deleteUser(ele.id)}
                     >
                       <HighlightOffIcon />
                     </button>{" "}
