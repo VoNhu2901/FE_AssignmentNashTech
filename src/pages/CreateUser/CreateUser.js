@@ -29,7 +29,24 @@ const CreateUser = () => {
       })
       .catch((error) =>{
         console.log(error)
-        Toast('error','Wrong: ' + error.response.data.message);
+        if (error.response.data.validationErrors){
+          if(error.response.data.validationErrors.firstname && error.response.data.validationErrors.lastname){
+            Toast('error','ERROR: ' + error.response.data.validationErrors.firstname);
+            Toast('error','ERROR: ' + error.response.data.validationErrors.lastname);
+          }
+          else if(error.response.data.validationErrors.firstname){
+            Toast('error','ERROR: ' + error.response.data.validationErrors.firstname);
+          }
+          else if(error.response.data.validationErrors.lastname){
+            Toast('error','ERROR: ' + error.response.data.validationErrors.lastname);
+          }
+        }        
+        else if(error.response.data){
+          Toast('error','ERROR: ' + error.response.data.message);
+        }
+        else {
+          Toast('error','Create User Fail!');
+        }
       });
   }
 
