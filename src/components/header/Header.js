@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import "./header.scss";
 
-const Header = () => {
+const Header = ({header}) => {
+
   return (
     <>
       <div className="header">
-        <div className="header__title" >Header Manager User</div>
-        <div className="header__username">Vo Nhu</div>
+        <div className="header__title">{header}</div>
+        <div className="header__username">Username</div>
       </div>
     </>
   );

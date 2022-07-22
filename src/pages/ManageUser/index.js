@@ -278,7 +278,7 @@ const ManageUser = () => {
                       checked={filterBy === "All"}
                       onClick={() => setFilterBy("All")}
                     />
-                    <label className="form-check-label" for="typeAll">
+                    <label className="form-check-label" htmlFor="typeAll">
                       All
                     </label>
                   </div>
@@ -293,7 +293,7 @@ const ManageUser = () => {
                       checked={filterBy === "Admin"}
                       onClick={() => setFilterBy("Admin")}
                     />
-                    <label className="form-check-label" for="typeAdmin">
+                    <label className="form-check-label" htmlFor="typeAdmin">
                       Admin
                     </label>
                   </div>
@@ -308,7 +308,7 @@ const ManageUser = () => {
                       checked={filterBy === "Staff"}
                       onClick={() => setFilterBy("Staff")}
                     />
-                    <label className="form-check-label" for="typeStaff">
+                    <label className="form-check-label" htmlFor="typeStaff">
                       Staff
                     </label>
                   </div>
