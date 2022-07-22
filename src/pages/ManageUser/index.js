@@ -7,87 +7,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseIcon from "@mui/icons-material/Close";
 
 import "./style.scss";
-
-// mock data to view
-const list = [
-  {
-    id: "SD1901",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "AD1902",
-    fullname: "Ban Nguyen Thuy",
-    username: "annt",
-    joinedDate: "21/06/2019",
-    type: "Staff",
-  },
-  {
-    id: "SD1903",
-    fullname: "Can Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Admin",
-  },
-  {
-    id: "SD1904",
-    fullname: "Y Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Admin",
-  },
-  {
-    id: "SD1905",
-    fullname: "Z Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Admin",
-  },
-  {
-    id: "SD1906",
-    fullname: "Go Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Admin",
-  },
-  {
-    id: "SD1907",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "20/05/2019",
-    type: "Admin",
-  },
-  {
-    id: "SD1908",
-    fullname: "",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Admin",
-  },
-  {
-    id: "SD1909",
-    fullname: "B",
-    username: "annt",
-    joinedDate: "20/06/2019",
-    type: "Admin",
-  },
-  {
-    id: "SD1910",
-    fullname: "A",
-    username: "annt",
-    joinedDate: "18/06/2019",
-    type: "Admin",
-  },
-  {
-    id: "SD1911",
-    fullname: "An Nguyen Thuy",
-    username: "annt",
-    joinedDate: "19/06/2019",
-    type: "Staff",
-  },
-];
+import { getAllUserSameLocation } from "../../api/UserAPI";
 
 const ManageUser = () => {
   const [page, setPage] = useState(1);
@@ -98,19 +18,28 @@ const ManageUser = () => {
   const [currentCol, setCurrentCol] = useState("");
   const userPerPage = 20;
 
+  const [error, setError] = useState(null);
   /**
    * Handle when init page and when page change
    */
   useEffect(() => {
-    // todo: get data from backend
-    setData(list);
+    // get data from backend
+    getAllUserSameLocation("HCM")
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((err) => {
+        // handle error here
+        console.log(err);
+        setError("No User Found");
+      });
 
     let len = data.length;
     let _numPage = Math.ceil(len / userPerPage); // calculate a number of page
     setNumPage(_numPage);
 
     // sort name ascending by default
-    data.sort((a, b) => a.fullname.localeCompare(b.fullname));
+    data.sort((a, b) => a.fullName.localeCompare(b.fullName));
 
     //paging
     const _data = data.slice((page - 1) * userPerPage, page * userPerPage);
@@ -125,7 +54,7 @@ const ManageUser = () => {
       const _data = data.slice((page - 1) * userPerPage, page * userPerPage);
       setUserList(_data);
     } else {
-      const _data = data.filter((user) => user.type === filterBy);
+      const _data = data.filter((user) => user.role === filterBy);
       const result = _data.slice((page - 1) * userPerPage, page * userPerPage);
 
       let len = _data.length;
@@ -140,14 +69,14 @@ const ManageUser = () => {
     switch (sortBy) {
       case "code":
         sortBy === currentCol
-          ? userList.sort((a, b) => a.id.localeCompare(b.id))
-          : userList.sort((a, b) => b.id.localeCompare(a.id));
+          ? userList.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
+          : userList.sort((a, b) => b.staffCode.localeCompare(a.staffCode));
         break;
 
       case "name":
         sortBy === currentCol
-          ? userList.sort((a, b) => a.fullname.localeCompare(b.fullname))
-          : userList.sort((a, b) => b.fullname.localeCompare(a.fullname));
+          ? userList.sort((a, b) => a.fullName.localeCompare(b.fullName))
+          : userList.sort((a, b) => b.fullName.localeCompare(a.fullName));
         break;
 
       case "date":
@@ -158,8 +87,8 @@ const ManageUser = () => {
 
       case "type":
         sortBy === currentCol
-          ? userList.sort((a, b) => a.type.localeCompare(b.type))
-          : userList.sort((a, b) => b.type.localeCompare(a.type));
+          ? userList.sort((a, b) => a.role.localeCompare(b.role))
+          : userList.sort((a, b) => b.role.localeCompare(a.role));
         break;
 
       default:
@@ -237,7 +166,10 @@ const ManageUser = () => {
     if (content) {
       let reg = new RegExp(content, "i");
       let _data = data.filter((user) => {
-        return user.id.match(reg) !== null || user.fullname.match(reg) !== null;
+        return (
+          user.staffCode.match(reg) !== null ||
+          user.fullName.match(reg) !== null
+        );
       });
       setUserList(_data);
       console.log(typeof reg);
@@ -248,7 +180,10 @@ const ManageUser = () => {
 
   return (
     <div className="user-list">
-      <div className="title">User List</div>
+      <div className="title">
+        <h3>User List</h3>
+        {error && <small className="text-muted fs-6">{error}</small>}
+      </div>
 
       <div className="table-board">
         <div className="left-board">
@@ -386,20 +321,21 @@ const ManageUser = () => {
               <>
                 <tr
                   data-bs-toggle="modal"
-                  data-bs-target={"#detailUserViewModal" + ele.id}
+                  data-bs-target={"#detailUserViewModal" + ele.staffCode}
+                  key={ele.staffCode}
                 >
-                  <td className="border-bottom">{ele.id}</td>
-                  <td className="border-bottom">{ele.fullname}</td>
+                  <td className="border-bottom">{ele.staffCode}</td>
+                  <td className="border-bottom">{ele.fullName}</td>
                   <td className="border-bottom">{ele.username}</td>
                   <td className="border-bottom">{ele.joinedDate}</td>
-                  <td className="border-bottom">{ele.type}</td>
+                  <td className="border-bottom">{ele.role}</td>
                   <td>
                     <button className="btn btn-outline-secondary border-0">
-                      <EditIcon onClick={() => editUser(ele.id)} />
+                      <EditIcon onClick={() => editUser(ele.staffCode)} />
                     </button>
                     <button
                       className="btn btn-outline-danger border-0"
-                      onClick={() => deleteUser(ele.id)}
+                      onClick={() => deleteUser(ele.staffCode)}
                     >
                       <HighlightOffIcon />
                     </button>{" "}
@@ -408,8 +344,8 @@ const ManageUser = () => {
 
                 <div
                   className="modal fade"
-                  id={"detailUserViewModal" + ele.id}
-                  tabindex="-1"
+                  id={"detailUserViewModal" + ele.staffCode}
+                  tabIndex="-1"
                   aria-labelledby="exampleModalLabel"
                   aria-hidden="true"
                 >
@@ -434,11 +370,11 @@ const ManageUser = () => {
                         <div className="detail">
                           <div className="detail-item">
                             <div className="label">Staff Code</div>
-                            <div className="value">{ele.id}</div>
+                            <div className="value">{ele.staffCode}</div>
                           </div>
                           <div className="detail-item">
                             <div className="label">Full Name</div>
-                            <div className="value">{ele.fullname}</div>
+                            <div className="value">{ele.fullName}</div>
                           </div>
                           <div className="detail-item">
                             <div className="label">Username</div>
@@ -446,13 +382,11 @@ const ManageUser = () => {
                           </div>
                           <div className="detail-item">
                             <div className="label">Date Of Birth</div>
-                            {/* TODO: change field below */}
-                            <div className="value">{"20/4/2001"}</div>
+                            <div className="value">{ele.dateOfBirth}</div>
                           </div>
                           <div className="detail-item">
                             <div className="label">Gender</div>
-                            {/* TODO: change field below */}
-                            <div className="value">{"Male"}</div>
+                            <div className="value">{ele.gender}</div>
                           </div>
                           <div className="detail-item">
                             <div className="label">Joined Date</div>
@@ -460,12 +394,11 @@ const ManageUser = () => {
                           </div>
                           <div className="detail-item">
                             <div className="label">Type</div>
-                            <div className="value">{ele.type}</div>
+                            <div className="value">{ele.role}</div>
                           </div>
                           <div className="detail-item">
                             <div className="label">Location</div>
-                            {/* TODO: change field below */}
-                            <div className="value">{"HCM"}</div>
+                            <div className="value">{ele.location}</div>
                           </div>
                         </div>
                       </div>
