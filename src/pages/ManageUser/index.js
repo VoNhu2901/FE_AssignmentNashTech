@@ -7,7 +7,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseIcon from "@mui/icons-material/Close";
 
 import "./style.scss";
-import { getAllUserSameLocation } from "../../api/UserAPI";
+import userService from "../../api/userService";
 
 const ManageUser = () => {
   const [page, setPage] = useState(1);
@@ -22,18 +22,22 @@ const ManageUser = () => {
   /**
    * Handle when init page and when page change
    */
-  useEffect(() => {
-    // get data from backend
-    getAllUserSameLocation("HCM")
-      .then((res) => {
-        setData(res.data);
-      })
-      .catch((err) => {
-        // handle error here
-        console.log(err);
-        setError("No User Found");
-      });
 
+  // get data from backend
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await userService.getAllUsers("HN");
+        setData(res.data);
+      } catch (error) {
+        console.log(error);
+        setError("No User Found");
+      }
+    })();
+  }, []);
+  // end get data
+
+  useEffect(() => {
     let len = data.length;
     let _numPage = Math.ceil(len / userPerPage); // calculate a number of page
     setNumPage(_numPage);
@@ -210,7 +214,7 @@ const ManageUser = () => {
                       type="checkbox"
                       value="All"
                       id="typeAll"
-                      checked={filterBy === "All"}
+                      defaultChecked={filterBy === "All"}
                       onClick={() => setFilterBy("All")}
                     />
                     <label className="form-check-label" htmlFor="typeAll">
@@ -225,7 +229,7 @@ const ManageUser = () => {
                       type="checkbox"
                       value="Admin"
                       id="typeAdmin"
-                      checked={filterBy === "Admin"}
+                      defaultChecked={filterBy === "Admin"}
                       onClick={() => setFilterBy("Admin")}
                     />
                     <label className="form-check-label" htmlFor="typeAdmin">
@@ -240,7 +244,7 @@ const ManageUser = () => {
                       type="checkbox"
                       value="Staff"
                       id="typeStaff"
-                      checked={filterBy === "Staff"}
+                      defaultChecked={filterBy === "Staff"}
                       onClick={() => setFilterBy("Staff")}
                     />
                     <label className="form-check-label" htmlFor="typeStaff">

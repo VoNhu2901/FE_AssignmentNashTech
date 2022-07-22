@@ -11,7 +11,6 @@ import LoginPage from './pages/LoginPage';
 
 import {ManageUser} from './pages'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
