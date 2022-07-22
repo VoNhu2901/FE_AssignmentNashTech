@@ -9,4 +9,4 @@ const ManageUserPage = () => {
   );
 };
 
-export default ManageUserPage;git 
+export default ManageUserPage;
