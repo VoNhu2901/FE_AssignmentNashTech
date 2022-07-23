@@ -94,13 +94,14 @@ const CreateUser = () => {
             <div className='form__input--item' >
               <div>
                 <input type="radio" id="male" name="fav_language" value="true"
-                checked
+                
                 onClick={e => setGender(e.target.value)}></input>
                 <label htmlFor="male">Male</label>
               </div>
 
               <div>
                 <input type="radio" id="female" name="fav_language" value="false"
+                
                 onClick={e => setGender(e.target.value)}></input>
                 <label htmlFor="female">Female</label>
               </div>
