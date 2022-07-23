@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
 import './createUser.scss'
 import axios from 'axios';
@@ -16,6 +16,8 @@ const CreateUser = () => {
   const [gender, setGender] = useState("true")
   const [joinedDate, setJoinedDate] = useState("")
   const [role, setRole] = useState("")
+  const [openLocation, setOpenLocation] = useState(true)
+  const [location, setLocation] = useState("")
   const payload = { firstname, lastname, dateOfBirth, gender, joinedDate, role }
 
   function handleCreateNewUser() {
@@ -24,7 +26,7 @@ const CreateUser = () => {
       .then(res => {
         if (res.status === 201) {
           Toast('success', 'Successfully added!!')
-          navigate('/create-user')
+          navigate('/manage-user')
         }
       })
       .catch((error) =>{
@@ -50,17 +52,20 @@ const CreateUser = () => {
       });
   }
 
-  const constructor = () => {
-    this.state = {
-      name: "React"
-    };
-    this.onChangeValue = this.onChangeValue.bind(this);
+  function handleCancel() {
+    navigate('/manage-user')
   }
 
-  const onChangeValue = (event) => {
-    console.log(event.target.value);
+  const handleRole = (e)=>{
+    const value = e.target.value
+    setRole(value);
+    if (value == 1){      
+      setOpenLocation(true)
+    }
+    else if (value == 2){
+      setOpenLocation(false)
+    }   
   }
-
 
   return (
     <>
@@ -74,14 +79,10 @@ const CreateUser = () => {
               value={firstname}
               onChange={(e) => setfirstName(e.target.value)}></input>
 
-
-
             <label for='lastName'>Last Name</label>
             <input type="text" id="lastName" className="form__input" placeholder='Last Name'
               value={lastname}
               onChange={(e) => setlastName(e.target.value)}></input>
-
-
 
             <label for='dateOfBirth'>Date Of Birth</label>
             <input type="date" id="dateOfbirth" className="form__input"
@@ -105,27 +106,37 @@ const CreateUser = () => {
               </div>
             </div>
 
-
             <label for='joinedDate'>Joinded Date</label>
             <input type="date" id="joinedDate" className="form__input"
               value={joinedDate}
               onChange={(e) => setJoinedDate(e.target.value)}></input>
 
-
-
             <label for='type'>Type</label>
             <select className="form__input" name="cars" id="cars"
               value={role}
-              onChange={(e) => setRole(e.target.value)}>
+              onChange={handleRole}
+              >
               <option value={1}>ADMIN</option>
               <option value={2}>STAFF</option>
             </select>
 
+            {openLocation &&
+              <>
+                <label for='type'>Location</label>
+              <select className="form__input" name="cars" id="cars"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}>
+                <option value={"HCM"}>Ho Chi Minh</option>
+                <option value={"DN"}>Da Nang</option>
+                <option value={"HN"}>Ha Noi</option>
+              </select>
+              </>
+            }
           </div>
 
           <div className='form__button-wrapper'>
             <button id="save" className='form__button-item' onClick={handleCreateNewUser}>Save</button>
-            <button id="cancel" className='form__button-item'>Cancel</button>
+            <button id="cancel" className='form__button-item' onClick={handleCancel}>Cancel</button>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ import HomePage from './pages/HomePage';
 import ManageAssignmentPage from './pages/ManageAssignmentPage';
 import RequestPage from './pages/RequestPage';
 import ReportPage from './pages/ReportPage';
-import CreateUser from './pages/CreateUser/CreateUser';
+import CreateUser from './pages/CreateUser/';
 
 
 
