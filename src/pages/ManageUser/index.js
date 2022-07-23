@@ -5,6 +5,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseIcon from "@mui/icons-material/Close";
+import moment from "moment";
 
 import "./style.scss";
 import userService from "../../api/userService";
@@ -331,7 +332,9 @@ const ManageUser = () => {
                   <td className="border-bottom">{ele.staffCode}</td>
                   <td className="border-bottom">{ele.fullName}</td>
                   <td className="border-bottom">{ele.username}</td>
-                  <td className="border-bottom">{ele.joinedDate}</td>
+                  <td className="border-bottom">
+                    {moment(ele.joinedDate).format("DD/MM/YYYY")}
+                  </td>
                   <td className="border-bottom">{ele.role}</td>
                   <td>
                     <button className="btn btn-outline-secondary border-0">
@@ -386,7 +389,9 @@ const ManageUser = () => {
                           </div>
                           <div className="detail-item">
                             <div className="label">Date Of Birth</div>
-                            <div className="value">{ele.dateOfBirth}</div>
+                            <div className="value">
+                              {moment(ele.dateOfBirth).format("DD/MM/YYYY")}
+                            </div>
                           </div>
                           <div className="detail-item">
                             <div className="label">Gender</div>
@@ -394,7 +399,9 @@ const ManageUser = () => {
                           </div>
                           <div className="detail-item">
                             <div className="label">Joined Date</div>
-                            <div className="value">{ele.joinedDate}</div>
+                            <div className="value">
+                              {moment(ele.joinedDate).format("DD/MM/YYYY")}
+                            </div>
                           </div>
                           <div className="detail-item">
                             <div className="label">Type</div>
