@@ -1,24 +1,41 @@
-import logo from './logo.svg';
 import './App.css';
+import { Fragment, Suspense } from 'react';
+import { Route, Routes } from "react-router-dom";
+import Main from './components/layout/Main';
+import ManageUser from './pages/ManageUserPage';
+import ManageAsset from './pages/ManageAssetPage';
+import HomePage from './pages/HomePage';
+import ManageAssignmentPage from './pages/ManageAssignmentPage';
+import RequestPage from './pages/RequestPage';
+import ReportPage from './pages/ReportPage';
+import CreateUser from './pages/CreateUser/';
+
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Fragment>
+      <Suspense fallback={<></>}>
+        <Routes>
+          <Route element={<Main></Main>}>
+            <Route path="/" element={<HomePage></HomePage>} />
+            <Route path="/manage-user" element={<ManageUser></ManageUser>} />
+            <Route path="/manage-asset" element={<ManageAsset></ManageAsset>} />
+            <Route
+              path="/manage-assignment"
+              element={<ManageAssignmentPage></ManageAssignmentPage>}
+            />
+            <Route
+              path="/manage-request"
+              element={<RequestPage></RequestPage>}
+            />
+            <Route path="/report" element={<ReportPage></ReportPage>} />
+            <Route path="/create-user" element={<CreateUser></CreateUser>} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </Fragment>
   );
 }
 
