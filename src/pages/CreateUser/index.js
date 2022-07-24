@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { NavLink, useNavigate } from "react-router-dom";
 import './createUser.scss'
 import axios from 'axios';
@@ -31,7 +31,10 @@ const CreateUser = () => {
       })
       .catch((error) =>{
         console.log(error)
-        if (error.response.data.validationErrors){
+        if (error.request){
+          Toast('error','CREATE NEW USER FAILED!!');
+        }        
+        else if (error.response.data.validationErrors){
           if(error.response.data.validationErrors.firstname && error.response.data.validationErrors.lastname){
             Toast('error','ERROR: ' + error.response.data.validationErrors.firstname);
             Toast('error','ERROR: ' + error.response.data.validationErrors.lastname);
@@ -45,9 +48,6 @@ const CreateUser = () => {
         }        
         else if(error.response.data){
           Toast('error','ERROR: ' + error.response.data.message);
-        }
-        else {
-          Toast('error','Create User Fail!');
         }
       });
   }
@@ -116,7 +116,7 @@ const CreateUser = () => {
             <select className="form__input" name="cars" id="cars"
               value={role}
               onChange={handleRole}
-              >
+              >              
               <option value={1}>ADMIN</option>
               <option value={2}>STAFF</option>
             </select>
