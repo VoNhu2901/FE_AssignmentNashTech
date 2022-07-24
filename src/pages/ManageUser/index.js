@@ -137,7 +137,7 @@ const ManageUser = () => {
         {Array.from({ length: numPage }, (_, i) => (
           <button
             type="button"
-            onClick={(e) => setPage(i + 1)}
+            onClick={() => setPage(i + 1)}
             className={
               page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
             }
