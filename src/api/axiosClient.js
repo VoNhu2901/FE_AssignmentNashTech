@@ -1,5 +1,4 @@
 import axios from "axios";
-import queryString from "query-string";
 
 const baseUrl = "http://localhost:8080";
 const getToken = () => localStorage.getItem("token");
@@ -9,7 +8,7 @@ const axiosClient = axios.create({
   headers: {
     "content-type": "application/json",
   },
-  paramsSerializer: (params) => queryString.stringify({ params }),
+  paramsSerializer: (params) => JSON.stringify({ params }),
 });
 
 axiosClient.interceptors.request.use(async (config) => {

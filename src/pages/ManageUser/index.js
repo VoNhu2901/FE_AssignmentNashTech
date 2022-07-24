@@ -8,7 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 
 import "./style.scss";
-import userService from "../../api/userService";
+import UserService from "../../api/UserService";
 
 const ManageUser = () => {
   const [page, setPage] = useState(1);
@@ -28,10 +28,10 @@ const ManageUser = () => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await userService.getAllUsers("HN");
+        const res = await UserService.getAllUsers("HN");
         setData(res.data);
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log(err);
         setError("No User Found");
       }
     })();
