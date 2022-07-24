@@ -8,7 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 
 import "./style.scss";
-import userService from "../../api/UserService";
+import userService from "../../api/userService.js";
 import { Link } from "react-router-dom";
 
 const ManageUser = () => {

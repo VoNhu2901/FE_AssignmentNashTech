@@ -1,4 +1,4 @@
-import axiosClient from "./AxiosClient";
+import axiosClient from "./axiosClient.js";
 
 const authApi = {
   signup: (params) => axiosClient.post("auth/signup", params),
