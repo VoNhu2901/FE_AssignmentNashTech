@@ -69,29 +69,29 @@ const CreateUser = () => {
 
   return (
     <>
-      <div className='form'>
-        <div className='form__container'>
-          <h2 className='form__title'>Create New User</h2>
-          <div className="form__input-wrapper">
+      <div className='form-create-user'>
+        <div className='form-create-user__container'>
+          <h2 className='form-create-user__title'>Create New User</h2>
+          <div className="form-create-user__input-wrapper">
 
             <label for='firstName'>First Name</label>
-            <input type="text" id="firstName" className="form__input" placeholder='First Name'
+            <input type="text" id="firstName" className="form-create-user__input" placeholder='First Name'
               value={firstname}
               onChange={(e) => setfirstName(e.target.value)}></input>
 
             <label for='lastName'>Last Name</label>
-            <input type="text" id="lastName" className="form__input" placeholder='Last Name'
+            <input type="text" id="lastName" className="form-create-user__input" placeholder='Last Name'
               value={lastname}
               onChange={(e) => setlastName(e.target.value)}></input>
 
             <label for='dateOfBirth'>Date Of Birth</label>
-            <input type="date" id="dateOfbirth" className="form__input"
+            <input type="date" id="dateOfbirth" className="form-create-user__input"
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}></input>
 
 
             <label for='gender'>Gender</label>
-            <div className='form__input--item' >
+            <div className='form-create-user__input--item' >
               <div>
                 <input type="radio" id="male" name="fav_language" value="true"
                 
@@ -108,12 +108,12 @@ const CreateUser = () => {
             </div>
 
             <label for='joinedDate'>Joinded Date</label>
-            <input type="date" id="joinedDate" className="form__input"
+            <input type="date" id="joinedDate" className="form-create-user__input"
               value={joinedDate}
               onChange={(e) => setJoinedDate(e.target.value)}></input>
 
             <label for='type'>Type</label>
-            <select className="form__input" name="cars" id="cars"
+            <select className="form-create-user__input" name="cars" id="cars"
               value={role}
               onChange={handleRole}
               >              
@@ -124,7 +124,7 @@ const CreateUser = () => {
             {openLocation &&
               <>
                 <label for='type'>Location</label>
-              <select className="form__input" name="cars" id="cars"
+              <select className="form-create-user__input" name="cars" id="cars"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}>
                 <option value={"HCM"}>Ho Chi Minh</option>
@@ -135,9 +135,9 @@ const CreateUser = () => {
             }
           </div>
 
-          <div className='form__button-wrapper'>
-            <button id="save" className='form__button-item' onClick={handleCreateNewUser}>Save</button>
-            <button id="cancel" className='form__button-item' onClick={handleCancel}>Cancel</button>
+          <div className='form-create-user__button-wrapper'>
+            <button id="save" className='form-create-user__button-item' onClick={handleCreateNewUser}>Save</button>
+            <button id="cancel" className='form-create-user__button-item' onClick={handleCancel}>Cancel</button>
           </div>
         </div>
       </div>

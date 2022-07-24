@@ -41,3 +41,9 @@
     color: white;
   }
 }
+
+a.menu-navlink:hover{
+  color: red !important;
+  background-color: $menu-hover-bg;
+
+}
