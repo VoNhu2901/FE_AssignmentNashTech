@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import "./createUser.scss";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import "./style.scss";
 
 const CreateUser = () => {
   const navigate = useNavigate();
@@ -11,10 +11,10 @@ const CreateUser = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
-  const [gender, setGender] = useState(true);
+  const [gender, setGender] = useState(null);
   const [joinedDate, setJoinedDate] = useState("");
-  const [role, setRole] = useState(1);
-  const [openLocation, setOpenLocation] = useState(true);
+  const [role, setRole] = useState(2);
+  const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("");
 
   useEffect(() => {
@@ -23,6 +23,17 @@ const CreateUser = () => {
   }, []);
 
   const handleCreateNewUser = () => {
+    if (firstName.length >= 128 || lastName >= 128) {
+      toast.warning(
+        "First name and last name must be smaller then 128 characters"
+      );
+    }
+    let regex = /^[A-Za-z0-9 ]+$/;
+
+    if (!firstName.match(regex) || !lastName.match(regex)) {
+      toast.warning("First name and last name not contain special symbols");
+    }
+
     if (firstName && lastName && dateOfBirth && joinedDate && role) {
       const payload = {
         firstName,
@@ -164,8 +175,12 @@ const CreateUser = () => {
               value={role}
               onChange={handleRole}
             >
-              <option value={1}>ADMIN</option>
-              <option value={2}>STAFF</option>
+              <option value={1} selected={role === 1}>
+                ADMIN
+              </option>
+              <option value={2} selected={role === 2}>
+                STAFF
+              </option>
             </select>
 
             {openLocation && (
@@ -191,6 +206,7 @@ const CreateUser = () => {
               id="save"
               className="form-create-user__button-item"
               onClick={handleCreateNewUser}
+              disabled={!(firstName && lastName && dateOfBirth && joinedDate)}
             >
               Save
             </button>

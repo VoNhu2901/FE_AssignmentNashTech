@@ -2,7 +2,7 @@ import axiosClient from "./AxiosClient";
 
 const userService = {
   getAllUsers: (location) => {
-    return axiosClient.get(`/user/getAll/${location}`);
+    return axiosClient.get(`/api/user/getAll/${location}`);
   }
 };
 
