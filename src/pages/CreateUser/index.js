@@ -1,65 +1,77 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import './createUser.scss'
-import axios from 'axios';
-import { ToastContainer } from 'react-toastify';
-import Toast from '../../components/Toast';
+import "./createUser.scss";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const CreateUser = () => {
-
   const navigate = useNavigate();
 
-  const POST_USER_URL = "http://localhost:8080/api/users/register"
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [dateOfBirth, setDateOfBirth] = useState("")
-  const [gender, setGender] = useState("true")
-  const [joinedDate, setJoinedDate] = useState("")
-  const [role, setRole] = useState("ADMIN");
+  const POST_USER_URL = "http://localhost:8080/api/user/register";
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [gender, setGender] = useState(true);
+  const [joinedDate, setJoinedDate] = useState("");
+  const [role, setRole] = useState(1);
   const [openLocation, setOpenLocation] = useState(true);
-  const [location, setLocation] = useState("HCM");
+  const [location, setLocation] = useState("");
+
+  useEffect(() => {
+    let _location = localStorage.getItem("location");
+    setLocation(_location);
+  }, []);
 
   const handleCreateNewUser = () => {
-    if (firstName && lastName && dateOfBirth && gender && joinedDate && role) {
+    if (firstName && lastName && dateOfBirth && joinedDate && role) {
       const payload = {
-        firstname: firstName,
-        lastname: lastName,
+        firstName,
+        lastName,
         dateOfBirth,
         gender,
         joinedDate,
         role,
+        location,
       };
-      axios
-        .post(POST_USER_URL, payload)
+
+      const token = localStorage.getItem("token");
+
+      axios({
+        method: "POST",
+        url: POST_USER_URL,
+        data: payload,
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+      })
         .then((res) => {
           if (res.status === 201) {
-            Toast("success", "Successfully added!!");
+            toast.success("Successfully added!!");
             navigate("/manage-user");
           }
         })
         .catch((error) => {
           console.log(error);
           if (error.request) {
-            Toast("error", "CREATE NEW USER FAILED!!");
+            toast.error("CREATE NEW USER FAILED!!");
           } else if (error.response) {
             if (error.response.data.validationErrors.firstname) {
-              Toast(
-                "error",
+              toast.error(
                 "ERROR: " + error.response.data.validationErrors.firstname
               );
             }
             if (error.response.data.validationErrors.lastname) {
-              Toast(
-                "error",
+              toast.error(
                 "ERROR: " + error.response.data.validationErrors.lastname
               );
             }
           } else if (error.response.data) {
-            Toast("error", "ERROR: " + error.response.data.message);
+            toast.error("ERROR: " + error.response.data.message);
           }
         });
     } else {
-      Toast("error", "ALL FIELDS ARE REQUIRE");
+      toast.error("ALL FIELDS ARE REQUIRE");
     }
   };
 
@@ -69,7 +81,7 @@ const CreateUser = () => {
 
   const handleRole = (e) => {
     const value = e.target.value;
-    setRole(value);
+    setRole(parseInt(value));
     if (value == 1) {
       setOpenLocation(true);
     } else if (value == 2) {
@@ -119,8 +131,7 @@ const CreateUser = () => {
                   type="radio"
                   id="male"
                   name="fav_language"
-                  value="true"
-                  onClick={(e) => setGender(e.target.value)}
+                  onClick={() => setGender(true)}
                 ></input>
                 <label htmlFor="male">Male</label>
               </div>
@@ -130,8 +141,7 @@ const CreateUser = () => {
                   type="radio"
                   id="female"
                   name="fav_language"
-                  value="false"
-                  onClick={(e) => setGender(e.target.value)}
+                  onClick={() => setGender(false)}
                 ></input>
                 <label htmlFor="female">Female</label>
               </div>
@@ -194,7 +204,6 @@ const CreateUser = () => {
           </div>
         </div>
       </div>
-      <ToastContainer />
     </>
   );
 };

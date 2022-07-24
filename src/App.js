@@ -3,7 +3,6 @@ import { Fragment, Suspense } from 'react';
 import { Route, Routes } from "react-router-dom";
 import Main from './components/layout/Main';
 import ManageAsset from './pages/ManageAssetPage';
-import HomePage from './pages/HomePage';
 import ManageAssignmentPage from './pages/ManageAssignmentPage';
 import RequestPage from './pages/RequestPage';
 import ReportPage from './pages/ReportPage';
@@ -12,7 +11,7 @@ import CreateUser from './pages/CreateUser/';
 
 import LoginPage from './pages/LoginPage';
 
-import {ManageUser} from './pages'
+import {ManageUser, HomePage} from './pages'
 
 
 function App() {

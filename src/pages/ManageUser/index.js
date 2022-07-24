@@ -15,7 +15,7 @@ const ManageUser = () => {
   const [page, setPage] = useState(1);
   const [userList, setUserList] = useState([]);
   const [data, setData] = useState([]);
-  const [filterBy, setFilterBy] = useState("All");
+  const [filterBy, setFilterBy] = useState("ALL");
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
   const userPerPage = 20;
@@ -26,12 +26,16 @@ const ManageUser = () => {
    */
 
   // get data from backend
-  //TODO: get location from storage ...
   useEffect(() => {
+    let location = localStorage.getItem("location");
+    let userId = localStorage.getItem("userId");
     (async () => {
       try {
-        const res = await userService.getAllUsers("HN");
-        setData(res.data);
+        const res = await userService.getAllUsers(location);
+
+        let _data = res.data.filter((ele) => ele.staffCode !== userId);
+
+        setData(_data);
       } catch (err) {
         console.log(err);
         setError("No User Found");
@@ -44,10 +48,8 @@ const ManageUser = () => {
     let len = data.length;
     let _numPage = Math.ceil(len / userPerPage); // calculate a number of page
     setNumPage(_numPage);
-
     // sort name ascending by default
     data.sort((a, b) => a.fullName.localeCompare(b.fullName));
-
     //paging
     const _data = data.slice((page - 1) * userPerPage, page * userPerPage);
     setUserList(_data);
@@ -57,7 +59,7 @@ const ManageUser = () => {
    * Handle for filter
    */
   useEffect(() => {
-    if (filterBy === "All") {
+    if (filterBy === "ALL") {
       const _data = data.slice((page - 1) * userPerPage, page * userPerPage);
       setUserList(_data);
     } else {
@@ -70,7 +72,7 @@ const ManageUser = () => {
 
       setUserList(result);
     }
-  }, [data, filterBy, page]);
+  }, [filterBy, data, page]);
 
   const sortByCol = (sortBy) => {
     switch (sortBy) {
@@ -217,8 +219,8 @@ const ManageUser = () => {
                       type="checkbox"
                       value="All"
                       id="typeAll"
-                      defaultChecked={filterBy === "All"}
-                      onClick={() => setFilterBy("All")}
+                      checked={filterBy === "ALL"}
+                      onClick={() => setFilterBy("ALL")}
                     />
                     <label className="form-check-label" htmlFor="typeAll">
                       All
@@ -232,8 +234,8 @@ const ManageUser = () => {
                       type="checkbox"
                       value="Admin"
                       id="typeAdmin"
-                      defaultChecked={filterBy === "Admin"}
-                      onClick={() => setFilterBy("Admin")}
+                      checked={filterBy === "ADMIN"}
+                      onClick={() => setFilterBy("ADMIN")}
                     />
                     <label className="form-check-label" htmlFor="typeAdmin">
                       Admin
@@ -247,8 +249,8 @@ const ManageUser = () => {
                       type="checkbox"
                       value="Staff"
                       id="typeStaff"
-                      defaultChecked={filterBy === "Staff"}
-                      onClick={() => setFilterBy("Staff")}
+                      checked={filterBy === "STAFF"}
+                      onClick={() => setFilterBy("STAFF")}
                     />
                     <label className="form-check-label" htmlFor="typeStaff">
                       Staff

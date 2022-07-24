@@ -1,51 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./login.scss";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import Button from "../button/Button";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
-// validation
-const schema = yup.object().shape({
-  username: yup.string().required("Username is required"),
-  password: yup
-    .string()
-    .min(8, "Your password must be at least 8 characters")
-    .required("Password is required"),
-});
+import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { errors, isValid, isSubmitting },
-  } = useForm({ mode: "onChange", resolver: yupResolver(schema) });
-
-  const handleLogin = async (values) => {
-    if (!isValid) return;
-    
-    //handle login here
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    // end handle
-
-    toast.success("Login success!!!");
-    navigate("/");
+  const loginHandler = () => {
+    if (username && password) {
+      const payload = { username, password };
+      axios({
+        headers: {
+          "content-type": "application/json",
+        },
+        url: "http://localhost:8080/api/auth/login",
+        data: payload,
+        method: "POST",
+      })
+        .then((res) => {
+          // set local storage
+          localStorage.clear();
+          localStorage.setItem("userId", res.data.userId);
+          localStorage.setItem("status", res.data.status);
+          localStorage.setItem("location", res.data.location);
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("username", res.data.username);
+          console.log(res.data);
+          toast.success("Login success!!!");
+          navigate("/");
+        })
+        .catch((err) => {
+          toast.error("Username or Password Invalid");
+          console.log(err);
+        });
+    } else {
+      toast.warning("All fields are required");
+    }
   };
 
-  useEffect(() => {
-    const arrErrors = Object.values(errors);
-    if (arrErrors.length > 0) {
-      toast.error(arrErrors[0]?.message);
-    }
-  }, [errors]);
-
   return (
-    <form className="form" onSubmit={handleSubmit(handleLogin)}>
+    <div className="form">
       <div className="form__container">
         <div>
           <img
@@ -56,33 +54,33 @@ const Login = () => {
         </div>
         <div className="form__input-wrapper">
           <input
-            {...register("username")}
             type="text"
             id="username"
             className="form__input"
             placeholder="Enter your username"
-            control={control}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
           <input
-            {...register("password")}
             type="password"
             id="password"
             className="form__input"
             placeholder="Enter your password"
-            control={control}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
-        <Button
+        <button
           type="submit"
           className="form__button"
-          isloading={isSubmitting}
-          disabled={isSubmitting}
+          onClick={loginHandler}
+          disabled={!(username && password)}
         >
           Login
-        </Button>
+        </button>
       </div>
-    </form>
+    </div>
   );
 };
 
