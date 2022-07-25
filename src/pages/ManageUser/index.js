@@ -10,7 +10,6 @@ import moment from "moment";
 import "./style.scss";
 import userService from "../../api/userService";
 import { Link } from "react-router-dom";
-import { get } from "react-hook-form";
 
 const ManageUser = () => {
   const [page, setPage] = useState(1);
@@ -20,7 +19,6 @@ const ManageUser = () => {
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
   const [search, setSearch] = useState("");
-  const userPerPage = 20;
   let location = localStorage.getItem("location");
   let userId = localStorage.getItem("userId");
 
@@ -55,10 +53,13 @@ const ManageUser = () => {
    */
   useEffect(() => {
     if (filterBy === "ALL") {
-      setUserList(data);
+    let _data = data.sort((a, b) => a.fullName.localeCompare(b.fullName));
+      setUserList(_data);
     } else {
       const _data = data.filter((user) => user.role === filterBy);
-      setUserList(_data);
+      let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
+
+      setUserList(sorted);
     }
   }, [filterBy, data]);
 
