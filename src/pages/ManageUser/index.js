@@ -8,8 +8,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
 
 import "./style.scss";
-import userService from "../../api/userService.js";
+import userService from "../../api/userService";
 import { Link } from "react-router-dom";
+import { get } from "react-hook-form";
 
 const ManageUser = () => {
   const [page, setPage] = useState(1);
@@ -18,7 +19,10 @@ const ManageUser = () => {
   const [filterBy, setFilterBy] = useState("ALL");
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
+  const [search, setSearch] = useState("");
   const userPerPage = 20;
+  let location = localStorage.getItem("location");
+  let userId = localStorage.getItem("userId");
 
   const [error, setError] = useState(null);
   /**
@@ -27,15 +31,17 @@ const ManageUser = () => {
 
   // get data from backend
   useEffect(() => {
-    let location = localStorage.getItem("location");
-    let userId = localStorage.getItem("userId");
+    // let location = localStorage.getItem("location");
+    // let userId = localStorage.getItem("userId");
     (async () => {
       try {
-        const res = await userService.getAllUsers(location);
+        const res = await userService.getAllUsers(location, page);
 
-        let _data = res.data.filter((ele) => ele.staffCode !== userId);
+        let _data = res.data.users.filter((ele) => ele.staffCode !== userId);
 
         setData(_data);
+
+        setNumPage(Math.ceil(res.data.totalRecord / 20));
       } catch (err) {
         console.log(err);
         setError("No User Found");
@@ -44,35 +50,17 @@ const ManageUser = () => {
   }, []);
   // end get data
 
-  useEffect(() => {
-    let len = data.length;
-    let _numPage = Math.ceil(len / userPerPage); // calculate a number of page
-    setNumPage(_numPage);
-    // sort name ascending by default
-    data.sort((a, b) => a.fullName.localeCompare(b.fullName));
-    //paging
-    const _data = data.slice((page - 1) * userPerPage, page * userPerPage);
-    setUserList(_data);
-  }, [data, page]);
-
   /**
    * Handle for filter
    */
   useEffect(() => {
     if (filterBy === "ALL") {
-      const _data = data.slice((page - 1) * userPerPage, page * userPerPage);
-      setUserList(_data);
+      setUserList(data);
     } else {
       const _data = data.filter((user) => user.role === filterBy);
-      const result = _data.slice((page - 1) * userPerPage, page * userPerPage);
-
-      let len = _data.length;
-      let _numPage = Math.ceil(len / 20);
-      setNumPage(_numPage);
-
-      setUserList(result);
+      setUserList(_data);
     }
-  }, [filterBy, data, page]);
+  }, [filterBy, data]);
 
   const sortByCol = (sortBy) => {
     switch (sortBy) {
@@ -115,49 +103,67 @@ const ManageUser = () => {
    * @returns html: code for paging
    */
   const getPaging = () => {
+    const getData = (p) => {
+      setPage(p)
+      userService
+        .getAllUsers(location, p)
+        .then((res) => {
+          let _data = res.data.users.filter((ele) => ele.staffCode !== userId);
+
+          setData(_data);
+          setUserList(_data);
+
+          setNumPage(Math.ceil(res.data.totalRecord / 20));
+        })
+        .catch((err) => console.log(err));
+    };
     const handleNext = () => {
       let temp = page + 1;
       if (temp <= numPage) {
-        setPage(temp);
+      getData(temp);
+
       }
     };
 
     const handlePre = () => {
       let temp = page - 1;
       if (temp >= 1) {
-        setPage(temp);
+      getData(temp);
+
       }
     };
 
-    return (
-      <div className="paging text-end">
-        <button
-          type="button"
-          className="btn btn-outline-secondary"
-          onClick={handlePre}
-        >
-          Previous
-        </button>
-        {Array.from({ length: numPage }, (_, i) => (
+    if (numPage > 1) {
+      return (
+        <div className="paging text-end">
           <button
             type="button"
-            onClick={() => setPage(i + 1)}
-            className={
-              page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-            }
+            className="btn btn-outline-secondary"
+            onClick={handlePre}
           >
-            {i + 1}
+            Previous
           </button>
-        ))}
-        <button
-          type="button"
-          className="btn btn-outline-danger"
-          onClick={handleNext}
-        >
-          Next
-        </button>
-      </div>
-    );
+          {Array.from({ length: numPage }, (_, i) => (
+            <button
+              type="button"
+              onClick={() => getData(i + 1)}
+              className={
+                page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
+              }
+            >
+              {i + 1}
+            </button>
+          ))}
+          <button
+            type="button"
+            className="btn btn-outline-danger"
+            onClick={handleNext}
+          >
+            Next
+          </button>
+        </div>
+      );
+    }
   };
 
   // handle delete user here
@@ -172,6 +178,7 @@ const ManageUser = () => {
 
   const searchHandle = (e) => {
     let content = e.target.value;
+    setSearch(content);
     if (content) {
       let reg = new RegExp(content, "i");
       let _data = data.filter((user) => {
@@ -185,6 +192,19 @@ const ManageUser = () => {
     } else {
       setUserList(data);
     }
+  };
+
+  const handleSearchGlobal = () => {
+    userService
+      .searchUser(location, search)
+      .then((res) => {
+        let _data = res.data.users.filter((ele) => ele.staffCode !== userId);
+
+        setData(_data);
+
+        setNumPage(Math.ceil(res.data.totalRecord / 20));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -269,7 +289,7 @@ const ManageUser = () => {
             </div>
 
             <div>
-              <button className="btn btn-light">
+              <button className="btn btn-light" onClick={handleSearchGlobal}>
                 <SearchIcon />
               </button>
             </div>
