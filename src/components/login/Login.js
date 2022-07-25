@@ -4,11 +4,14 @@ import Button from "../button/Button";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import IconEyeClose from "./../icon/IconEyeClose";
+import IconEyeOpen from "./../icon/IconEyeOpen";
 
 const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [togglePassword, setTogglePassword] = useState(false);
 
   const loginHandler = () => {
     if (username && password) {
@@ -62,13 +65,24 @@ const Login = () => {
             onChange={(e) => setUsername(e.target.value)}
           />
           <input
-            type="password"
+            type={togglePassword ? "text" : "password"}
             id="password"
             className="form__input"
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {!togglePassword ? (
+            <IconEyeClose
+              className="icon-eye"
+              onClick={() => setTogglePassword(true)}
+            ></IconEyeClose>
+          ) : (
+            <IconEyeOpen
+              className="icon-eye"
+              onClick={() => setTogglePassword(false)}
+            ></IconEyeOpen>
+          )}
         </div>
 
         <button

@@ -1,10 +1,14 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import IconEyeClose from "../../components/icon/IconEyeClose";
+import IconEyeOpen from './../../components/icon/IconEyeOpen';
+import "./home.scss";
 
 const HomePage = () => {
   const [isNew, setIsNew] = useState(false);
   const [newPassword, setNewPassword] = useState("");
+  const [togglePassword, setTogglePassword] = useState(false);
 
   useEffect(() => {
     let status = localStorage.getItem("status");
@@ -63,11 +67,22 @@ const HomePage = () => {
                   New Password
                 </label>
                 <input
-                  type="password"
+                  type={togglePassword ? "text" : "password"}
                   id="pass"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
+                {!togglePassword ? (
+                  <IconEyeClose
+                    className="icon-eye"
+                    onClick={() => setTogglePassword(true)}
+                  ></IconEyeClose>
+                ) : (
+                  <IconEyeOpen
+                    className="icon-eye"
+                    onClick={() => setTogglePassword(false)}
+                  ></IconEyeOpen>
+                )}
               </div>
               <div className="button-save">
                 <button

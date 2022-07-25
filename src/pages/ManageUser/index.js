@@ -38,6 +38,7 @@ const ManageUser = () => {
         let _data = res.data.users.filter((ele) => ele.staffCode !== userId);
 
         setData(_data);
+        console.log(_data);
 
         setNumPage(Math.ceil(res.data.totalRecord / 20));
       } catch (err) {
