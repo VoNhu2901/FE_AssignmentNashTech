@@ -64,22 +64,11 @@ const CreateUser = () => {
         })
         .catch((error) => {
           console.log(error);
-          if (error.request) {
-            toast.error("CREATE NEW USER FAILED!!");
-          } else if (error.response) {
-            if (error.response.data.validationErrors.firstname) {
-              toast.error(
-                "ERROR: " + error.response.data.validationErrors.firstname
-              );
-            }
-            if (error.response.data.validationErrors.lastname) {
-              toast.error(
-                "ERROR: " + error.response.data.validationErrors.lastname
-              );
-            }
-          } else if (error.response.data) {
+          if (error.response.data) {
             toast.error("ERROR: " + error.response.data.message);
-          }
+          } else if (error) {
+            toast.error("CREATE NEW USER FAILED!!");
+          } 
         });
     } else {
       toast.error("ALL FIELDS ARE REQUIRE");
