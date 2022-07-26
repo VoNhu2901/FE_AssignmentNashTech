@@ -36,19 +36,16 @@ const ManageUser = () => {
   useEffect(() => {
     (async () => {
       try {
-        const res = await userService.getAllUsers(location, page);
+        const res = await userService.getAllUsers(location);
 
-        setNumPage(Math.ceil(res.data.totalRecord / rowPerPage));
-        let newUser = res.data.users.filter(
-          (user) => user.staffCode === newUserId
-        );
-        let _data = res.data.users.filter(
+        let newUser = res.data.filter((user) => user.staffCode === newUserId);
+        let _data = res.data.filter(
           (user) => user.staffCode !== userId || user.staffCode !== newUserId
         );
         let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
 
         const finalList = [...newUser, ...sorted];
-
+        setNumPage(Math.ceil(finalList.length / rowPerPage));
         setData(finalList);
         setUserList(finalList);
       } catch (err) {
@@ -76,26 +73,39 @@ const ManageUser = () => {
     switch (sortBy) {
       case "code":
         sortBy === currentCol
-          ? userList.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
-          : userList.sort((a, b) => b.staffCode.localeCompare(a.staffCode));
+          ? setUserList(
+              data.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
+            )
+          : setUserList(
+              data.sort((a, b) => b.staffCode.localeCompare(a.staffCode))
+            );
+
         break;
 
       case "name":
         sortBy === currentCol
-          ? userList.sort((a, b) => a.fullName.localeCompare(b.fullName))
-          : userList.sort((a, b) => b.fullName.localeCompare(a.fullName));
+          ? setUserList(
+              data.sort((a, b) => a.fullName.localeCompare(b.fullName))
+            )
+          : setUserList(
+              data.sort((a, b) => b.fullName.localeCompare(a.fullName))
+            );
         break;
 
       case "date":
         sortBy === currentCol
-          ? userList.sort((a, b) => a.joinedDate.localeCompare(b.joinedDate))
-          : userList.sort((a, b) => b.joinedDate.localeCompare(a.joinedDate));
+          ? setUserList(
+              data.sort((a, b) => a.joinedDate.localeCompare(b.joinedDate))
+            )
+          : setUserList(
+              data.sort((a, b) => b.joinedDate.localeCompare(a.joinedDate))
+            );
         break;
 
       case "type":
         sortBy === currentCol
-          ? userList.sort((a, b) => a.role.localeCompare(b.role))
-          : userList.sort((a, b) => b.role.localeCompare(a.role));
+          ? setUserList(data.sort((a, b) => a.role.localeCompare(b.role)))
+          : setUserList(data.sort((a, b) => b.role.localeCompare(a.role)));
         break;
 
       default:
