@@ -153,8 +153,10 @@ const ManageUser = () => {
           user.fullName.match(reg) !== null
         );
       });
+      setNumPage(Math.ceil(_data.length / rowPerPage))
       setUserList(_data);
     } else {
+      setNumPage(Math.ceil(data.length / rowPerPage))
       setUserList(data);
     }
   };
@@ -406,7 +408,7 @@ const ManageUser = () => {
       </div>
 
       <div className="paging">
-        {numPage >= 1 ? (
+        {numPage > 1 ? (
           <div className="paging text-end">
             <button
               type="button"
