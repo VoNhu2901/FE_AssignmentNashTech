@@ -19,7 +19,7 @@ const HomePage = () => {
 
   const handleSavePassword = () => {
     if (newPassword) {
-      // send to backend
+      // send to backend test
       const userId = localStorage.getItem("userId");
 
       axios({
