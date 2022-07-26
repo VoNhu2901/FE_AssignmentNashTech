@@ -362,7 +362,7 @@ const ManageUser = () => {
                   <td className="border-bottom">{ele.fullName}</td>
                   <td className="border-bottom">{ele.username}</td>
                   <td className="border-bottom">
-                    {moment(ele.joinedDate).format("DD/MM/YYYY")}
+                    {moment(ele.joinedDate).format("L")}
                   </td>
                   <td className="border-bottom">{ele.role}</td>
                   <td>
@@ -419,7 +419,7 @@ const ManageUser = () => {
                           <div className="detail-item">
                             <div className="label">Date Of Birth</div>
                             <div className="value">
-                              {moment(ele.dateOfBirth).format("DD/MM/YYYY")}
+                              {moment(ele.dateOfBirth).format("L")}
                             </div>
                           </div>
                           <div className="detail-item">
@@ -429,7 +429,7 @@ const ManageUser = () => {
                           <div className="detail-item">
                             <div className="label">Joined Date</div>
                             <div className="value">
-                              {moment(ele.joinedDate).format("DD/MM/YYYY")}
+                              {moment(ele.joinedDate).format("L")}
                             </div>
                           </div>
                           <div className="detail-item">

@@ -74,12 +74,12 @@ const Login = () => {
           />
           {!togglePassword ? (
             <IconEyeClose
-              className="icon-eye"
+              className="icon-eye-login"
               onClick={() => setTogglePassword(true)}
             ></IconEyeClose>
           ) : (
             <IconEyeOpen
-              className="icon-eye"
+              className="icon-eye-login"
               onClick={() => setTogglePassword(false)}
             ></IconEyeOpen>
           )}
