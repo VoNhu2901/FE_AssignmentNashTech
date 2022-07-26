@@ -17,6 +17,8 @@ const CreateUser = () => {
   const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("");
 
+  // refactor code
+
   useEffect(() => {
     let _location = localStorage.getItem("location");
     setLocation(_location);

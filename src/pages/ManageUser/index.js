@@ -6,27 +6,27 @@ import EditIcon from "@mui/icons-material/Edit";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
-
 import "./style.scss";
 import userService from "../../api/userService";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-// TODO: change way to get paging and search => keep quick search, paging at front end page
-// TODO: remove location in parameter when get data, use token or in find location of admin in backend instead. 
-// TODO: set new user in top of list
+// TODO: remove location in parameter when get data, use token or in find location of admin in backend instead.
 
 const ManageUser = () => {
+  const navigate = useNavigate();
+
   const [page, setPage] = useState(1);
   const [userList, setUserList] = useState([]);
   const [data, setData] = useState([]);
   const [filterBy, setFilterBy] = useState("ALL");
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
-  const [search, setSearch] = useState("");
   let location = localStorage.getItem("location");
   let userId = localStorage.getItem("userId");
   const newUserId = localStorage.getItem("newUser");
+
+  const rowPerPage = 20;
 
   /**
    * Handle when init page and when page change
@@ -38,45 +38,39 @@ const ManageUser = () => {
       try {
         const res = await userService.getAllUsers(location, page);
 
-        let newUser = res.data.users.filter((user) => user.staffCode === newUserId) // ? maybe have error, debug if need.
-
-        let _data = res.data.users.filter((user) => user.staffCode !== userId || user.staffCode !== newUserId);
+        setNumPage(Math.ceil(res.data.totalRecord / rowPerPage));
+        let newUser = res.data.users.filter(
+          (user) => user.staffCode === newUserId
+        );
+        let _data = res.data.users.filter(
+          (user) => user.staffCode !== userId || user.staffCode !== newUserId
+        );
         let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
 
-        console.log(newUser)
-        console.log("New User Id ", newUserId);
-        console.log(sorted)
-        
-        console.log([...newUser, ...sorted])
+        const finalList = [...newUser, ...sorted];
 
-        // TODO: sort data before concat
-        setData([...newUser, ...sorted]);
-        setNumPage(Math.ceil(res.data.totalRecord / 20));
+        setData(finalList);
+        setUserList(finalList);
       } catch (err) {
         console.log(err);
         toast.info("No User Found");
       }
-
     })();
-    
-      // delete newUserId
-      localStorage.removeItem("newUser")
 
+    localStorage.removeItem("newUser");
   }, []);
-  // end get data
 
-  /**
-   * Handle for filter
-   */
-  useEffect(() => {
-    if (filterBy === "ALL") {
+  const handleFilter = (type) => {
+    setFilterBy(type);
+    setPage(1);
+    if (type === "ALL") {
       setUserList(data);
     } else {
-      const _data = data.filter((user) => user.role === filterBy);
-
+      const _data = data.filter((user) => user.role === type);
+      setNumPage(Math.ceil(_data.length / rowPerPage));
       setUserList(_data);
     }
-  }, [filterBy, data]);
+  };
 
   const sortByCol = (sortBy) => {
     switch (sortBy) {
@@ -114,71 +108,17 @@ const ManageUser = () => {
     }
   };
 
-  /**
-   * Paging
-   * @returns html: code for paging
-   */
-  const getPaging = () => {
-    const getData = (p) => {
-      setPage(p)
-      userService
-        .getAllUsers(location, p)
-        .then((res) => {
-          let _data = res.data.users.filter((ele) => ele.staffCode !== userId);
+  const handleNext = () => {
+    let temp = page + 1;
+    if (temp <= numPage) {
+      setPage(temp);
+    }
+  };
 
-          setData(_data);
-          setUserList(_data);
-
-          setNumPage(Math.ceil(res.data.totalRecord / 20));
-        })
-        .catch((err) => console.log(err));
-    };
-    const handleNext = () => {
-      let temp = page + 1;
-      if (temp <= numPage) {
-      getData(temp);
-
-      }
-    };
-
-    const handlePre = () => {
-      let temp = page - 1;
-      if (temp >= 1) {
-      getData(temp);
-
-      }
-    };
-
-    if (numPage > 1) {
-      return (
-        <div className="paging text-end">
-          <button
-            type="button"
-            className="btn btn-outline-secondary"
-            onClick={handlePre}
-          >
-            Previous
-          </button>
-          {Array.from({ length: numPage }, (_, i) => (
-            <button
-              type="button"
-              onClick={() => getData(i + 1)}
-              className={
-                page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-              }
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button
-            type="button"
-            className="btn btn-outline-danger"
-            onClick={handleNext}
-          >
-            Next
-          </button>
-        </div>
-      );
+  const handlePre = () => {
+    let temp = page - 1;
+    if (temp >= 1) {
+      setPage(temp);
     }
   };
 
@@ -194,7 +134,6 @@ const ManageUser = () => {
 
   const searchHandle = (e) => {
     let content = e.target.value;
-    setSearch(content);
     if (content) {
       let reg = new RegExp(content, "i");
       let _data = data.filter((user) => {
@@ -204,23 +143,9 @@ const ManageUser = () => {
         );
       });
       setUserList(_data);
-      console.log(typeof reg);
     } else {
       setUserList(data);
     }
-  };
-
-  const handleSearchGlobal = () => {
-    userService
-      .searchUser(location, search)
-      .then((res) => {
-        let _data = res.data.users.filter((ele) => ele.staffCode !== userId);
-
-        setData(_data);
-
-        setNumPage(Math.ceil(res.data.totalRecord / 20));
-      })
-      .catch((err) => console.log(err));
   };
 
   return (
@@ -255,7 +180,7 @@ const ManageUser = () => {
                       value="All"
                       id="typeAll"
                       checked={filterBy === "ALL"}
-                      onClick={() => setFilterBy("ALL")}
+                      onClick={() => handleFilter("ALL")}
                     />
                     <label className="form-check-label" htmlFor="typeAll">
                       All
@@ -270,7 +195,7 @@ const ManageUser = () => {
                       value="Admin"
                       id="typeAdmin"
                       checked={filterBy === "ADMIN"}
-                      onClick={() => setFilterBy("ADMIN")}
+                      onClick={() => handleFilter("ADMIN")}
                     />
                     <label className="form-check-label" htmlFor="typeAdmin">
                       Admin
@@ -285,7 +210,7 @@ const ManageUser = () => {
                       value="Staff"
                       id="typeStaff"
                       checked={filterBy === "STAFF"}
-                      onClick={() => setFilterBy("STAFF")}
+                      onClick={() => handleFilter("STAFF")}
                     />
                     <label className="form-check-label" htmlFor="typeStaff">
                       Staff
@@ -304,17 +229,20 @@ const ManageUser = () => {
             </div>
 
             <div>
-              <button className="btn btn-light" onClick={handleSearchGlobal}>
+              <button className="btn border-0">
                 <SearchIcon />
               </button>
             </div>
           </div>
           <div className="button">
-            <button type="button" className="btn btn-danger">
-              <Link to="/create-user" className="link-to-create">
-                {" "}
-                Create new user
-              </Link>
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={() => {
+                navigate("/create-user");
+              }}
+            >
+              Create new user
             </button>
           </div>
         </div>
@@ -327,7 +255,7 @@ const ManageUser = () => {
               <th className="border-bottom border-3">
                 Staff Code{" "}
                 <button
-                  className="btn btn-outline-light"
+                  className="btn border-0"
                   onClick={() => sortByCol("code")}
                 >
                   <ArrowDropDownIcon />
@@ -336,7 +264,7 @@ const ManageUser = () => {
               <th className="border-bottom border-3">
                 Full Name{" "}
                 <button
-                  className="btn btn-outline-light"
+                  className="btn border-0"
                   onClick={() => sortByCol("name")}
                 >
                   <ArrowDropDownIcon />
@@ -346,7 +274,7 @@ const ManageUser = () => {
               <th className="border-bottom border-3">
                 Joined Date{" "}
                 <button
-                  className="btn btn-outline-light"
+                  className="btn border-0"
                   onClick={() => sortByCol("date")}
                 >
                   <ArrowDropDownIcon />
@@ -355,7 +283,7 @@ const ManageUser = () => {
               <th className="border-bottom border-3">
                 Type{" "}
                 <button
-                  className="btn btn-outline-light"
+                  className="btn border-0"
                   onClick={() => sortByCol("type")}
                 >
                   <ArrowDropDownIcon />
@@ -364,7 +292,9 @@ const ManageUser = () => {
             </tr>
           </thead>
           <tbody>
-            {(userList || []).map((ele) => (
+            {(
+              userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
+            ).map((ele) => (
               <>
                 <tr
                   data-bs-toggle="modal"
@@ -464,7 +394,39 @@ const ManageUser = () => {
         </table>
       </div>
 
-      <div className="paging">{userList && getPaging()}</div>
+      <div className="paging">
+        {numPage >= 1 ? (
+          <div className="paging text-end">
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={handlePre}
+            >
+              Previous
+            </button>
+            {Array.from({ length: numPage }, (_, i) => (
+              <button
+                type="button"
+                onClick={() => setPage(i + 1)}
+                className={
+                  page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
+                }
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              type="button"
+              className="btn btn-outline-danger"
+              onClick={handleNext}
+            >
+              Next
+            </button>
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
     </div>
   );
 };
