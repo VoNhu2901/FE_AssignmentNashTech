@@ -119,10 +119,12 @@ const CreateUser = () => {
             <label for="dateOfBirth">Date Of Birth</label>
             <input
               type="date"
-              id="dateOfbirth"
+              id="dateOfBirth"
               className="form-create-user__input"
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}
+              min="1950-01-01"
+              max="2022-12-31"
             ></input>
 
             <label for="gender">Gender</label>
@@ -155,6 +157,8 @@ const CreateUser = () => {
               className="form-create-user__input"
               value={joinedDate}
               onChange={(e) => setJoinedDate(e.target.value)}
+              min="1950-01-01"
+              max="2022-12-31"
             ></input>
 
             <label for="type">Type</label>
