@@ -10,6 +10,11 @@ import moment from "moment";
 import "./style.scss";
 import userService from "../../api/userService";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+
+// TODO: change way to get paging and search => keep quick search, paging at front end page
+// TODO: remove location in parameter when get data, use token or in find location of admin in backend instead. 
+// TODO: set new user in top of list
 
 const ManageUser = () => {
   const [page, setPage] = useState(1);
@@ -21,31 +26,42 @@ const ManageUser = () => {
   const [search, setSearch] = useState("");
   let location = localStorage.getItem("location");
   let userId = localStorage.getItem("userId");
+  const newUserId = localStorage.getItem("newUser");
 
-  const [error, setError] = useState(null);
   /**
    * Handle when init page and when page change
    */
 
   // get data from backend
   useEffect(() => {
-    // let location = localStorage.getItem("location");
-    // let userId = localStorage.getItem("userId");
     (async () => {
       try {
         const res = await userService.getAllUsers(location, page);
 
-        let _data = res.data.users.filter((ele) => ele.staffCode !== userId);
+        let newUser = res.data.users.filter((user) => user.staffCode === newUserId) // ? maybe have error, debug if need.
 
-        setData(_data);
-        console.log(_data);
+        let _data = res.data.users.filter((user) => user.staffCode !== userId || user.staffCode !== newUserId);
+        let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
 
+        console.log(newUser)
+        console.log("New User Id ", newUserId);
+        console.log(sorted)
+        
+        console.log([...newUser, ...sorted])
+
+        // TODO: sort data before concat
+        setData([...newUser, ...sorted]);
         setNumPage(Math.ceil(res.data.totalRecord / 20));
       } catch (err) {
         console.log(err);
-        setError("No User Found");
+        toast.info("No User Found");
       }
+
     })();
+    
+      // delete newUserId
+      localStorage.removeItem("newUser")
+
   }, []);
   // end get data
 
@@ -54,13 +70,11 @@ const ManageUser = () => {
    */
   useEffect(() => {
     if (filterBy === "ALL") {
-    let _data = data.sort((a, b) => a.fullName.localeCompare(b.fullName));
-      setUserList(_data);
+      setUserList(data);
     } else {
       const _data = data.filter((user) => user.role === filterBy);
-      let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
 
-      setUserList(sorted);
+      setUserList(_data);
     }
   }, [filterBy, data]);
 
@@ -213,7 +227,6 @@ const ManageUser = () => {
     <div className="user-list">
       <div className="title">
         <h3>User List</h3>
-        {error && <small className="text-muted fs-6">{error}</small>}
       </div>
 
       <div className="table-board">

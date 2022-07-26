@@ -13,7 +13,7 @@ const CreateUser = () => {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [gender, setGender] = useState(null);
   const [joinedDate, setJoinedDate] = useState("");
-  const [role, setRole] = useState(2);
+  const [role, setRole] = useState("2");
   const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("");
 
@@ -59,6 +59,7 @@ const CreateUser = () => {
         .then((res) => {
           if (res.status === 201) {
             toast.success("Successfully added!!");
+            localStorage.setItem("newUser", res.data.userId);
             navigate("/manage-user");
           }
         })
@@ -68,7 +69,7 @@ const CreateUser = () => {
             toast.error("ERROR: " + error.response.data.message);
           } else if (error) {
             toast.error("CREATE NEW USER FAILED!!");
-          } 
+          }
         });
     } else {
       toast.error("ALL FIELDS ARE REQUIRE");
@@ -82,9 +83,9 @@ const CreateUser = () => {
   const handleRole = (e) => {
     const value = e.target.value;
     setRole(parseInt(value));
-    if (value == 1) {
+    if (value === "1") {
       setOpenLocation(true);
-    } else if (value == 2) {
+    } else if (value === "2") {
       setOpenLocation(false);
     }
   };
@@ -195,7 +196,15 @@ const CreateUser = () => {
               id="save"
               className="form-create-user__button-item"
               onClick={handleCreateNewUser}
-              disabled={!(firstName && lastName && dateOfBirth && joinedDate)}
+              disabled={
+                !(
+                  firstName &&
+                  lastName &&
+                  dateOfBirth &&
+                  joinedDate &&
+                  gender !== null
+                )
+              }
             >
               Save
             </button>

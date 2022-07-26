@@ -7,3 +7,5 @@ const authApi = {
 };
 
 export default authApi;
+
+//TODO: Change all ways to call api
