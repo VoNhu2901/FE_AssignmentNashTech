@@ -1,11 +1,10 @@
 import axiosClient from "./axiosClient";
 
-const authApi = {
+const authService = {
   signup: (params) => axiosClient.post("auth/signup", params),
-  login: (params) => axiosClient.post("auth/login", params),
+  login: (params) => axiosClient.post("/api/auth/login", params),
   verifyToken: () => axiosClient.post("auth/verify-token"),
 };
 
-export default authApi;
+export default authService;
 
-//TODO: Change all ways to call api

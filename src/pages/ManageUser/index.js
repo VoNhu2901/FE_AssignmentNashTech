@@ -11,8 +11,6 @@ import userService from "../../api/userService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-// TODO: remove location in parameter when get data, use token or in find location of admin in backend instead.
-
 const ManageUser = () => {
   const navigate = useNavigate();
 
@@ -22,9 +20,6 @@ const ManageUser = () => {
   const [filterBy, setFilterBy] = useState("ALL");
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
-  let location = localStorage.getItem("location");
-  let userId = localStorage.getItem("userId");
-  const newUserId = localStorage.getItem("newUser");
 
   const rowPerPage = 20;
 
@@ -34,11 +29,17 @@ const ManageUser = () => {
 
   // get data from backend
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await userService.getAllUsers(location);
+    const location = localStorage.getItem("location");
+    const userId = localStorage.getItem("userId");
+    const newUserId = localStorage.getItem("newUser");
 
+    userService
+      .getAllUsers(location)
+      .then((res) => {
         let newUser = res.data.filter((user) => user.staffCode === newUserId);
+        if (res.data.length === 0) {
+          toast.error("No user founded");
+        }
         let _data = res.data.filter(
           (user) => user.staffCode !== userId || user.staffCode !== newUserId
         );
@@ -48,11 +49,11 @@ const ManageUser = () => {
         setNumPage(Math.ceil(finalList.length / rowPerPage));
         setData(finalList);
         setUserList(finalList);
-      } catch (err) {
+      })
+      .catch((err) => {
         console.log(err);
         toast.info("No User Found");
-      }
-    })();
+      });
 
     localStorage.removeItem("newUser");
   }, []);

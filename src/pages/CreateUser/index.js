@@ -1,13 +1,12 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import userService from "../../api/userService";
 import "./style.scss";
 
 const CreateUser = () => {
   const navigate = useNavigate();
 
-  const POST_USER_URL = "http://localhost:8080/api/user/register";
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
@@ -47,17 +46,8 @@ const CreateUser = () => {
         location,
       };
 
-      const token = localStorage.getItem("token");
-
-      axios({
-        method: "POST",
-        url: POST_USER_URL,
-        data: payload,
-        headers: {
-          "content-type": "application/json",
-          authorization: `Bearer ${token}`,
-        },
-      })
+      userService
+        .createUser(payload)
         .then((res) => {
           if (res.status === 201) {
             toast.success("Successfully added!!");

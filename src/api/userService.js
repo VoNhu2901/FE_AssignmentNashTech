@@ -7,6 +7,10 @@ const userService = {
   searchUser: (location, content) => {
     return axiosClient.get(`/api/user/search/${location}/${content}`);
   },
+
+  createUser: (params) => {
+    return axiosClient.post("/api/user/register", params);
+  }
 };
 
 export default userService;

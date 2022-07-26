@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
-import "./login.scss";
-import Button from "../button/Button";
-import { toast } from "react-toastify";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import IconEyeClose from "./../icon/IconEyeClose";
-import IconEyeOpen from "./../icon/IconEyeOpen";
+import { toast } from "react-toastify";
+import authService from "../../api/authService";
+import IconEyeClose from "../../components/icon/IconEyeClose";
+import IconEyeOpen from "../../components/icon/IconEyeOpen";
+import "./login.scss";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,14 +15,8 @@ const Login = () => {
   const loginHandler = () => {
     if (username && password) {
       const payload = { username, password };
-      axios({
-        headers: {
-          "content-type": "application/json",
-        },
-        url: "http://localhost:8080/api/auth/login",
-        data: payload,
-        method: "POST",
-      })
+      authService
+        .login(payload)
         .then((res) => {
           // set local storage
           localStorage.clear();

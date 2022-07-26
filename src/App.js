@@ -9,9 +9,7 @@ import ReportPage from './pages/ReportPage';
 import CreateUser from './pages/CreateUser/';
 
 
-import LoginPage from './pages/LoginPage';
-
-import {ManageUser, HomePage} from './pages'
+import {ManageUser, HomePage, Login} from './pages'
 
 
 function App() {
@@ -34,7 +32,7 @@ function App() {
             <Route path="/report" element={<ReportPage></ReportPage>} />
             <Route path="/create-user" element={<CreateUser></CreateUser>} />
           </Route>
-          <Route path="/login" element={<LoginPage></LoginPage>} />
+          <Route path="/login" element={<Login></Login>} />
         </Routes>
       </Suspense>
     </Fragment>
