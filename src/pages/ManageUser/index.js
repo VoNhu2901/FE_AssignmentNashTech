@@ -36,13 +36,17 @@ const ManageUser = () => {
     userService
       .getAllUsers(location)
       .then((res) => {
-        let newUser = res.data.filter((user) => user.staffCode === newUserId);
-        if (res.data.length === 0) {
+        const resData = res.data;
+        let newUser = resData.filter((user) => user.staffCode === newUserId);
+        if (resData.length === 0) {
           toast.error("No user founded");
         }
-        let _data = res.data.filter(
-          (user) => user.staffCode !== userId || user.staffCode !== newUserId
-        );
+
+        let _data = resData.filter((user) => user.staffCode !== userId);
+
+        if (newUserId) {
+          _data = resData.filter((user) => user.staffCode !== newUserId);
+        }
         let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
 
         const finalList = [...newUser, ...sorted];
