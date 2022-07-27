@@ -23,6 +23,8 @@ const ManageUser = () => {
   const [content, setContent] = useState("");
   const rowPerPage = 20;
 
+  const [disable, setDisable] = useState(null);
+
   /**
    * Handle when init page and when page change
    */
@@ -139,15 +141,36 @@ const ManageUser = () => {
   };
 
   // handle delete user here
-  const deleteUser = (code) => {
-    alert(code);
+  const checkUserAvailableToDisable = (code) => {
+    userService
+      .checkUserCanDelete(code)
+      .then((res) => {
+        setDisable(code);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        setDisable("Error");
+      });
+  };
+
+  const disableUser = () => {
+    userService
+      .disableUser(disable)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Internet interrupt. Try later");
+      });
+    navigate("/manage-user");
   };
 
   // handle edit user here
   const editUser = (code) => {
-    alert(code);
+    navigate(`/edit-user/${code}`);
   };
-
 
   const handleSearch = () => {
     const loca = localStorage.getItem("location");
@@ -170,289 +193,382 @@ const ManageUser = () => {
   };
 
   return (
-    <div className="user-list">
-      <div className="title">
-        <h3>User List</h3>
+    <>
+      <div
+        className={
+          "modal fade " +
+          (disable && disable !== "Error" ? " show d-block" : " d-none")
+        }
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Are you sure?</h5>
+            </div>
+            <div className="modal-body confirm-disable">
+              <div className="modal-subtitle">Do you want to disable user?</div>
+              <div className="button">
+                <button
+                  className="btn btn-danger"
+                  id="disable-button"
+                  onClick={disableUser}
+                >
+                  Disable
+                </button>
+                <button
+                  className="btn btn-outline-secondary"
+                  id="cancel-button"
+                  onClick={() => setDisable(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="table-board">
-        <div className="left-board">
-          <div className="filter">
-            <div className="dropdown">
+      <div
+        className={
+          "modal fade " + (disable === "Error" ? " show d-block" : " d-none")
+        }
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Can not disable user</h5>
               <button
-                className="btn btn-outline-secondary dropdown-toggle"
                 type="button"
-                id="dropMenuFilterType"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+                className="btn btn-outline-danger border-4"
+                onClick={() => setDisable(null)}
               >
-                Type
-                <FilterAltIcon />
-              </button>
-              <ul
-                className="dropdown-menu form-check"
-                aria-labelledby="dropMenuFilterType"
-              >
-                <li>
-                  <div>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="All"
-                      id="typeAll"
-                      checked={filterBy === "ALL"}
-                      onClick={() => handleFilter("ALL")}
-                    />
-                    <label className="form-check-label" htmlFor="typeAll">
-                      All
-                    </label>
-                  </div>
-                </li>
-                <li>
-                  <div>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="Admin"
-                      id="typeAdmin"
-                      checked={filterBy === "ADMIN"}
-                      onClick={() => handleFilter("ADMIN")}
-                    />
-                    <label className="form-check-label" htmlFor="typeAdmin">
-                      Admin
-                    </label>
-                  </div>
-                </li>
-                <li>
-                  <div>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="Staff"
-                      id="typeStaff"
-                      checked={filterBy === "STAFF"}
-                      onClick={() => handleFilter("STAFF")}
-                    />
-                    <label className="form-check-label" htmlFor="typeStaff">
-                      Staff
-                    </label>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="right-board">
-          <div className="search">
-            <div className="input">
-              <input
-                type="text"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-              />
-            </div>
-
-            <div>
-              <button className="btn border-0" onClick={handleSearch}>
-                <SearchIcon />
+                <CloseIcon />
               </button>
             </div>
-          </div>
-          <div className="button">
-            <button
-              type="button"
-              className="btn btn-danger"
-              onClick={() => {
-                navigate("/create-user");
-              }}
-            >
-              Create new user
-            </button>
+            <div className="modal-body confirm-disable">
+              <div className="modal-subtitle">
+                There are valid assignments belonging to this user. <br />
+                Please close all assignments before disabling user.
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="table-user-list">
-        <table>
-          <thead>
-            <tr>
-              <th className="border-bottom border-3">
-                Staff Code{" "}
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("code")}
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
-              <th className="border-bottom border-3">
-                Full Name{" "}
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("name")}
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
-              <th className="border-bottom border-3">Username</th>
-              <th className="border-bottom border-3">
-                Joined Date{" "}
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("date")}
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
-              <th className="border-bottom border-3">
-                Type{" "}
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("type")}
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {(
-              userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
-            ).map((ele) => (
-              <>
-                <tr
-                  data-bs-toggle="modal"
-                  data-bs-target={"#detailUserViewModal" + ele.staffCode}
-                  key={ele.staffCode}
-                >
-                  <td className="border-bottom">{ele.staffCode}</td>
-                  <td className="border-bottom">{ele.fullName}</td>
-                  <td className="border-bottom">{ele.username}</td>
-                  <td className="border-bottom">
-                    {moment(ele.joinedDate).format("L")}
-                  </td>
-                  <td className="border-bottom">{ele.role}</td>
-                  <td>
-                    <button className="btn btn-outline-secondary border-0">
-                      <EditIcon onClick={() => editUser(ele.staffCode)} />
-                    </button>
-                    <button
-                      className="btn btn-outline-danger border-0"
-                      onClick={() => deleteUser(ele.staffCode)}
-                    >
-                      <HighlightOffIcon />
-                    </button>{" "}
-                  </td>
-                </tr>
+      <div className="user-list">
+        <div className="title">
+          <h3>User List</h3>
+        </div>
 
-                <div
-                  className="modal fade"
-                  id={"detailUserViewModal" + ele.staffCode}
-                  tabIndex="-1"
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
+        <div className="table-board">
+          <div className="left-board">
+            <div className="filter">
+              <div className="dropdown">
+                <button
+                  className="btn btn-outline-secondary dropdown-toggle"
+                  type="button"
+                  id="dropMenuFilterType"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
                 >
-                  <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h5
-                          className="modal-title text-danger"
-                          id="exampleModalLabel"
-                        >
-                          Detailed User Information
-                        </h5>
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger border-4"
-                          data-bs-dismiss="modal"
-                        >
-                          <CloseIcon />
-                        </button>
-                      </div>
-                      <div className="modal-body">
-                        <div className="detail">
-                          <div className="detail-item">
-                            <div className="label">Staff Code</div>
-                            <div className="value">{ele.staffCode}</div>
-                          </div>
-                          <div className="detail-item">
-                            <div className="label">Full Name</div>
-                            <div className="value">{ele.fullName}</div>
-                          </div>
-                          <div className="detail-item">
-                            <div className="label">Username</div>
-                            <div className="value">{ele.username}</div>
-                          </div>
-                          <div className="detail-item">
-                            <div className="label">Date Of Birth</div>
-                            <div className="value">
-                              {moment(ele.dateOfBirth).format("L")}
+                  Type
+                  <FilterAltIcon />
+                </button>
+                <ul
+                  className="dropdown-menu form-check"
+                  aria-labelledby="dropMenuFilterType"
+                >
+                  <li>
+                    <div>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value="All"
+                        id="typeAll"
+                        checked={filterBy === "ALL"}
+                        onClick={() => handleFilter("ALL")}
+                      />
+                      <label className="form-check-label" htmlFor="typeAll">
+                        All
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value="Admin"
+                        id="typeAdmin"
+                        checked={filterBy === "ADMIN"}
+                        onClick={() => handleFilter("ADMIN")}
+                      />
+                      <label className="form-check-label" htmlFor="typeAdmin">
+                        Admin
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value="Staff"
+                        id="typeStaff"
+                        checked={filterBy === "STAFF"}
+                        onClick={() => handleFilter("STAFF")}
+                      />
+                      <label className="form-check-label" htmlFor="typeStaff">
+                        Staff
+                      </label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="right-board">
+            <div className="search">
+              <div className="input">
+                <input
+                  type="text"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <button className="btn border-0" onClick={handleSearch}>
+                  <SearchIcon />
+                </button>
+              </div>
+            </div>
+            <div className="button">
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => {
+                  navigate("/create-user");
+                }}
+              >
+                Create new user
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="table-user-list">
+          <table>
+            <thead>
+              <tr>
+                <th className="border-bottom border-3">
+                  Staff Code{" "}
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("code")}
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
+                <th className="border-bottom border-3">
+                  Full Name{" "}
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("name")}
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
+                <th className="border-bottom border-3">Username</th>
+                <th className="border-bottom border-3">
+                  Joined Date{" "}
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("date")}
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
+                <th className="border-bottom border-3">
+                  Type{" "}
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("type")}
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {(
+                userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
+              ).map((ele) => (
+                <>
+                  <tr key={ele.staffCode}>
+                    <td
+                      className="border-bottom"
+                      data-bs-toggle="modal"
+                      data-bs-target={"#detailUserViewModal" + ele.staffCode}
+                    >
+                      {ele.staffCode}
+                    </td>
+                    <td
+                      className="border-bottom"
+                      data-bs-toggle="modal"
+                      data-bs-target={"#detailUserViewModal" + ele.staffCode}
+                    >
+                      {ele.fullName}
+                    </td>
+                    <td
+                      className="border-bottom"
+                      data-bs-toggle="modal"
+                      data-bs-target={"#detailUserViewModal" + ele.staffCode}
+                    >
+                      {ele.username}
+                    </td>
+                    <td
+                      className="border-bottom"
+                      data-bs-toggle="modal"
+                      data-bs-target={"#detailUserViewModal" + ele.staffCode}
+                    >
+                      {moment(ele.joinedDate).format("L")}
+                    </td>
+                    <td
+                      className="border-bottom"
+                      data-bs-toggle="modal"
+                      data-bs-target={"#detailUserViewModal" + ele.staffCode}
+                    >
+                      {ele.role}
+                    </td>
+                    <td>
+                      <button className="btn btn-outline-secondary border-0">
+                        <EditIcon onClick={() => editUser(ele.staffCode)} />
+                      </button>
+                      <button
+                        className="btn btn-outline-danger border-0"
+                        onClick={() =>
+                          checkUserAvailableToDisable(ele.staffCode)
+                        }
+                      >
+                        <HighlightOffIcon />
+                      </button>{" "}
+                    </td>
+                  </tr>
+
+                  <div
+                    className="modal fade"
+                    id={"detailUserViewModal" + ele.staffCode}
+                    tabIndex="-1"
+                    aria-labelledby="exampleModalLabel"
+                    aria-hidden="true"
+                  >
+                    <div className="modal-dialog modal-dialog-centered">
+                      <div className="modal-content">
+                        <div className="modal-header">
+                          <h5
+                            className="modal-title text-danger"
+                            id="exampleModalLabel"
+                          >
+                            Detailed User Information
+                          </h5>
+                          <button
+                            type="button"
+                            className="btn btn-outline-danger border-4"
+                            data-bs-dismiss="modal"
+                          >
+                            <CloseIcon />
+                          </button>
+                        </div>
+                        <div className="modal-body">
+                          <div className="detail">
+                            <div className="detail-item">
+                              <div className="label">Staff Code</div>
+                              <div className="value">{ele.staffCode}</div>
                             </div>
-                          </div>
-                          <div className="detail-item">
-                            <div className="label">Gender</div>
-                            <div className="value">{ele.gender}</div>
-                          </div>
-                          <div className="detail-item">
-                            <div className="label">Joined Date</div>
-                            <div className="value">
-                              {moment(ele.joinedDate).format("L")}
+                            <div className="detail-item">
+                              <div className="label">Full Name</div>
+                              <div className="value">{ele.fullName}</div>
                             </div>
-                          </div>
-                          <div className="detail-item">
-                            <div className="label">Type</div>
-                            <div className="value">{ele.role}</div>
-                          </div>
-                          <div className="detail-item">
-                            <div className="label">Location</div>
-                            <div className="value">{ele.location}</div>
+                            <div className="detail-item">
+                              <div className="label">Username</div>
+                              <div className="value">{ele.username}</div>
+                            </div>
+                            <div className="detail-item">
+                              <div className="label">Date Of Birth</div>
+                              <div className="value">
+                                {moment(ele.dateOfBirth).format("L")}
+                              </div>
+                            </div>
+                            <div className="detail-item">
+                              <div className="label">Gender</div>
+                              <div className="value">{ele.gender}</div>
+                            </div>
+                            <div className="detail-item">
+                              <div className="label">Joined Date</div>
+                              <div className="value">
+                                {moment(ele.joinedDate).format("L")}
+                              </div>
+                            </div>
+                            <div className="detail-item">
+                              <div className="label">Type</div>
+                              <div className="value">{ele.role}</div>
+                            </div>
+                            <div className="detail-item">
+                              <div className="label">Location</div>
+                              <div className="value">{ele.location}</div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      <div className="paging">
-        {numPage > 1 ? (
-          <div className="paging text-end">
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={handlePre}
-            >
-              Previous
-            </button>
-            {Array.from({ length: numPage }, (_, i) => (
+        <div className="paging">
+          {numPage > 1 ? (
+            <div className="paging text-end">
               <button
                 type="button"
-                onClick={() => setPage(i + 1)}
-                className={
-                  page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                }
+                className="btn btn-outline-secondary"
+                onClick={handlePre}
               >
-                {i + 1}
+                Previous
               </button>
-            ))}
-            <button
-              type="button"
-              className="btn btn-outline-danger"
-              onClick={handleNext}
-            >
-              Next
-            </button>
-          </div>
-        ) : (
-          <></>
-        )}
+              {Array.from({ length: numPage }, (_, i) => (
+                <button
+                  type="button"
+                  onClick={() => setPage(i + 1)}
+                  className={
+                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
+                  }
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={handleNext}
+              >
+                Next
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

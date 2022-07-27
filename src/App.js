@@ -9,8 +9,7 @@ import ReportPage from './pages/ReportPage';
 import CreateUser from './pages/CreateUser/';
 
 
-import {ManageUser, HomePage, Login} from './pages'
-
+import { ManageUser, HomePage, Login, EditUser } from "./pages";
 
 function App() {
   return (
@@ -19,6 +18,7 @@ function App() {
         <Routes>
           <Route element={<Main></Main>}>
             <Route path="/" element={<HomePage></HomePage>} />
+            <Route path="/edit-user/:code" element={<EditUser></EditUser>} />
             <Route path="/manage-user" element={<ManageUser></ManageUser>} />
             <Route path="/manage-asset" element={<ManageAsset></ManageAsset>} />
             <Route

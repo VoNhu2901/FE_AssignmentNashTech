@@ -10,6 +10,14 @@ const userService = {
 
   createUser: (params) => {
     return axiosClient.post("/api/user/register", params);
+  },
+
+  checkUserCanDelete: (staffCode) => {
+    return axiosClient.get(`/api/user/check/${staffCode}`);
+  },
+
+  disableUser: (staffCode) => {
+    return axiosClient.patch(`/api/user/disable/${staffCode}`)
   }
 };
 
