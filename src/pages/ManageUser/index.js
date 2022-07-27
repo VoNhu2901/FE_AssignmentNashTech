@@ -62,6 +62,7 @@ const ManageUser = () => {
     setFilterBy(type);
     setPage(1);
     if (type === "ALL") {
+      setNumPage(Math.ceil(data.length / rowPerPage));
       setUserList(data);
     } else {
       const _data = data.filter((user) => user.role === type);
