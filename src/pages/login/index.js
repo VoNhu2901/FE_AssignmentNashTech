@@ -19,7 +19,7 @@ const Login = () => {
         headers: {
           "content-type": "application/json",
         },
-        url: "http://localhost:8080/api/auth/login",
+        url: "https://backend05.azurewebsites.net/api/auth/login",
         data: payload,
         method: "POST",
       })
