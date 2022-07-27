@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Header from "../header/Header";
-import Sidebar from '../sidebar/Sidebar';
+import Sidebar from "../sidebar/Sidebar";
 const list = [
   {
     id: 1,
@@ -39,28 +39,32 @@ const list = [
 const Main = () => {
   const [menu, setMenu] = useState([]);
   const [header, setHeader] = useState("Home");
+  const navigate = useNavigate();
 
-   useEffect(() => {
-     setMenu(list);
-   }, []);
-  
-  const handleClick = (e, id) => {
-    setMenu(list.map((item) => {
-      if (item.id === id) {
-        setHeader(item.name);
-      }
-      return item;
+  useEffect(() => {
+    const checkUser = localStorage.getItem("userId");
+    if (!checkUser) {
+      navigate("/login");
     }
-    ));
-  }
-  
+    setMenu(list);
+  }, []);
+
+  const handleClick = (e, id) => {
+    setMenu(
+      list.map((item) => {
+        if (item.id === id) {
+          setHeader(item.name);
+        }
+        return item;
+      })
+    );
+  };
+
   return (
     <>
       <Header header={header}></Header>
       <div style={{ display: "flex" }}>
-        <Sidebar menu={menu}
-          handleClick={handleClick}
-        ></Sidebar>
+        <Sidebar menu={menu} handleClick={handleClick}></Sidebar>
 
         {/* Outlet dùng để nested những cái nằm trong Main (để muốn Route nào cũng có Header nên phải dùng Outlet như này) */}
         <Outlet></Outlet>
