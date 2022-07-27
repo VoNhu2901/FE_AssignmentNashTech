@@ -20,7 +20,7 @@ const ManageUser = () => {
   const [filterBy, setFilterBy] = useState("ALL");
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
-
+  const [content, setContent] = useState("");
   const rowPerPage = 20;
 
   /**
@@ -143,22 +143,25 @@ const ManageUser = () => {
     alert(code);
   };
 
-  const searchHandle = (e) => {
-    let content = e.target.value;
-    if (content) {
-      let reg = new RegExp(content, "i");
-      let _data = data.filter((user) => {
-        return (
-          user.staffCode.match(reg) !== null ||
-          user.fullName.match(reg) !== null
-        );
+
+  const handleSearch = () => {
+    const loca = localStorage.getItem("location");
+    userService
+      .searchUser(loca, content)
+      .then((res) => {
+        if (res.data.length === 0) {
+          toast.error("No user founded");
+        }
+        const _data = res.data;
+        let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
+
+        setNumPage(Math.ceil(sorted.length / rowPerPage));
+        setData(sorted);
+        setUserList(sorted);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-      setNumPage(Math.ceil(_data.length / rowPerPage))
-      setUserList(_data);
-    } else {
-      setNumPage(Math.ceil(data.length / rowPerPage))
-      setUserList(data);
-    }
   };
 
   return (
@@ -238,11 +241,15 @@ const ManageUser = () => {
         <div className="right-board">
           <div className="search">
             <div className="input">
-              <input type="text" onChange={searchHandle} />
+              <input
+                type="text"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+              />
             </div>
 
             <div>
-              <button className="btn border-0">
+              <button className="btn border-0" onClick={handleSearch}>
                 <SearchIcon />
               </button>
             </div>
