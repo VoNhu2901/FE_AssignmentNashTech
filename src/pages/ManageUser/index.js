@@ -30,7 +30,7 @@ const ManageUser = () => {
    */
 
   // get data from backend
-  useEffect(() => {
+  const initData = () => {
     const location = localStorage.getItem("location");
     const userId = localStorage.getItem("userId");
     const newUserId = localStorage.getItem("newUser");
@@ -62,6 +62,9 @@ const ManageUser = () => {
       });
 
     localStorage.removeItem("newUser");
+  };
+  useEffect(() => {
+    initData();
   }, []);
 
   const handleFilter = (type) => {
@@ -145,8 +148,11 @@ const ManageUser = () => {
     userService
       .checkUserCanDelete(code)
       .then((res) => {
-        setDisable(code);
-        console.log(res);
+        if (res.data) {
+          setDisable(code);
+        } else {
+          setDisable("Error");
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -158,13 +164,15 @@ const ManageUser = () => {
     userService
       .disableUser(disable)
       .then((res) => {
-        console.log(res);
+        if (res.status === 200) {
+          setDisable(null);
+          initData();
+        }
       })
       .catch((err) => {
         console.log(err);
         toast.error("Internet interrupt. Try later");
       });
-    navigate("/manage-user");
   };
 
   // handle edit user here
