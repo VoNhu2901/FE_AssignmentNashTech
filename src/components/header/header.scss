@@ -10,8 +10,59 @@
   align-items: center;
   justify-content: space-between;
   padding: 25px;
+
   &__username {
     color: white;
     font-size: 20px;
+  }
+
+  button {
+    background-color: #cf2338;
+    color: aliceblue;
+    border-style: none;
+  }
+
+  button:hover {
+    background-color: #d43548;
+  }
+
+  button:not(:disabled):not(:disabled):active {
+    background-color: #e18293;
+  }
+
+  #user_header {
+    padding-right: 25px;
+  }
+
+  .dropdown-item {
+    color: #20191a;
+  }
+
+  .dropdown-item:hover {
+    background-color: #d84b5c;
+    color: aliceblue;
+  }
+
+  .dropdown-menu {
+    border: 1px solid #20191a;
+  }
+
+  #ModalLabel {
+    color: #d43548;
+    text-align: center;
+  }
+
+  .modal-header {
+    background-color: rgb(240, 245, 245);
+  }
+
+  #btnCancel {
+    background-color: whitesmoke;
+    color: #20191a;
+    border: 0.5px solid #20191a;
+  }
+
+  #btnLogout {
+    border: 1px solid white;
   }
 }
