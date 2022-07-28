@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./header.scss";
 import { useNavigate} from "react-router-dom";
+import authService from "../../api/authService";
 
 const Header = ({ header }) => {
   const navigate = useNavigate();
@@ -12,10 +13,17 @@ const Header = ({ header }) => {
 
 
   const handleLogOut = () =>{
-    localStorage.clear()
+    authService.logout()
+  .then(res => {
+    localStorage.clear();
     navigate("/login")
+  }).catch((err) =>{
+    console.log(err)
+  })
+
   }
 
+  
   return (
     <>
       <div className="header">
