@@ -2,14 +2,13 @@ import './App.css';
 import { Fragment, Suspense } from 'react';
 import { Route, Routes } from "react-router-dom";
 import Main from './components/layout/Main';
-import ManageAsset from './pages/ManageAssetPage';
 import ManageAssignmentPage from './pages/ManageAssignmentPage';
 import RequestPage from './pages/RequestPage';
 import ReportPage from './pages/ReportPage';
 import CreateUser from './pages/CreateUser/';
 
 
-import {ManageUser, HomePage, Login} from './pages'
+import {ManageUser, HomePage, Login, ManageAsset} from './pages'
 
 
 function App() {
@@ -31,6 +30,7 @@ function App() {
             />
             <Route path="/report" element={<ReportPage></ReportPage>} />
             <Route path="/create-user" element={<CreateUser></CreateUser>} />
+            {/* <Route path="/create-asset" element={<CreateAsset></CreateAsset>} /> */}
           </Route>
           <Route path="/login" element={<Login></Login>} />
         </Routes>
