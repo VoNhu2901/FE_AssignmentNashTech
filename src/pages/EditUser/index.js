@@ -58,7 +58,7 @@ const EditUser = () => {
         dateOfBirth: dateOfBirth,
         gender: gender === "Male",
         joinedDate: joinedDate,
-        role: role === "ADMIN" ? 1 : 2,
+        role: role === "STAFF" ? 1 : 2,
         location: location,
       };
 
@@ -68,6 +68,7 @@ const EditUser = () => {
         .then((res) => {
           if (res.status === 200) {
             toast.success("Successfully edit!!");
+            localStorage.setItem("newUser", res.data.userId);
             navigate("/manage-user");
           }
         })
@@ -236,7 +237,7 @@ const EditUser = () => {
               </option>
             </select>
 
-            {openLocation && (
+            {/* {openLocation && (
               <>
                 <label for="type">Location</label>
                 <select
@@ -251,7 +252,7 @@ const EditUser = () => {
                   <option value={"HN"}>Ha Noi</option>
                 </select>
               </>
-            )}
+            )} */}
           </div>
 
           <div className="form-edit-user-information__button-wrapper">
