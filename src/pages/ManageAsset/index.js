@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 import {
-  FilterAltIcon,
-  SearchIcon,
-  HighlightOffIcon,
-  EditIcon,
   ArrowDropDownIcon,
   CloseIcon,
+  EditIcon,
+  FilterAltIcon,
+  HighlightOffIcon,
+  SearchIcon,
 } from "../../components/icon";
+import "./index.scss";
 import SubTable from "./SubTable";
-import './index.scss';
-import { useNavigate } from "react-router-dom";
+import assetService from "./../../api/assetService";
+import { toast } from "react-toastify";
 
 const filterState = [
   {
@@ -121,65 +123,154 @@ const tableHead = [
   },
 ];
 
-const tableBody = [
-  {
-    assetCode: "LA100001",
-    assetName: "Laptop",
-    category: "Laptop",
-    installedDate: "2020-01-01",
-    state: "Available",
-    location: "HCM",
-    specification: "Core i7",
-    history: [
-      {
-        date: "2020-01-01",
-        assignedTo: "Vo Nhu",
-        assignedBy: "Nguyen Thi Nga",
-        returnedDate: "2021-01-01",
-      },
-      {
-        date: "2020-01-01",
-        assignedTo: "Nguyen Thi A",
-        assignedBy: "Ho Ngoc Ha",
-        returnedDate: "2021-01-01",
-      },
-    ],
-  },
-  {
-    assetCode: "LA100002",
-    assetName: "Mobile",
-    category: "Mobile",
-    installedDate: "2021-01-01",
-    state: "Not available",
-    location: "HCM",
-    specification: "Nokia",
-    history: [
-      {
-        date: "2020-01-01",
-        assignedTo: "Vo Nhu",
-        assignedBy: "Nguyen Thi Nga",
-        returnedDate: "2021-01-01",
-      },
-      {
-        date: "2020-01-01",
-        assignedTo: "Nguyen Thi A",
-        assignedBy: "Ho Ngoc Ha",
-        returnedDate: "2021-01-01",
-      },
-    ],
-  },
-];
 
 const ManageAsset = () => {
   const navigate = useNavigate();
 
+  const [page, setPage] = useState(1);
+  const [userList, setUserList] = useState([]);
+  const [data, setData] = useState([]);
+  // const [filterBy, setFilterBy] = useState("ALL");
+  const [numPage, setNumPage] = useState(0);
+  const [currentCol, setCurrentCol] = useState("");
+  const [content, setContent] = useState("");
+  const rowPerPage = 20;
 
+  const [filterByState, setFilterByState] = useState("ASSIGNED");
+
+  const location = localStorage.getItem("location");
+
+  // get data from backend
+  useEffect(() => {
+    assetService
+      .getAllAssets(location)
+      .then((res) => {
+        const resData = res.data;
+        if (resData.length === 0) {
+          toast.error("No asset founded");
+        }
+
+        let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
+
+        const finalList = [...sorted];
+        setNumPage(Math.ceil(finalList.length / rowPerPage));
+        setData(finalList); // get data to handle
+        setUserList(finalList); // get data to display (have change)
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.info("No Asset Found");
+      });
+  }, []);
+
+  const handleFilterByState = (type) => {
+    setFilterByState(type);
+    setPage(1);
+    if (type === "ALL") {
+      setNumPage(Math.ceil(data.length / rowPerPage));
+      setUserList(data);
+    } else {
+      const filtered = data.filter((asset) => asset.state === type);
+      setNumPage(Math.ceil(filtered.length / rowPerPage));
+      setUserList(filtered);
+    }
+  };
+
+  const sortByCol = (col) => {
+    if (col === currentCol) {
+      // if click same column
+      setCurrentCol(""); // reset currentCol
+    } else {
+      // if click new column
+      setCurrentCol(col); // set currentCol
+    }
+    switch (col) {
+      case "assetcode":
+        col === currentCol ? 
+          setUserList(data.sort((a, b) => a.id.localeCompare(b.id)))
+          : setUserList(data.sort((a, b) => b.id.localeCompare(a.id)))
+        break;
+      case "assetname":
+        col === currentCol ? 
+          setUserList(data.sort((a, b) => a.name.localeCompare(b.name)))
+          : setUserList(data.sort((a, b) => b.name.localeCompare(a.name)))
+        break;
+      case "category":
+        col === currentCol
+          ? setUserList(
+              data.sort((a, b) =>
+                a.category.name.localeCompare(b.category.name)
+              )
+            )
+          : setUserList(
+              data.sort((a, b) =>
+                b.category.name.localeCompare(a.category.name)
+              )
+            );
+        break;
+      case "state":
+        col === currentCol
+          ? setUserList(data.sort((a, b) => a.state.localeCompare(b.state)))
+          : setUserList(data.sort((a, b) => b.state.localeCompare(a.state)));
+        break;
+      default:
+        break;
+    }    
+  };
+
+  const handleSearch = () => {
+    assetService
+      .searchAsset(location, content)
+      .then((res) => {
+        const resData = res.data;
+        if (resData.length === 0) {
+          toast.error("No asset founded");
+        }
+
+        let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
+
+        const finalList = [...sorted];
+        setNumPage(Math.ceil(finalList.length / rowPerPage));
+        setData(finalList); // get data to handle
+        setUserList(finalList); // get data to display (have change)
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.info("No Asset Found");
+      });
+  };
+
+  // handle delete user here
+  const deleteUser = (code) => {
+    alert(code);
+  };
+
+  // handle edit user here
+  const editUser = (code) => {
+    alert(code);
+  };
+
+    const handleNext = () => {
+      let temp = page + 1;
+      if (temp <= numPage) {
+        setPage(temp);
+      }
+    };
+
+    const handlePre = () => {
+      let temp = page - 1;
+      if (temp >= 1) {
+        setPage(temp);
+      }
+  };
+  
   return (
     <>
       <div className="user-list">
         <div className="title">
           <h3>Asset List</h3>
         </div>
+
         {/* start Toolbar */}
         <div className="table-board">
           <div className="left-board">
@@ -208,10 +299,13 @@ const ManageAsset = () => {
                           type="checkbox"
                           value={type.value}
                           id={type.id}
-                          // checked={filterBy === type.checked}
-                          // onChange={() => handleFilter(type.checked)}
+                          checked={filterByState === type.checked}
+                          onChange={() => handleFilterByState(type.checked)}
                         />
-                        <label className="form-check-label" htmlFor={type.id}>
+                        <label
+                          className="form-check-label"
+                          htmlFor={type.id}
+                        >
                           {type.value}
                         </label>
                       </div>
@@ -266,15 +360,12 @@ const ManageAsset = () => {
               <div className="input">
                 <input
                   type="text"
-                  // value={content}
-                  // onChange={(e) => setContent(e.target.value)}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
                 />
               </div>
               <div>
-                <button
-                  className="btn border-0"
-                  // onClick={handleSearch}
-                >
+                <button className="btn border-0" onClick={handleSearch}>
                   <SearchIcon />
                 </button>
               </div>
@@ -308,7 +399,7 @@ const ManageAsset = () => {
                     {item.name}
                     <button
                       className="btn border-0"
-                      // onClick={() => sortByCol(item.id)}
+                      onClick={() => sortByCol(item.id)}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -317,142 +408,140 @@ const ManageAsset = () => {
               </tr>
             </thead>
             <tbody>
-              {(tableBody || []).map((ele) => (
-                <>
-                  <tr
-                    data-bs-toggle="modal"
-                    data-bs-target={"#detailUserViewModal" + ele.assetCode}
-                    key={ele.assetCode}
-                  >
-                    <td className="border-bottom">{ele.assetCode}</td>
-                    <td className="border-bottom">{ele.assetName}</td>
-                    <td className="border-bottom">{ele.category}</td>
-                    <td className="border-bottom">{ele.state}</td>
-                    <td>
-                      <button className="btn btn-outline-secondary border-0">
-                        <EditIcon
-                        // onClick={() => editUser(ele.staffCode)}
-                        />
-                      </button>
-                      <button
-                        className="btn btn-outline-danger border-0"
-                        // onClick={() => deleteUser(ele.staffCode)}
-                      >
-                        <HighlightOffIcon />
-                      </button>{" "}
-                    </td>
-                  </tr>
+              {(userList || []).map((ele, index) => {
+                return (
+                  <>
+                    <tr
+                      data-bs-toggle="modal"
+                      data-bs-target={"#detailUserViewModal" + ele.id}
+                      key={1}
+                    >
+                      <td className="border-bottom">{ele.id}</td>
+                      <td className="border-bottom">{ele.name}</td>
+                      <td className="border-bottom">{ele.category.name}</td>
+                      <td className="border-bottom">{ele.state}</td>
+                      <td>
+                        <button className="btn btn-outline-secondary border-0">
+                          <EditIcon onClick={() => editUser(ele.id)} />
+                        </button>
+                        <button
+                          className="btn btn-outline-danger border-0"
+                          onClick={() => deleteUser(ele.id)}
+                        >
+                          <HighlightOffIcon />
+                        </button>{" "}
+                      </td>
+                    </tr>
 
-                  <div
-                    className="modal fade"
-                    id={"detailUserViewModal" + ele.assetCode}
-                    tabIndex="-1"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
-                  >
-                    <div className="modal-dialog modal-dialog-centered modal-lg">
-                      <div className="modal-content ">
-                        <div className="modal-header">
-                          <h5
-                            className="modal-title text-danger"
-                            id="exampleModalLabel"
-                          >
-                            Detailed Asset Information
-                          </h5>
-                          <button
-                            type="button"
-                            className="btn btn-outline-danger border-4"
-                            data-bs-dismiss="modal"
-                          >
-                            <CloseIcon />
-                          </button>
-                        </div>
-                        <div className="modal-body">
-                          <div className="detail">
-                            <div className="detail-item">
-                              <div className="label">Asset Code</div>
-                              <div className="value">{ele.assetCode}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Asset Name</div>
-                              <div className="value">{ele.assetName}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Category</div>
-                              <div className="value">{ele.category}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Installed Date</div>
-                              <div className="value">
-                                {moment(ele.installedDate).format("L")}
+                    <div
+                      className="modal fade"
+                      id={"detailUserViewModal" + ele.id}
+                      tabIndex="-1"
+                      aria-labelledby="exampleModalLabel"
+                      aria-hidden="true"
+                    >
+                      <div className="modal-dialog modal-dialog-centered modal-lg">
+                        <div className="modal-content ">
+                          <div className="modal-header">
+                            <h5
+                              className="modal-title text-danger"
+                              id="exampleModalLabel"
+                            >
+                              Detailed Asset Information
+                            </h5>
+                            <button
+                              type="button"
+                              className="btn btn-outline-danger border-4"
+                              data-bs-dismiss="modal"
+                            >
+                              <CloseIcon />
+                            </button>
+                          </div>
+                          <div className="modal-body">
+                            <div className="detail">
+                              <div className="detail-item">
+                                <div className="label">Asset Code</div>
+                                <div className="value">{ele.id}</div>
                               </div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">State</div>
-                              <div className="value">{ele.state}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Location</div>
-                              <div className="value">
-                                {moment(ele.location).format("L")}
+                              <div className="detail-item">
+                                <div className="label">Asset Name</div>
+                                <div className="value">{ele.name}</div>
                               </div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Specification</div>
-                              <div className="value">{ele.specification}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">History</div>
-                              <div className="value">
-                                <SubTable history={ele.history}></SubTable>
+                              <div className="detail-item">
+                                <div className="label">Category</div>
+                                <div className="value">{ele.category.name}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Installed Date</div>
+                                <div className="value">
+                                  {moment(ele.installedDate).format("L")}
+                                </div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">State</div>
+                                <div className="value">{ele.state}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Location</div>
+                                <div className="value">{location}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Specification</div>
+                                <div className="value">{ele.specification}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">History</div>
+                                <div className="value">
+                                  <SubTable history={ele.history}></SubTable>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </>
-              ))}
+                  </>
+                );
+              })}
             </tbody>
           </table>
         </div>
         {/* end Table list */}
 
         {/* start Pagination */}
-        {/* <div className="paging">
-        {numPage > 1 ? (
-          <div className="paging text-end">
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={handlePre}
-            >
-              Previous
-            </button>
-            {Array.from({ length: numPage }, (_, i) => (
+        <div className="paging">
+          {numPage > 1 ? (
+            <div className="paging text-end">
               <button
                 type="button"
-                onClick={() => setPage(i + 1)}
-                className={
-                  page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                }
+                className="btn btn-outline-secondary"
+                onClick={handlePre}
               >
-                {i + 1}
+                Previous
               </button>
-            ))}
-            <button
-              type="button"
-              className="btn btn-outline-danger"
-              onClick={handleNext}
-            >
-              Next
-            </button>
-          </div>
-        ) : (
-          <></>
-        )}
-      </div> */}
+              {Array.from({ length: numPage }, (_, i) => (
+                <button
+                  type="button"
+                  onClick={() => setPage(i + 1)}
+                  className={
+                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
+                  }
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={handleNext}
+              >
+                Next
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
         {/* end Pagination */}
       </div>
     </>
