@@ -18,7 +18,6 @@ const EditUser = () => {
   const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("");
 
-  const [error, setError] = useState();
   const [validateDOB, setValidateDOB] = useState("");
   const [validateJD, setValidateJD] = useState("");
 
@@ -56,15 +55,16 @@ const EditUser = () => {
         firstName: firstName,
         lastName: lastName,
         dateOfBirth: dateOfBirth,
-        gender: gender === "Male",
+        gender: gender,
         joinedDate: joinedDate,
         role: role === "STAFF" ? 1 : 2,
         location: location,
       };
 
-      console.log(payload)
+      console.log(payload);
 
-      userService.editUser(staffCode, payload)
+      userService
+        .editUser(staffCode, payload)
         .then((res) => {
           if (res.status === 200) {
             toast.success("Successfully edit!!");
@@ -77,7 +77,6 @@ const EditUser = () => {
           toast.error("EDIT FAILED!!");
         });
     }
-
   };
 
   function handleCancel() {
@@ -126,7 +125,8 @@ const EditUser = () => {
       setValidateJD(
         "Joined date is not later than Date of Birth. Please select a different date"
       );
-    } else if (calculateAge(joinedDate, dateOfBirth) < 16)
+    }
+    if (calculateAge(joinedDate, dateOfBirth) < 16)
       setValidateJD(
         "User joins when under 18 years old. Please select a different date"
       );
@@ -185,7 +185,7 @@ const EditUser = () => {
                   type="radio"
                   id="male"
                   name="fav_language"
-                  checked={gender === "Male"}
+                  checked={gender}
                   onClick={() => setGender(true)}
                 ></input>
                 <label htmlFor="male">Male</label>
@@ -196,7 +196,7 @@ const EditUser = () => {
                   type="radio"
                   id="female"
                   name="fav_language"
-                  checked={gender === "Female"}
+                  checked={!gender}
                   onClick={() => setGender(false)}
                 ></input>
                 <label htmlFor="female">Female</label>
@@ -264,7 +264,7 @@ const EditUser = () => {
                 !(
                   dateOfBirth &&
                   joinedDate &&
-                  gender !== null&&
+                  gender !== null &&
                   !validateDOB &&
                   !validateJD
                 )
