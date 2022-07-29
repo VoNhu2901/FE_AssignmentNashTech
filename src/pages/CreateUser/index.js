@@ -16,6 +16,9 @@ const CreateUser = () => {
   const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("");
 
+  const [validateDOB, setValidateDOB] = useState("");
+  const [validateJD, setValidateJD] = useState("");
+
   // refactor code
 
   useEffect(() => {
@@ -82,6 +85,45 @@ const CreateUser = () => {
     }
   };
 
+  const calculateAge = (date, dob) => {
+    let today = new Date(date);
+    let dOB = new Date(dob);
+    let age = today.getFullYear() - dOB.getFullYear();
+    let m = today.getMonth() - dOB.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dOB.getDate())) {
+      age = age - 1;
+    }
+    return age;
+  };
+
+  const handleCheckAgeUser = () => {
+    const age = calculateAge(new Date(), dateOfBirth);
+    if (age < 18) {
+      setValidateDOB("User is under 18. Please select a different date");
+    }
+    if (age >= 65) {
+      setValidateDOB("The user has reached the retirement age.");
+    }
+  };
+
+  const handleCheckJoinedDateUser = () => {
+    let date = new Date(joinedDate);
+    if (date.getDay() === 6 || date.getDay() === 0) {
+      setValidateJD(
+        "Joined date is Saturday or Sunday. Please select a different date"
+      );
+    }
+
+    if (calculateAge(joinedDate, dateOfBirth) <= 0) {
+      setValidateJD(
+        "Joined date is not later than Date of Birth. Please select a different date"
+      );
+    } else if (calculateAge(joinedDate, dateOfBirth) < 16)
+      setValidateJD(
+        "User joins when under 18 years old. Please select a different date"
+      );
+  };
+
   return (
     <>
       <div className="form-create-user">
@@ -109,15 +151,22 @@ const CreateUser = () => {
             ></input>
 
             <label for="dateOfBirth">Date Of Birth</label>
-            <input
-              type="date"
-              id="dateOfBirth"
-              className="form-create-user__input"
-              value={dateOfBirth}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-              min="1950-01-01"
-              max="2022-12-31"
-            ></input>
+            <div>
+              <input
+                type="date"
+                id="dateOfBirth"
+                className={
+                  validateDOB
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                onBlur={handleCheckAgeUser}
+                onFocus={() => setValidateDOB(null)}
+              ></input>
+              {validateDOB && <p className="text-danger fs-6">{validateDOB}</p>}
+            </div>
 
             <label for="gender">Gender</label>
             <div className="form-create-user__input--item">
@@ -143,15 +192,22 @@ const CreateUser = () => {
             </div>
 
             <label for="joinedDate">Joined Date</label>
-            <input
-              type="date"
-              id="joinedDate"
-              className="form-create-user__input"
-              value={joinedDate}
-              onChange={(e) => setJoinedDate(e.target.value)}
-              min="1950-01-01"
-              max="2022-12-31"
-            ></input>
+            <div>
+              <input
+                type="date"
+                id="joinedDate"
+                className={
+                  validateJD
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                value={joinedDate}
+                onChange={(e) => setJoinedDate(e.target.value)}
+                onBlur={handleCheckJoinedDateUser}
+                onFocus={() => setValidateJD(null)}
+              ></input>
+              {validateJD && <p className="text-danger fs-6">{validateJD}</p>}
+            </div>
 
             <label for="type">Type</label>
             <select
@@ -198,7 +254,9 @@ const CreateUser = () => {
                   lastName &&
                   dateOfBirth &&
                   joinedDate &&
-                  gender !== null
+                  gender !== null &&
+                  !validateDOB &&
+                  !validateJD
                 )
               }
             >
