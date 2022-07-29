@@ -118,7 +118,8 @@ const CreateUser = () => {
       setValidateJD(
         "Joined date is not later than Date of Birth. Please select a different date"
       );
-    } else if (calculateAge(joinedDate, dateOfBirth) < 16)
+    }  
+    if (calculateAge(joinedDate, dateOfBirth) < 16)
       setValidateJD(
         "User joins when under 18 years old. Please select a different date"
       );
