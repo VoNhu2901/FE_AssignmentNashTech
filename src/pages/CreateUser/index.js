@@ -16,6 +16,11 @@ const CreateUser = () => {
   const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("");
 
+  const [validateDOB, setValidateDOB] = useState("");
+  const [validateJD, setValidateJD] = useState("");
+  const [validateFirstName, setvalidateFirstName] = useState("");
+  const [validateLastName, setvalidateLastName] = useState("");
+
   // refactor code
 
   useEffect(() => {
@@ -28,11 +33,6 @@ const CreateUser = () => {
       toast.warning(
         "First name and last name must be smaller then 128 characters"
       );
-    }
-    let regex = /^[A-Za-z0-9 ]+$/;
-
-    if (!firstName.match(regex) || !lastName.match(regex)) {
-      toast.warning("First name and last name not contain special symbols");
     }
 
     if (firstName && lastName && dateOfBirth && joinedDate && role) {
@@ -82,6 +82,66 @@ const CreateUser = () => {
     }
   };
 
+  const handleCheckFirstName = () => {
+    let regex = /^[A-Za-z0-9 ]+$/;
+    if (!firstName.match(regex) ) {
+      setvalidateFirstName("First name  not contain special symbols");
+    }
+    if (!firstName) {
+      setvalidateFirstName("First Name is required");
+    }
+
+  }
+
+  const handleCheckLastName = () => {
+    let regex = /^[A-Za-z0-9 ]+$/;
+    if (!lastName.match(regex)) {
+      setvalidateLastName("Last name not contain special symbols");
+    }
+    if (!lastName) {
+      setvalidateLastName("Last name is required");
+    }
+  }
+
+  const calculateAge = (date, dob) => {
+    let today = new Date(date);
+    let dOB = new Date(dob);
+    let age = today.getFullYear() - dOB.getFullYear();
+    let m = today.getMonth() - dOB.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dOB.getDate())) {
+      age = age - 1;
+    }
+    return age;
+  };
+
+  const handleCheckAgeUser = () => {
+    const age = calculateAge(new Date(), dateOfBirth);
+    if (age < 18) {
+      setValidateDOB("User is under 18. Please select a different date");
+    }
+    else if (age >= 65) {
+      setValidateDOB("The user has reached the retirement age.");
+    }
+  };
+
+  const handleCheckJoinedDateUser = () => {
+    let date = new Date(joinedDate);
+    if (date.getDay() === 6 || date.getDay() === 0) {
+      setValidateJD(
+        "Joined date is Saturday or Sunday. Please select a different date"
+      );
+    }
+
+    if (calculateAge(joinedDate, dateOfBirth) <= 0) {
+      setValidateJD(
+        "Joined date is not later than Date of Birth. Please select a different date"
+      );
+    } else if (calculateAge(joinedDate, dateOfBirth) < 16)
+      setValidateJD(
+        "User joins when under 18 years old. Please select a different date"
+      );
+  };
+
   return (
     <>
       <div className="form-create-user">
@@ -89,35 +149,61 @@ const CreateUser = () => {
           <h2 className="form-create-user__title">Create New User</h2>
           <div className="form-create-user__input-wrapper">
             <label for="firstName">First Name</label>
-            <input
-              type="text"
-              id="firstName"
-              className="form-create-user__input"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            ></input>
+            <div>
+              <input
+                type="text"
+                id="firstName"
+                className={
+                  validateFirstName
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                onBlur={handleCheckFirstName}
+                onFocus={() => setvalidateFirstName(null)}
+              ></input>
+              {validateFirstName && <p className="text-danger fs-6">{validateFirstName}</p>}
+            </div>
 
             <label for="lastName">Last Name</label>
-            <input
-              type="text"
-              id="lastName"
-              className="form-create-user__input"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            ></input>
+            <div>
+              <input
+                type="text"
+                id="lastName"
+                className={
+                  validateLastName
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                onBlur={handleCheckLastName}
+                onFocus={() => setvalidateLastName(null)}
+              >
+              </input>
+              {validateLastName && <p className="text-danger fs-6">{validateLastName}</p>}
+            </div>
 
             <label for="dateOfBirth">Date Of Birth</label>
-            <input
-              type="date"
-              id="dateOfBirth"
-              className="form-create-user__input"
-              value={dateOfBirth}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-              min="1950-01-01"
-              max="2022-12-31"
-            ></input>
+            <div>
+              <input
+                type="date"
+                id="dateOfBirth"
+                className={
+                  validateDOB
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                onBlur={handleCheckAgeUser}
+                onFocus={() => setValidateDOB(null)}
+              ></input>
+              {validateDOB && <p className="text-danger fs-6">{validateDOB}</p>}
+            </div>
 
             <label for="gender">Gender</label>
             <div className="form-create-user__input--item">
@@ -143,15 +229,22 @@ const CreateUser = () => {
             </div>
 
             <label for="joinedDate">Joined Date</label>
-            <input
-              type="date"
-              id="joinedDate"
-              className="form-create-user__input"
-              value={joinedDate}
-              onChange={(e) => setJoinedDate(e.target.value)}
-              min="1950-01-01"
-              max="2022-12-31"
-            ></input>
+            <div>
+              <input
+                type="date"
+                id="joinedDate"
+                className={
+                  validateJD
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                value={joinedDate}
+                onChange={(e) => setJoinedDate(e.target.value)}
+                onBlur={handleCheckJoinedDateUser}
+                onFocus={() => setValidateJD(null)}
+              ></input>
+              {validateJD && <p className="text-danger fs-6">{validateJD}</p>}
+            </div>
 
             <label for="type">Type</label>
             <select
@@ -198,7 +291,11 @@ const CreateUser = () => {
                   lastName &&
                   dateOfBirth &&
                   joinedDate &&
-                  gender !== null
+                  gender !== null &&
+                  !validateDOB &&
+                  !validateJD &&
+                  !validateFirstName &&
+                  !validateLastName
                 )
               }
             >

@@ -58,6 +58,15 @@
             outline: none;
         }
     }
+    &__input-error{
+        padding: 5px 20px ;
+        border-radius: 5px ;
+        border: 1px solid red ;
+        width: 100%;
+        &:focus{
+            outline: none;
+        }
+    }
 }
 
 #save{

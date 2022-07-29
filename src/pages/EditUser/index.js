@@ -18,7 +18,9 @@ const EditUser = () => {
   const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("");
 
-  const [error, setError] = useState()
+  const [error, setError] = useState();
+  const [validateDOB, setValidateDOB] = useState("");
+  const [validateJD, setValidateJD] = useState("");
 
   // refactor code
 
@@ -28,34 +30,25 @@ const EditUser = () => {
   }, []);
 
 
-// get data
-  useEffect(()=>{
+  // get data
+  useEffect(() => {
     userService
       .getUserByStaffCode(staffCode)
       .then((res) => {
-            const [data] = [...res.data]
-            
-            setFirstName(data.firstName)
-            setLastName(data.lastName)
-            setDateOfBirth(data.dateOfBirth)
-            setGender(data.gender)
-            setJoinedDate(data.joinedDate)
-            setRole(data.role)
-            setLocation(data.location)
-          })
-          .catch((error) => {
-            console.log(error);          
-          });
-  },[])
+        const [data] = [...res.data]
 
-  // handle function
-const handleDateOfBrith = (e) =>{
-  const value = new Date(e.target.value);
-  setError(value)
-  setDateOfBirth(value)
-  const date = new Date();
-  console.log( typeof date.getFullYear())
-}
+        setFirstName(data.firstName)
+        setLastName(data.lastName)
+        setDateOfBirth(data.dateOfBirth)
+        setGender(data.gender)
+        setJoinedDate(data.joinedDate)
+        setRole(data.role)
+        setLocation(data.location)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [])
 
   const handleEditUser = () => {
     if (dateOfBirth && joinedDate && role) {
@@ -65,23 +58,23 @@ const handleDateOfBrith = (e) =>{
         dateOfBirth: dateOfBirth,
         gender: gender === "Male",
         joinedDate: joinedDate,
-        role: role === "ADMIN" ? 1: 2,
+        role: role === "ADMIN" ? 1 : 2,
         location: location,
       };
 
       console.log(payload)
 
       userService.editUser(staffCode, payload)
-      .then((res)=>{
-        if (res.status === 200) {
-          toast.success("Successfully edit!!");
-          navigate("/manage-user");
-        }
-      })
-      .catch((error)=>{
-        console.log(error);
-        toast.error("EDIT FAILED!!");
-      });
+        .then((res) => {
+          if (res.status === 200) {
+            toast.success("Successfully edit!!");
+            navigate("/manage-user");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error("EDIT FAILED!!");
+        });
     }
 
   };
@@ -99,6 +92,44 @@ const handleDateOfBrith = (e) =>{
       setOpenLocation(false);
     }
   };
+  const calculateAge = (date, dob) => {
+    let today = new Date(date);
+    let dOB = new Date(dob);
+    let age = today.getFullYear() - dOB.getFullYear();
+    let m = today.getMonth() - dOB.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dOB.getDate())) {
+      age = age - 1;
+    }
+    return age;
+  };
+
+  const handleCheckAgeUser = () => {
+    const age = calculateAge(new Date(), dateOfBirth);
+    if (age < 18) {
+      setValidateDOB("User is under 18. Please select a different date");
+    }
+    if (age >= 65) {
+      setValidateDOB("The user has reached the retirement age.");
+    }
+  };
+
+  const handleCheckJoinedDateUser = () => {
+    let date = new Date(joinedDate);
+    if (date.getDay() === 6 || date.getDay() === 0) {
+      setValidateJD(
+        "Joined date is Saturday or Sunday. Please select a different date"
+      );
+    }
+
+    if (calculateAge(joinedDate, dateOfBirth) <= 0) {
+      setValidateJD(
+        "Joined date is not later than Date of Birth. Please select a different date"
+      );
+    } else if (calculateAge(joinedDate, dateOfBirth) < 16)
+      setValidateJD(
+        "User joins when under 18 years old. Please select a different date"
+      );
+  };
 
   return (
     <>
@@ -113,7 +144,7 @@ const handleDateOfBrith = (e) =>{
               className="form-edit-user-information__input"
               placeholder="First Name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}              
+              onChange={(e) => setFirstName(e.target.value)}
               disabled
             ></input>
 
@@ -129,16 +160,23 @@ const handleDateOfBrith = (e) =>{
             ></input>
 
             <label for="dateOfBirth">Date Of Birth</label>
-            <input
-              type="date"
-              id="dateOfBirth"
-              className={"form-edit-user-information__input"}
-              value={dateOfBirth}
-              // onBlur={handleDateOfBrith}
-              onChange={(e) => setDateOfBirth(e.target.value)}
-              min="1950-01-01"
-              max="2022-12-31"
-            ></input>
+            <div>
+              <input
+                type="date"
+                id="dateOfBirth"
+                className={
+                  validateDOB
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                onBlur={handleCheckAgeUser}
+                onFocus={() => setValidateDOB(null)}
+              ></input>
+              {validateDOB && <p className="text-danger fs-6">{validateDOB}</p>}
+            </div>
+
             <label for="gender">Gender</label>
             <div className="form-edit-user-information__input--item">
               <div>
@@ -165,15 +203,22 @@ const handleDateOfBrith = (e) =>{
             </div>
 
             <label for="joinedDate">Joined Date</label>
-            <input
-              type="date"
-              id="joinedDate"
-              className="form-edit-user-information__input"
-              value={joinedDate}
-              onChange={(e) => setJoinedDate(e.target.value)}
-              min="1950-01-01"
-              max="2022-12-31"
-            ></input>
+            <div>
+              <input
+                type="date"
+                id="joinedDate"
+                className={
+                  validateJD
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                value={joinedDate}
+                onChange={(e) => setJoinedDate(e.target.value)}
+                onBlur={handleCheckJoinedDateUser}
+                onFocus={() => setValidateJD(null)}
+              ></input>
+              {validateJD && <p className="text-danger fs-6">{validateJD}</p>}
+            </div>
 
             <label for="type">Type</label>
             <select
@@ -215,10 +260,12 @@ const handleDateOfBrith = (e) =>{
               className="form-edit-user-information__button-item"
               onClick={handleEditUser}
               disabled={
-                !(                  
+                !(
                   dateOfBirth &&
                   joinedDate &&
-                  gender !== null
+                  gender !== null&&
+                  !validateDOB &&
+                  !validateJD
                 )
               }
             >
