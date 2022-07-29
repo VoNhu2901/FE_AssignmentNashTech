@@ -18,6 +18,8 @@ const CreateUser = () => {
 
   const [validateDOB, setValidateDOB] = useState("");
   const [validateJD, setValidateJD] = useState("");
+  const [validateFirstName, setvalidateFirstName] = useState("");
+  const [validateLastName, setvalidateLastName] = useState("");
 
   // refactor code
 
@@ -31,11 +33,6 @@ const CreateUser = () => {
       toast.warning(
         "First name and last name must be smaller then 128 characters"
       );
-    }
-    let regex = /^[A-Za-z0-9 ]+$/;
-
-    if (!firstName.match(regex) || !lastName.match(regex)) {
-      toast.warning("First name and last name not contain special symbols");
     }
 
     if (firstName && lastName && dateOfBirth && joinedDate && role) {
@@ -85,6 +82,27 @@ const CreateUser = () => {
     }
   };
 
+  const handleCheckFirstName = () => {
+    let regex = /^[A-Za-z0-9 ]+$/;
+    if (!firstName.match(regex) ) {
+      setvalidateFirstName("First name  not contain special symbols");
+    }
+    if (!firstName) {
+      setvalidateFirstName("First Name is required");
+    }
+
+  }
+
+  const handleCheckLastName = () => {
+    let regex = /^[A-Za-z0-9 ]+$/;
+    if (!lastName.match(regex)) {
+      setvalidateLastName("Last name not contain special symbols");
+    }
+    if (!lastName) {
+      setvalidateLastName("Last name is required");
+    }
+  }
+
   const calculateAge = (date, dob) => {
     let today = new Date(date);
     let dOB = new Date(dob);
@@ -101,7 +119,7 @@ const CreateUser = () => {
     if (age < 18) {
       setValidateDOB("User is under 18. Please select a different date");
     }
-    if (age >= 65) {
+    else if (age >= 65) {
       setValidateDOB("The user has reached the retirement age.");
     }
   };
@@ -132,24 +150,43 @@ const CreateUser = () => {
           <h2 className="form-create-user__title">Create New User</h2>
           <div className="form-create-user__input-wrapper">
             <label for="firstName">First Name</label>
-            <input
-              type="text"
-              id="firstName"
-              className="form-create-user__input"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            ></input>
+            <div>
+              <input
+                type="text"
+                id="firstName"
+                className={
+                  validateFirstName
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                onBlur={handleCheckFirstName}
+                onFocus={() => setvalidateFirstName(null)}
+              ></input>
+              {validateFirstName && <p className="text-danger fs-6">{validateFirstName}</p>}
+            </div>
 
             <label for="lastName">Last Name</label>
-            <input
-              type="text"
-              id="lastName"
-              className="form-create-user__input"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            ></input>
+            <div>
+              <input
+                type="text"
+                id="lastName"
+                className={
+                  validateLastName
+                    ? "form-create-user__input-error"
+                    : "form-create-user__input"
+                }
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                onBlur={handleCheckLastName}
+                onFocus={() => setvalidateLastName(null)}
+              >
+              </input>
+              {validateLastName && <p className="text-danger fs-6">{validateLastName}</p>}
+            </div>
 
             <label for="dateOfBirth">Date Of Birth</label>
             <div>
@@ -257,7 +294,9 @@ const CreateUser = () => {
                   joinedDate &&
                   gender !== null &&
                   !validateDOB &&
-                  !validateJD
+                  !validateJD &&
+                  !validateFirstName &&
+                  !validateLastName
                 )
               }
             >
