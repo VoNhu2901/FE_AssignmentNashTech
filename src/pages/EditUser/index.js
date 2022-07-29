@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import userService from "../../api/userService";
+import { useParams } from 'react-router-dom';
 import "./style.scss";
 
-const CreateUser = () => {
+const EditUser = () => {
   const navigate = useNavigate();
+  let { staffCode } = useParams();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -18,8 +20,6 @@ const CreateUser = () => {
 
   const [validateDOB, setValidateDOB] = useState("");
   const [validateJD, setValidateJD] = useState("");
-  const [validateFirstName, setvalidateFirstName] = useState("");
-  const [validateLastName, setvalidateLastName] = useState("");
 
   // refactor code
 
@@ -28,43 +28,54 @@ const CreateUser = () => {
     setLocation(_location);
   }, []);
 
-  const handleCreateNewUser = () => {
-    if (firstName.length >= 128 || lastName >= 128) {
-      toast.warning(
-        "First name and last name must be smaller then 128 characters"
-      );
-    }
 
-    if (firstName && lastName && dateOfBirth && joinedDate && role) {
+  // get data
+  useEffect(() => {
+    userService
+      .getUserByStaffCode(staffCode)
+      .then((res) => {
+        const [data] = [...res.data]
+
+        setFirstName(data.firstName)
+        setLastName(data.lastName)
+        setDateOfBirth(data.dateOfBirth)
+        setGender(data.gender)
+        setJoinedDate(data.joinedDate)
+        setRole(data.role)
+        setLocation(data.location)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [])
+
+  const handleEditUser = () => {
+    if (dateOfBirth && joinedDate && role) {
       const payload = {
-        firstName,
-        lastName,
-        dateOfBirth,
-        gender,
-        joinedDate,
-        role,
-        location,
+        firstName: firstName,
+        lastName: lastName,
+        dateOfBirth: dateOfBirth,
+        gender: gender,
+        joinedDate: joinedDate,
+        role: role === "STAFF" ? 1 : 2,
+        location: location,
       };
 
+      console.log(payload);
+
       userService
-        .createUser(payload)
+        .editUser(staffCode, payload)
         .then((res) => {
-          if (res.status === 201) {
-            toast.success("Successfully added!!");
+          if (res.status === 200) {
+            toast.success("Successfully edit!!");
             localStorage.setItem("newUser", res.data.userId);
             navigate("/manage-user");
           }
         })
         .catch((error) => {
           console.log(error);
-          if (error.response.data) {
-            toast.error("ERROR: " + error.response.data.message);
-          } else if (error) {
-            toast.error("CREATE NEW USER FAILED!!");
-          }
+          toast.error("EDIT FAILED!!");
         });
-    } else {
-      toast.error("ALL FIELDS ARE REQUIRE");
     }
   };
 
@@ -81,28 +92,6 @@ const CreateUser = () => {
       setOpenLocation(false);
     }
   };
-
-  const handleCheckFirstName = () => {
-    let regex = /^[A-Za-z0-9 ]+$/;
-    if (!firstName.match(regex) ) {
-      setvalidateFirstName("First name  not contain special symbols");
-    }
-    if (!firstName) {
-      setvalidateFirstName("First Name is required");
-    }
-
-  }
-
-  const handleCheckLastName = () => {
-    let regex = /^[A-Za-z0-9 ]+$/;
-    if (!lastName.match(regex)) {
-      setvalidateLastName("Last name not contain special symbols");
-    }
-    if (!lastName) {
-      setvalidateLastName("Last name is required");
-    }
-  }
-
   const calculateAge = (date, dob) => {
     let today = new Date(date);
     let dOB = new Date(dob);
@@ -119,7 +108,7 @@ const CreateUser = () => {
     if (age < 18) {
       setValidateDOB("User is under 18. Please select a different date");
     }
-    else if (age >= 65) {
+    if (age >= 65) {
       setValidateDOB("The user has reached the retirement age.");
     }
   };
@@ -136,7 +125,7 @@ const CreateUser = () => {
       setValidateJD(
         "Joined date is not later than Date of Birth. Please select a different date"
       );
-    }  
+    }
     if (calculateAge(joinedDate, dateOfBirth) < 16)
       setValidateJD(
         "User joins when under 18 years old. Please select a different date"
@@ -145,48 +134,31 @@ const CreateUser = () => {
 
   return (
     <>
-      <div className="form-create-user">
-        <div className="form-create-user__container">
-          <h2 className="form-create-user__title">Create New User</h2>
-          <div className="form-create-user__input-wrapper">
+      <div className="form-edit-user-information">
+        <div className="form-edit-user-information__container">
+          <h2 className="form-edit-user-information__title">Edit User</h2>
+          <div className="form-edit-user-information__input-wrapper">
             <label for="firstName">First Name</label>
-            <div>
-              <input
-                type="text"
-                id="firstName"
-                className={
-                  validateFirstName
-                    ? "form-create-user__input-error"
-                    : "form-create-user__input"
-                }
-                placeholder="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                onBlur={handleCheckFirstName}
-                onFocus={() => setvalidateFirstName(null)}
-              ></input>
-              {validateFirstName && <p className="text-danger fs-6">{validateFirstName}</p>}
-            </div>
+            <input
+              type="text"
+              id="firstName"
+              className="form-edit-user-information__input"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              disabled
+            ></input>
 
             <label for="lastName">Last Name</label>
-            <div>
-              <input
-                type="text"
-                id="lastName"
-                className={
-                  validateLastName
-                    ? "form-create-user__input-error"
-                    : "form-create-user__input"
-                }
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                onBlur={handleCheckLastName}
-                onFocus={() => setvalidateLastName(null)}
-              >
-              </input>
-              {validateLastName && <p className="text-danger fs-6">{validateLastName}</p>}
-            </div>
+            <input
+              type="text"
+              id="lastName"
+              className="form-edit-user-information__input"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              disabled
+            ></input>
 
             <label for="dateOfBirth">Date Of Birth</label>
             <div>
@@ -207,12 +179,13 @@ const CreateUser = () => {
             </div>
 
             <label for="gender">Gender</label>
-            <div className="form-create-user__input--item">
+            <div className="form-edit-user-information__input--item">
               <div>
                 <input
                   type="radio"
                   id="male"
                   name="fav_language"
+                  checked={gender}
                   onClick={() => setGender(true)}
                 ></input>
                 <label htmlFor="male">Male</label>
@@ -223,6 +196,7 @@ const CreateUser = () => {
                   type="radio"
                   id="female"
                   name="fav_language"
+                  checked={!gender}
                   onClick={() => setGender(false)}
                 ></input>
                 <label htmlFor="female">Female</label>
@@ -249,7 +223,7 @@ const CreateUser = () => {
 
             <label for="type">Type</label>
             <select
-              className="form-create-user__input"
+              className="form-edit-user-information__input"
               name="cars"
               id="cars"
               value={role}
@@ -263,11 +237,11 @@ const CreateUser = () => {
               </option>
             </select>
 
-            {openLocation && (
+            {/* {openLocation && (
               <>
                 <label for="type">Location</label>
                 <select
-                  className="form-create-user__input"
+                  className="form-edit-user-information__input"
                   name="cars"
                   id="cars"
                   value={location}
@@ -278,33 +252,30 @@ const CreateUser = () => {
                   <option value={"HN"}>Ha Noi</option>
                 </select>
               </>
-            )}
+            )} */}
           </div>
 
-          <div className="form-create-user__button-wrapper">
+          <div className="form-edit-user-information__button-wrapper">
             <button
               id="save"
-              className="form-create-user__button-item"
-              onClick={handleCreateNewUser}
+              className="form-edit-user-information__button-item"
+              onClick={handleEditUser}
               disabled={
                 !(
-                  firstName &&
-                  lastName &&
                   dateOfBirth &&
                   joinedDate &&
                   gender !== null &&
                   !validateDOB &&
-                  !validateJD &&
-                  !validateFirstName &&
-                  !validateLastName
+                  !validateJD
                 )
               }
             >
               Save
             </button>
+
             <button
               id="cancel"
-              className="form-create-user__button-item"
+              className="form-edit-user-information__button-item"
               onClick={handleCancel}
             >
               Cancel
@@ -316,4 +287,4 @@ const CreateUser = () => {
   );
 };
 
-export default CreateUser;
+export default EditUser;

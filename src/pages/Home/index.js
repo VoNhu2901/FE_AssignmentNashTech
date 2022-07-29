@@ -15,8 +15,6 @@ const HomePage = () => {
     if (status === "NEW") {
       setIsNew(true);
     }
-
-    localStorage.removeItem("status");
   }, []);
 
   const handleSavePassword = () => {

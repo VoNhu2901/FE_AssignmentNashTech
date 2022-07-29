@@ -86,14 +86,19 @@
 }
 
 .modal{
-    border: 1px solid black;
     .modal-header{
-        border-bottom: 1px solid black;
+        border: 1px solid black;
+        border-bottom: none;
         font-weight: 700;
+        background-color: #f0f1f5;
     }
 }
 
 .modal-body{
+    background-color: #fafcfb;  
+    border-end-end-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border: 1px solid black !important;
     .detail{
         padding: 1rem;
         .detail-item{
@@ -115,4 +120,13 @@
 a.link-to-create{
     text-decoration: none !important;
     color: white !important;
+}
+
+#disable-button, #cancel-button{
+    margin-right: 1rem;
+    margin-top: 1rem;
+}
+
+.confirm-disable{
+    padding: 2.5rem !important;
 }

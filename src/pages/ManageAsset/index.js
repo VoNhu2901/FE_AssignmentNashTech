@@ -123,7 +123,6 @@ const tableHead = [
   },
 ];
 
-
 const ManageAsset = () => {
   const navigate = useNavigate();
 
@@ -136,7 +135,7 @@ const ManageAsset = () => {
   const [content, setContent] = useState("");
   const rowPerPage = 20;
 
-  const [filterByState, setFilterByState] = useState("ASSIGNED");
+  const [filterByState, setFilterByState] = useState([0,1,1,1,0,0]);
 
   const location = localStorage.getItem("location");
 
@@ -186,14 +185,14 @@ const ManageAsset = () => {
     }
     switch (col) {
       case "assetcode":
-        col === currentCol ? 
-          setUserList(data.sort((a, b) => a.id.localeCompare(b.id)))
-          : setUserList(data.sort((a, b) => b.id.localeCompare(a.id)))
+        col === currentCol
+          ? setUserList(data.sort((a, b) => a.id.localeCompare(b.id)))
+          : setUserList(data.sort((a, b) => b.id.localeCompare(a.id)));
         break;
       case "assetname":
-        col === currentCol ? 
-          setUserList(data.sort((a, b) => a.name.localeCompare(b.name)))
-          : setUserList(data.sort((a, b) => b.name.localeCompare(a.name)))
+        col === currentCol
+          ? setUserList(data.sort((a, b) => a.name.localeCompare(b.name)))
+          : setUserList(data.sort((a, b) => b.name.localeCompare(a.name)));
         break;
       case "category":
         col === currentCol
@@ -215,7 +214,7 @@ const ManageAsset = () => {
         break;
       default:
         break;
-    }    
+    }
   };
 
   const handleSearch = () => {
@@ -250,20 +249,20 @@ const ManageAsset = () => {
     alert(code);
   };
 
-    const handleNext = () => {
-      let temp = page + 1;
-      if (temp <= numPage) {
-        setPage(temp);
-      }
-    };
-
-    const handlePre = () => {
-      let temp = page - 1;
-      if (temp >= 1) {
-        setPage(temp);
-      }
+  const handleNext = () => {
+    let temp = page + 1;
+    if (temp <= numPage) {
+      setPage(temp);
+    }
   };
-  
+
+  const handlePre = () => {
+    let temp = page - 1;
+    if (temp >= 1) {
+      setPage(temp);
+    }
+  };
+
   return (
     <>
       <div className="user-list">
@@ -291,7 +290,7 @@ const ManageAsset = () => {
                   className="dropdown-menu form-check"
                   aria-labelledby="dropMenuFilterType"
                 >
-                  {filterState.map((type) => (
+                  {filterState.map((type, index) => (
                     <li key={type.id}>
                       <div>
                         <input
@@ -299,13 +298,10 @@ const ManageAsset = () => {
                           type="checkbox"
                           value={type.value}
                           id={type.id}
-                          checked={filterByState === type.checked}
-                          onChange={() => handleFilterByState(type.checked)}
+                          checked={filterByState[index]}
+                          onChange={() => handleFilterByState(type[index])}
                         />
-                        <label
-                          className="form-check-label"
-                          htmlFor={type.id}
-                        >
+                        <label className="form-check-label" htmlFor={type.id}>
                           {type.value}
                         </label>
                       </div>
@@ -408,13 +404,15 @@ const ManageAsset = () => {
               </tr>
             </thead>
             <tbody>
-              {(userList || []).map((ele, index) => {
+              {(
+                userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
+              ).map((ele, index) => {
                 return (
                   <>
                     <tr
                       data-bs-toggle="modal"
                       data-bs-target={"#detailUserViewModal" + ele.id}
-                      key={1}
+                      key={ele.id}
                     >
                       <td className="border-bottom">{ele.id}</td>
                       <td className="border-bottom">{ele.name}</td>
