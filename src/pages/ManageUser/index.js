@@ -181,23 +181,33 @@ const ManageUser = () => {
   };
 
   const handleSearch = () => {
-    const loca = localStorage.getItem("location");
-    userService
-      .searchUser(loca, content)
-      .then((res) => {
-        if (res.data.length === 0) {
-          toast.error("No user founded");
-        }
-        const _data = res.data;
-        let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
+    if (!content) {
+      initData();
+    } else {
+      const loca = localStorage.getItem("location");
+      userService
+        .searchUser(loca, content)
+        .then((res) => {
+          console.log(res);
+          if (res.data.length === 0) {
+            toast.error("No user founded");
+          }
+          const _data = res.data;
+          let sorted = _data.sort((a, b) =>
+            a.fullName.localeCompare(b.fullName)
+          );
 
-        setNumPage(Math.ceil(sorted.length / rowPerPage));
-        setData(sorted);
-        setUserList(sorted);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+          setNumPage(Math.ceil(sorted.length / rowPerPage));
+          setData(sorted);
+          setUserList(sorted);
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.info(
+            `No user match with "${content}". Try again with correct format.`
+          );
+        });
+    }
   };
 
   return (
@@ -349,12 +359,12 @@ const ManageUser = () => {
                   onChange={(e) => setContent(e.target.value)}
                 />
               </div>
-
-              <div>
-                <button className="btn border-0" onClick={handleSearch}>
-                  <SearchIcon />
-                </button>
-              </div>
+              <button
+                className="btn btn-light border-dark border-start border-bottom-0 border-end-0 border-top-0 rounded-0 me-1"
+                onClick={handleSearch}
+              >
+                <SearchIcon />
+              </button>
             </div>
             <div className="button">
               <button
