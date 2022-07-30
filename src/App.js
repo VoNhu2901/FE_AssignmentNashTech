@@ -1,15 +1,21 @@
-import './App.css';
-import { Fragment, Suspense } from 'react';
+import "./App.css";
+import { Fragment, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import Main from './components/layout/Main';
-import ManageAssignmentPage from './pages/ManageAssignmentPage';
-import RequestPage from './pages/RequestPage';
-import ReportPage from './pages/ReportPage';
-import CreateUser from './pages/CreateUser/';
+import Main from "./components/layout/Main";
+import ManageAssignmentPage from "./pages/ManageAssignmentPage";
+import RequestPage from "./pages/RequestPage";
+import ReportPage from "./pages/ReportPage";
 
-
-import { ManageUser, HomePage, Login, ManageAsset, EditUser } from "./pages";
-
+import {
+  ManageUser,
+  HomePage,
+  Login,
+  ManageAsset,
+  EditUser,
+  CreateUser,
+  EditAsset,
+  CreateAsset,
+} from "./pages";
 
 function App() {
   return (
@@ -18,7 +24,6 @@ function App() {
         <Routes>
           <Route element={<Main></Main>}>
             <Route path="/" element={<HomePage></HomePage>} />
-            <Route path="/edit-user/:staffCode" element={<EditUser></EditUser>} />
             <Route path="/manage-user" element={<ManageUser></ManageUser>} />
             <Route path="/manage-asset" element={<ManageAsset></ManageAsset>} />
             <Route
@@ -31,7 +36,15 @@ function App() {
             />
             <Route path="/report" element={<ReportPage></ReportPage>} />
             <Route path="/create-user" element={<CreateUser></CreateUser>} />
-            {/* <Route path="/create-asset" element={<CreateAsset></CreateAsset>} /> */}
+            <Route
+              path="/edit-user/:staffCode"
+              element={<EditUser></EditUser>}
+            />
+            <Route path="/create-asset" element={<CreateAsset></CreateAsset>} />
+            <Route
+              path="/edit-asset/:assetCode"
+              element={<EditAsset></EditAsset>}
+            />
           </Route>
           <Route path="/login" element={<Login></Login>} />
         </Routes>

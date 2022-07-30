@@ -147,6 +147,8 @@ const ManageAsset = () => {
 
   const location = localStorage.getItem("location");
 
+  const [disable, setDisable] = useState(null);
+
   // get data from backend
   useEffect(() => {
     assetService
@@ -199,7 +201,9 @@ const ManageAsset = () => {
     } else {
       let filtered = data.filter(isFilter);
       if (filtered.length === 0) {
-        toast.info(`No asset in ${location} have state you choose. Choose another state.`);
+        toast.info(
+          `No asset in ${location} have state you choose. Choose another state.`
+        );
       }
       setUserList(filtered);
     }
@@ -269,14 +273,14 @@ const ManageAsset = () => {
       });
   };
 
-  // handle delete user here
-  const deleteUser = (code) => {
-    alert(code);
-  };
+  // handle delete asset here
+  // const deleteAsset = (code) => {
+  //   alert(code);
+  // };
 
-  // handle edit user here
-  const editUser = (code) => {
-    alert(code);
+  // handle edit asset here
+  const editAsset = (code) => {
+    navigate(`/edit-asset/${code}`);
   };
 
   const handleNext = () => {
@@ -293,12 +297,111 @@ const ManageAsset = () => {
     }
   };
 
-  // const isCheck = (index) => {
-  //   return filterByState[index] === 1;
+  // handle delete user here
+  const checkAssetAvailableToDisable = (code) => {
+    // assetService
+    //   .checkAssetCanDelete(code)
+    //   .then((res) => {
+    //     if (res.data) {
+    //       setDisable(code);
+    //     } else {
+    //       setDisable("Error");
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setDisable("Error");
+    //   });
+  };
+
+  // const disableAsset = () => {
+  //   assetService
+  //     .disableAsset(disable)
+  //     .then((res) => {
+  //       if (res.status === 200) {
+  //         setDisable(null);
+  //         // initData();
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       toast.error("Internet interrupt. Try later");
+  //     });
   // };
 
   return (
     <>
+      {/* start dialog */}
+      <div
+        className={
+          "modal fade" +
+          (disable && disable !== "Error" ? " show d-block" : " d-none")
+        }
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Are you sure?</h5>
+            </div>
+            <div className="modal-body confirm-disable">
+              <div className="modal-subtitle">
+                Do you want to delete this asset?
+              </div>
+              <div className="button">
+                <button
+                  className="btn btn-danger"
+                  id="disable-button"
+                  // onClick={disableUser}
+                >
+                  Delete
+                </button>
+                <button
+                  className="btn btn-outline-secondary"
+                  id="cancel-button"
+                  onClick={() => setDisable(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={
+          "modal fade " + (disable === "Error" ? " show d-block" : " d-none")
+        }
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Cannot Delete Asset</h5>
+              <button
+                type="button"
+                className="btn btn-outline-danger border-4"
+                onClick={() => setDisable(null)}
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="modal-body confirm-disable">
+              <div className="modal-subtitle">
+                Cannot delete the asset because it belongs to one or more
+                historical assignments. <br />
+                If the asset is not able to be used anymore, please update its
+                state in <a href="#">Edit Asset page</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* end dialog */}
+
       <div className="user-list">
         <div className="title">
           <h3>Asset List</h3>
@@ -454,11 +557,11 @@ const ManageAsset = () => {
                       <td className="border-bottom">{ele.state}</td>
                       <td>
                         <button className="btn btn-outline-secondary border-0">
-                          <EditIcon onClick={() => editUser(ele.id)} />
+                          <EditIcon onClick={() => editAsset(ele.id)} />
                         </button>
                         <button
                           className="btn btn-outline-danger border-0"
-                          onClick={() => deleteUser(ele.id)}
+                          onClick={() => checkAssetAvailableToDisable(ele.id)}
                         >
                           <HighlightOffIcon />
                         </button>{" "}
