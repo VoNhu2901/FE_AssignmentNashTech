@@ -47,6 +47,15 @@ const filterState = [
   },
 ];
 
+const state = [
+  "ALL",
+  "Assigned",
+  "Available",
+  "Not available",
+  "Waiting for recycling",
+  "Recycled",
+];
+
 const filterCategory = [
   {
     id: "categoryAll",
@@ -129,13 +138,12 @@ const ManageAsset = () => {
   const [page, setPage] = useState(1);
   const [userList, setUserList] = useState([]);
   const [data, setData] = useState([]);
-  // const [filterBy, setFilterBy] = useState("ALL");
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
   const rowPerPage = 20;
 
-  const [filterByState, setFilterByState] = useState([0,1,1,1,0,0]);
+  const [filterByState, setFilterByState] = useState([0, 1, 1, 1, 0, 0]);
 
   const location = localStorage.getItem("location");
 
@@ -149,12 +157,15 @@ const ManageAsset = () => {
           toast.error("No asset founded");
         }
 
+        console.log(resData);
         let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
 
         const finalList = [...sorted];
         setNumPage(Math.ceil(finalList.length / rowPerPage));
         setData(finalList); // get data to handle
-        setUserList(finalList); // get data to display (have change)
+
+        const filterByDefault = finalList.filter(isFilter);
+        setUserList(filterByDefault); // get data to display (have change)
       })
       .catch((err) => {
         console.log(err);
@@ -162,15 +173,34 @@ const ManageAsset = () => {
       });
   }, []);
 
-  const handleFilterByState = (type) => {
-    setFilterByState(type);
-    setPage(1);
-    if (type === "ALL") {
-      setNumPage(Math.ceil(data.length / rowPerPage));
+  const isFilter = (asset) => {
+    if (state[1].localeCompare(asset.state) === 0) {
+      return filterByState[1];
+    } else if (state[2].localeCompare(asset.state) === 0) {
+      return filterByState[2];
+    } else if (state[3].localeCompare(asset.state) === 0) {
+      return filterByState[3];
+    } else if (state[4].localeCompare(asset.state) === 0) {
+      return filterByState[4];
+    } else if (state[5].localeCompare(asset.state) === 0) {
+      return filterByState[5];
+    }
+    return false;
+  };
+
+  const handleFilterByState = (index) => {
+    let temp = filterByState;
+    let a = filterByState[index];
+    temp[index] = a === 1 ? 0 : 1;
+    setFilterByState([...temp]);
+
+    if (filterByState[0]) {
       setUserList(data);
     } else {
-      const filtered = data.filter((asset) => asset.state === type);
-      setNumPage(Math.ceil(filtered.length / rowPerPage));
+      let filtered = data.filter(isFilter);
+      if (filtered.length === 0) {
+        toast.info(`No asset in ${location} have state you choose. Choose another state.`);
+      }
       setUserList(filtered);
     }
   };
@@ -263,6 +293,10 @@ const ManageAsset = () => {
     }
   };
 
+  // const isCheck = (index) => {
+  //   return filterByState[index] === 1;
+  // };
+
   return (
     <>
       <div className="user-list">
@@ -298,8 +332,8 @@ const ManageAsset = () => {
                           type="checkbox"
                           value={type.value}
                           id={type.id}
-                          checked={filterByState[index]}
-                          onChange={() => handleFilterByState(type[index])}
+                          checked={filterByState[index] === 1}
+                          onChange={() => handleFilterByState(index)}
                         />
                         <label className="form-check-label" htmlFor={type.id}>
                           {type.value}
