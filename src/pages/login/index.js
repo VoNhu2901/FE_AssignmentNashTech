@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import IconEyeClose from "../../components/icon/IconEyeClose";
 import IconEyeOpen from "../../components/icon/IconEyeOpen";
 import "./login.scss";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -15,6 +16,9 @@ const Login = () => {
   const loginHandler = () => {
     if (username && password) {
       const payload = { username, password };
+
+      Loading.hourglass("Sending...");
+
       axios({
         headers: {
           "content-type": "application/json",
@@ -32,10 +36,13 @@ const Login = () => {
           localStorage.setItem("location", res.data.location);
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("username", res.data.username);
+
+          Loading.remove();
           toast.success("Login success!!!");
           navigate("/");
         })
         .catch((err) => {
+          Loading.remove();
           toast.error("Username or Password Invalid");
           console.log(err);
         });

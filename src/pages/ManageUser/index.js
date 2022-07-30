@@ -10,6 +10,7 @@ import "./style.scss";
 import userService from "../../api/userService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
 
 const ManageUser = () => {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ const ManageUser = () => {
     const userId = localStorage.getItem("userId");
     const newUserId = localStorage.getItem("newUser");
 
+    Loading.standard("Loading...");
     userService
       .getAllUsers(location)
       .then((res) => {
@@ -56,8 +58,10 @@ const ManageUser = () => {
         setNumPage(Math.ceil(finalList.length / rowPerPage));
         setData(finalList);
         setUserList(finalList);
+          Loading.remove();
       })
       .catch((err) => {
+          Loading.remove();
         console.log(err);
         toast.info("No User Found");
       });

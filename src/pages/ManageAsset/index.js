@@ -13,6 +13,7 @@ import "./index.scss";
 import SubTable from "./SubTable";
 import assetService from "./../../api/assetService";
 import { toast } from "react-toastify";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
 
 const filterState = [
   {
@@ -151,6 +152,7 @@ const ManageAsset = () => {
 
   // get data from backend
   useEffect(() => {
+    Loading.standard("Loading...");
     assetService
       .getAllAssets(location)
       .then((res) => {
@@ -168,8 +170,10 @@ const ManageAsset = () => {
 
         const filterByDefault = finalList.filter(isFilter);
         setUserList(filterByDefault); // get data to display (have change)
+        Loading.remove();
       })
       .catch((err) => {
+        Loading.remove();
         console.log(err);
         toast.info("No Asset Found");
       });
