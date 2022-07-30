@@ -56,7 +56,7 @@ const EditUser = () => {
         firstName: firstName,
         lastName: lastName,
         dateOfBirth: dateOfBirth,
-        gender: gender,
+        gender: gender === true ? true : false,
         joinedDate: joinedDate,
         role: role === 2 ? 2 : 1,
         location: location,
@@ -187,7 +187,6 @@ const EditUser = () => {
                   id="male"
                   name="fav_language"
                   checked={gender}
-                  
                   onClick={() => setGender(true)}
                 ></input>
                 <label htmlFor="male">Male</label>
