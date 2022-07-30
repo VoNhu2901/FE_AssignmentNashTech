@@ -14,8 +14,8 @@ const EditUser = () => {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [gender, setGender] = useState(null);
   const [joinedDate, setJoinedDate] = useState("");
-  const [role, setRole] = useState("2");
-  const [openLocation, setOpenLocation] = useState(false);
+  const [role, setRole] = useState(2);
+  // const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("");
 
   const [error, setError] = useState();
@@ -56,9 +56,9 @@ const EditUser = () => {
         firstName: firstName,
         lastName: lastName,
         dateOfBirth: dateOfBirth,
-        gender: gender === "Male",
+        gender: gender,
         joinedDate: joinedDate,
-        role: role === "STAFF" ? 1 : 2,
+        role: role === 2 ? 2 : 1,
         location: location,
       };
 
@@ -87,11 +87,12 @@ const EditUser = () => {
   const handleRole = (e) => {
     const value = e.target.value;
     setRole(parseInt(value));
-    if (value === "1") {
-      setOpenLocation(true);
-    } else if (value === "2") {
-      setOpenLocation(false);
-    }
+    // if (value === "ADMIN") {
+    //   setOpenLocation(true);
+    // }
+    // else if (value === "STAFF") {
+    //   setOpenLocation(false);
+    // }
   };
   const calculateAge = (date, dob) => {
     let today = new Date(date);
@@ -185,7 +186,8 @@ const EditUser = () => {
                   type="radio"
                   id="male"
                   name="fav_language"
-                  checked={gender === "Male"}
+                  checked={gender}
+                  
                   onClick={() => setGender(true)}
                 ></input>
                 <label htmlFor="male">Male</label>
@@ -196,7 +198,7 @@ const EditUser = () => {
                   type="radio"
                   id="female"
                   name="fav_language"
-                  checked={gender === "Female"}
+                  checked={!gender}
                   onClick={() => setGender(false)}
                 ></input>
                 <label htmlFor="female">Female</label>
@@ -264,7 +266,7 @@ const EditUser = () => {
                 !(
                   dateOfBirth &&
                   joinedDate &&
-                  gender !== null&&
+                  gender !== null &&
                   !validateDOB &&
                   !validateJD
                 )
