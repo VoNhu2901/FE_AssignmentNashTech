@@ -2,8 +2,16 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import './style.scss';
+import "./style.scss";
 import assetService from "../../api/assetService";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
+
+const stateName = [
+  "Available",
+  "Not available",
+  "Waiting for recycling",
+  "Recycled",
+];
 
 const EditAsset = () => {
   const navigate = useNavigate();
@@ -18,47 +26,53 @@ const EditAsset = () => {
 
   // get data
   useEffect(() => {
+    Loading.standard("Loading...");
+
     assetService
       .getAssetById(assetCode)
-      .then((res) => {        
-        
-        setName(res.data.name)
-        setCategory(res.data.category.id)
-        setCategoryName(res.data.category.name)
-        setSpecification(res.data.specification)
-        setInstalledDate(res.data.installedDate)
-        setState(res.data.state)
+      .then((res) => {
+        setName(res.data.name);
+        setCategory(res.data.category.id);
+        setCategoryName(res.data.category.name);
+        setSpecification(res.data.specification);
+        setInstalledDate(res.data.installedDate);
+        setState(res.data.state);
+
+        Loading.remove();
       })
       .catch((error) => {
+        Loading.remove();
         console.log(error);
-        
       });
-  }, [])
-  
+  }, []);
 
   const handleEditAsset = () => {
-    if (name && specification && installedDate && state){
+    if (name && specification && installedDate && state) {
       const payload = {
         name,
         specification,
         installedDate,
         state,
       };
-      console.log(payload)
+      console.log(payload);
+
+      Loading.hourglass('Editing asset...');
 
       assetService
-      .editAsset(assetCode, payload)
-      .then((res) => {
-        if (res.status === 200) {
-          toast.success("SUCCESSFULLY EDIT!!");
-          localStorage.setItem("newAsset", res.data.id);
-          navigate("/manage-asset");
-        }
-      })
-      .catch((error) => {
-        toast.error("EDIT FAILED!!")
-      });
-    }    
+        .editAsset(assetCode, payload)
+        .then((res) => {
+          if (res.status === 200) {
+            toast.success("SUCCESSFULLY EDIT!!");
+            localStorage.setItem("newAsset", res.data.id);
+            navigate("/manage-asset");
+            Loading.remove();
+          }
+        })
+        .catch((error) => {
+          Loading.remove();
+          toast.error("EDIT FAILED!!");
+        });
+    }
   };
 
   const handleCancel = () => {
@@ -89,7 +103,6 @@ const EditAsset = () => {
                 className="btn dropdown-toggle"
                 id="disabled"
                 aria-expanded="false"
-
               >
                 {categoryName}
               </button>
@@ -125,11 +138,11 @@ const EditAsset = () => {
                   type="radio"
                   id="available"
                   name="state"
-                  checked={state === "Available"}
-                  value={"Available"}
+                  checked={state === stateName[0]}
+                  value={stateName[0]}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
-                <label htmlFor="available">Available</label>
+                <label htmlFor="available">{stateName[0]}</label>
               </div>
 
               <div className="form-check">
@@ -138,11 +151,11 @@ const EditAsset = () => {
                   type="radio"
                   id="notAvailable"
                   name="state"
-                  checked={state === "Not Available"}
-                  value={"Not Available"}
+                  checked={state === stateName[1]}
+                  value={stateName[1]}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
-                <label htmlFor="notAvailable">Not Available</label>
+                <label htmlFor="notAvailable">{stateName[1]}</label>
               </div>
 
               <div className="form-check">
@@ -151,11 +164,11 @@ const EditAsset = () => {
                   type="radio"
                   id="notAvailable"
                   name="state"
-                  checked={state === "Waiting for recycling"}
-                  value={"Waiting for recycling"}
+                  checked={state === stateName[2]}
+                  value={stateName[2]}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
-                <label htmlFor="notAvailable">Waiting for recycling</label>
+                <label htmlFor="notAvailable">{stateName[2]}</label>
               </div>
 
               <div className="form-check">
@@ -164,28 +177,22 @@ const EditAsset = () => {
                   type="radio"
                   id="notAvailable"
                   name="state"
-                  checked={state === "Recycled"}
-                  value={"Recycled"}
+                  checked={state === stateName[3]}
+                  value={stateName[3]}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
-                <label htmlFor="notAvailable">Recycled</label>
+                <label htmlFor="notAvailable">{stateName[3]}</label>
               </div>
             </div>
           </div>
 
           <div className="form-create-asset__button-wrapper">
-            <button 
+            <button
               id="save"
               className="form-create-asset__button-item"
               onClick={handleEditAsset}
               disabled={
-                !(
-                  name &&
-                  category &&
-                  specification &&
-                  installedDate &&
-                  state
-                )
+                !(name && category && specification && installedDate && state)
               }
             >
               Save

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import assetService from "../../api/assetService";
 import { toast } from "react-toastify";
 import categoryService from "../../api/categoryService";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
 
 const CreateAsset = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -67,7 +68,8 @@ const CreateAsset = () => {
         installedDate,
         state,
       };
-      console.log(payload)
+
+    Loading.pulse("Creating...");
 
       assetService
         .createAsset(payload)
@@ -77,8 +79,10 @@ const CreateAsset = () => {
             localStorage.getItem("newAsset", res.data.id);
             navigate("/manage-asset");
           }
+        Loading.remove();
         })
         .catch((error) => {
+        Loading.remove();
           console.log(error)
           if (error.response.data) {
             toast.error("ERROR: " + error.response.data.message);

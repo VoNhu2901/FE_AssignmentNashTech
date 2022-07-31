@@ -149,7 +149,8 @@ const ManageAsset = () => {
   const location = localStorage.getItem("location");
 
   const [disable, setDisable] = useState(null);
-  const newAssetId = localStorage.getItem("newAsset");
+  // const newAssetId = localStorage.getItem("newAsset");
+  // console.log(newAssetId);
   
   // get data from backend
   useEffect(() => {
@@ -158,21 +159,21 @@ const ManageAsset = () => {
       .getAllAssets(location)
       .then((res) => {
         const resData = res.data;
-        
+        console.log(resData);
         if (resData.length === 0) {
           toast.error("No asset founded");
         }
 
-        let newAsset = resData.filter((asset) => asset.id === newAssetId);
-        let _data;
-        if (newAssetId) {
-          _data = resData.filter((asset) => asset.id !== newAssetId);
-        }
-
-    
-        let sorted = _data.sort((a, b) => a.name.localeCompare(b.name));
-
-        const finalList = [...newAsset, ...sorted];
+        // let newAsset = resData.filter((asset) => asset.id === newAssetId);
+        // let _data;
+        // if (newAssetId) {
+        //   _data = resData.filter((asset) => asset.id !== newAssetId);
+        // }    
+        // let sorted = _data.sort((a, b) => a.name.localeCompare(b.name));
+        // const finalList = [...newAsset, ...sorted];
+        
+        let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
+        const finalList = [...sorted];
         setNumPage(Math.ceil(finalList.length / rowPerPage));
         setData(finalList); // get data to handle
 

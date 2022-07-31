@@ -72,6 +72,8 @@ const EditUser = () => {
 
       console.log(payload);
 
+      Loading.hourglass("Editing asset...");
+
       userService
         .editUser(staffCode, payload)
         .then((res) => {
@@ -79,9 +81,11 @@ const EditUser = () => {
             toast.success("Successfully edit!!");
             localStorage.setItem("newUser", res.data.userId);
             navigate("/manage-user");
+          Loading.remove();
           }
         })
         .catch((error) => {
+          Loading.remove();
           console.log(error);
           toast.error("EDIT FAILED!!");
         });
