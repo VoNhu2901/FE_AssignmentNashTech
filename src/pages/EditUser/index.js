@@ -12,9 +12,9 @@ const EditUser = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
-  const [gender, setGender] = useState(null);
+  const [gender, setGender] = useState("");
   const [joinedDate, setJoinedDate] = useState("");
-  const [role, setRole] = useState(2);
+  const [role, setRole] = useState("");
   // const [openLocation, setOpenLocation] = useState(false);
   const [location, setLocation] = useState("");
 
@@ -36,13 +36,13 @@ const EditUser = () => {
       .getUserByStaffCode(staffCode)
       .then((res) => {
         const [data] = [...res.data]
-
+        console.log(data);
         setFirstName(data.firstName)
         setLastName(data.lastName)
         setDateOfBirth(data.dateOfBirth)
-        setGender(data.gender)
+        setGender(data.gender === "Male" ? true : false)
         setJoinedDate(data.joinedDate)
-        setRole(data.role)
+        setRole(data.role === "ADMIN" ? 1 : 2)
         setLocation(data.location)
       })
       .catch((error) => {
@@ -56,9 +56,9 @@ const EditUser = () => {
         firstName: firstName,
         lastName: lastName,
         dateOfBirth: dateOfBirth,
-        gender: gender === true ? true : false,
+        gender: gender,
         joinedDate: joinedDate,
-        role: role === 2 ? 2 : 1,
+        role: role,
         location: location,
       };
 
@@ -186,7 +186,7 @@ const EditUser = () => {
                   type="radio"
                   id="male"
                   name="fav_language"
-                  checked={gender}
+                  checked={gender === true}
                   onClick={() => setGender(true)}
                 ></input>
                 <label htmlFor="male">Male</label>
@@ -197,7 +197,7 @@ const EditUser = () => {
                   type="radio"
                   id="female"
                   name="fav_language"
-                  checked={!gender}
+                  checked={gender === false}
                   onClick={() => setGender(false)}
                 ></input>
                 <label htmlFor="female">Female</label>
