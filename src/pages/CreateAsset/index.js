@@ -22,42 +22,47 @@ const CreateAsset = () => {
   const [installedDate, setInstalledDate] = useState("");
   const [state, setState] = useState("");
 
-  // get data Category
-  useEffect(() => {
+  const loadCategory = () => {
+    Loading.standard("Loading...");
     categoryService
       .getAllCategory()
       .then((res) => {
         console.log(res);
         setListCategory(res.data);
-
+        Loading.remove();
       })
       .catch((error) => {
-        toast.error("ERROR SERVER")
+        Loading.remove();
+        toast.error("ERROR SERVER");
       });
-  }, [])
+  };
+  // get data Category
+  useEffect(() => {
+    loadCategory();
+  }, []);
 
   const handleCreateNewCategory = () => {
     const payload = {
-      id:categoryPrefix,
-      name:categoryName,
-    }
+      id: categoryPrefix,
+      name: categoryName,
+    };
 
     categoryService
       .createCategory(payload)
       .then((res) => {
         if (res.status === 201) {
           toast.success("SUCCESSFULLY ADDED!!");
+          loadCategory();
         }
       })
       .catch((error) => {
         if (error.response.data) {
           toast.error("ERROR: " + error.response.data.message);
-        }
-        else if (error) {
+        } else if (error) {
           toast.error("ADD NEW CATEGORY FAILED");
         }
       });
-  }
+  };
 
   const handleCreateNewAsset = () => {
     if (name && category && specification && installedDate && state) {
@@ -69,7 +74,7 @@ const CreateAsset = () => {
         state,
       };
 
-    Loading.pulse("Creating...");
+      Loading.pulse("Creating...");
 
       assetService
         .createAsset(payload)
@@ -79,27 +84,25 @@ const CreateAsset = () => {
             localStorage.getItem("newAsset", res.data.id);
             navigate("/manage-asset");
           }
-        Loading.remove();
+          Loading.remove();
         })
         .catch((error) => {
-        Loading.remove();
-          console.log(error)
+          Loading.remove();
+          console.log(error);
           if (error.response.data) {
             toast.error("ERROR: " + error.response.data.message);
-          }
-          else if (error) {
+          } else if (error) {
             toast.error("CREATE NEW ASSET FAILED!!");
           }
         });
-    }
-    else {
+    } else {
       toast.error("ALL FIELDS ARE REQUIRED");
     }
-  }
+  };
 
   const handleCancelAsset = () => {
     navigate("/manage-asset");
-  }
+  };
 
   return (
     <>
@@ -127,24 +130,24 @@ const CreateAsset = () => {
                 id="dropdownMenuLink"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-
-              >{categoryName}</button>
+              >
+                {categoryName}
+              </button>
 
               <ul className="dropdown-menu bg-light">
-                {
-                  listCategory.map(category =>
-                    <li>
-                      <a className="dropdown-item"
-                        onClick={() => {
-                          setCategoryName(category.name)
-                          setCategory(category.id)
-                        }}
-                      >
+                {listCategory.map((category) => (
+                  <li>
+                    <a
+                      className="dropdown-item"
+                      onClick={() => {
+                        setCategoryName(category.name);
+                        setCategory(category.id);
+                      }}
+                    >
                       {category.name}
-                      </a>
-                    </li>
-                  )
-                }
+                    </a>
+                  </li>
+                ))}
 
                 <li>
                   <hr className="dropdown-divider" />
@@ -172,7 +175,7 @@ const CreateAsset = () => {
                           className="form-control w-50"
                           placeholder="Bluetooth Mouse"
                           value={categoryName}
-                          onChange={(e) => setCategoryName(e.target.value)}
+                          onChange={(e) => {setCategoryName(e.target.value)}}
                         />
                         <input
                           type="text"
@@ -182,7 +185,8 @@ const CreateAsset = () => {
                           onChange={(e) => setCategoryPrefix(e.target.value)}
                         />
                         <div style={{ padding: "5px", cursor: "pointer" }}>
-                          <CheckIcon sx={{ color: "red" }} 
+                          <CheckIcon
+                            sx={{ color: "red" }}
                             onClick={handleCreateNewCategory}
                           />
                           <CloseIcon
@@ -247,18 +251,14 @@ const CreateAsset = () => {
           </div>
 
           <div className="form-create-asset__button-wrapper">
-            <button id="save" className="form-create-asset__button-item"
+            <button
+              id="save"
+              className="form-create-asset__button-item"
               onClick={handleCreateNewAsset}
               disabled={
-                !(
-                  name &&
-                  category &&
-                  specification &&
-                  installedDate &&
-                  state
-                )
+                !(name && category && specification && installedDate && state)
               }
-            >             
+            >
               Save
             </button>
             <button

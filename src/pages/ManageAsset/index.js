@@ -14,6 +14,7 @@ import SubTable from "./SubTable";
 import assetService from "./../../api/assetService";
 import { toast } from "react-toastify";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
+import categoryService from "../../api/categoryService";
 
 const filterState = [
   {
@@ -136,6 +137,10 @@ const tableHead = [
 const ManageAsset = () => {
   const navigate = useNavigate();
 
+  const [categoryPrefix, setCategoryPrefix] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [listCategory, setListCategory] = useState([]);
+
   const [page, setPage] = useState(1);
   const [userList, setUserList] = useState([]);
   const [data, setData] = useState([]);
@@ -145,13 +150,14 @@ const ManageAsset = () => {
   const rowPerPage = 20;
 
   const [filterByState, setFilterByState] = useState([0, 1, 1, 1, 0, 0]);
+  const [filterByCategory, setFilterByCategory] = useState("ALL");
 
   const location = localStorage.getItem("location");
 
   const [disable, setDisable] = useState(null);
   // const newAssetId = localStorage.getItem("newAsset");
   // console.log(newAssetId);
-  
+
   // get data from backend
   useEffect(() => {
     Loading.standard("Loading...");
@@ -159,7 +165,6 @@ const ManageAsset = () => {
       .getAllAssets(location)
       .then((res) => {
         const resData = res.data;
-        console.log(resData);
         if (resData.length === 0) {
           toast.error("No asset founded");
         }
@@ -168,10 +173,10 @@ const ManageAsset = () => {
         // let _data;
         // if (newAssetId) {
         //   _data = resData.filter((asset) => asset.id !== newAssetId);
-        // }    
+        // }
         // let sorted = _data.sort((a, b) => a.name.localeCompare(b.name));
         // const finalList = [...newAsset, ...sorted];
-        
+
         let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
         const finalList = [...sorted];
         setNumPage(Math.ceil(finalList.length / rowPerPage));
@@ -186,6 +191,18 @@ const ManageAsset = () => {
         console.log(err);
         toast.info("No Asset Found");
       });
+    
+    //category
+    categoryService
+      .getAllCategory()
+      .then((res) => {
+        console.log(res.data);
+        setListCategory(res.data);
+      })
+      .catch((error) => {
+        toast.error("ERROR SERVER");
+      });
+    
   }, []);
 
   const isFilter = (asset) => {
@@ -216,6 +233,23 @@ const ManageAsset = () => {
       if (filtered.length === 0) {
         toast.info(
           `No asset in ${location} have state you choose. Choose another state.`
+        );
+      }
+      setUserList(filtered);
+    }
+  };
+
+  const handleFilterByCategory = (type) => {
+    setFilterByCategory(type);
+    setPage(1);
+    if (type === "ALL") {
+      setNumPage(Math.ceil(data.length / rowPerPage));
+      setUserList(data);
+    } else {
+      let filtered = data.filter((asset) => asset.category.id === type);
+      if (filtered.length === 0) {
+        toast.info(
+          `No asset in ${location} have category you choose. Choose another category.`
         );
       }
       setUserList(filtered);
@@ -286,11 +320,6 @@ const ManageAsset = () => {
       });
   };
 
-  // handle delete asset here
-  // const deleteAsset = (code) => {
-  //   alert(code);
-  // };
-
   // handle edit asset here
   const editAsset = (code) => {
     navigate(`/edit-asset/${code}`);
@@ -312,6 +341,8 @@ const ManageAsset = () => {
 
   // handle delete user here
   const checkAssetAvailableToDisable = (code) => {
+    Loading.standard("Loading...");
+
     assetService
       .checkAssetHistory(code)
       .then((res) => {
@@ -320,8 +351,10 @@ const ManageAsset = () => {
         } else {
           setDisable("Error");
         }
+        Loading.remove();
       })
       .catch((err) => {
+        Loading.remove();
         console.log(err);
         setDisable("Error");
       });
@@ -333,7 +366,6 @@ const ManageAsset = () => {
       .then((res) => {
         if (res.status === 200) {
           setDisable(null);
-          // initData();
         }
       })
       .catch((err) => {
@@ -341,6 +373,8 @@ const ManageAsset = () => {
         toast.error("Internet interrupt. Try later");
       });
   };
+
+  
 
   return (
     <>
@@ -387,6 +421,7 @@ const ManageAsset = () => {
         className={
           "modal fade " + (disable === "Error" ? " show d-block" : " d-none")
         }
+        // className={"modal fade  show d-block"}
         tabIndex="-1"
         role="dialog"
       >
@@ -407,7 +442,19 @@ const ManageAsset = () => {
                 Cannot delete the asset because it belongs to one or more
                 historical assignments. <br />
                 If the asset is not able to be used anymore, please update its
-                state in <a href="#">Edit Asset page</a>
+                state in{" "}
+                <span
+                  style={{
+                    color: "dodgerblue",
+                    textDecoration: "underline",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    navigate(`/edit-asset/${disable}`);
+                  }}
+                >
+                  Edit Asset page
+                </span>
               </div>
             </div>
           </div>
@@ -477,19 +524,34 @@ const ManageAsset = () => {
                   className="dropdown-menu form-check"
                   aria-labelledby="dropMenuFilterType"
                 >
-                  {filterCategory.map((type) => (
+                  <li>
+                    <div>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value="All"
+                        id="typeAll"
+                        checked={filterByCategory === "ALL"}
+                        onClick={() => handleFilterByCategory("ALL")}
+                      />
+                      <label className="form-check-label" htmlFor="typeAll">
+                        All
+                      </label>
+                    </div>
+                  </li>
+                  {listCategory.map((type) => (
                     <li key={type.id}>
                       <div>
                         <input
                           className="form-check-input"
                           type="checkbox"
-                          value={type.value}
+                          value={type.id}
                           id={type.id}
-                          // checked={filterBy === type.checked}
-                          // onChange={() => handleFilter(type.checked)}
+                          checked={filterByCategory === type.id}
+                          onChange={() => handleFilterByCategory(type.id)}
                         />
                         <label className="form-check-label" htmlFor={type.id}>
-                          {type.value}
+                          {type.name}
                         </label>
                       </div>
                     </li>
@@ -559,15 +621,35 @@ const ManageAsset = () => {
               ).map((ele, index) => {
                 return (
                   <>
-                    <tr
-                      data-bs-toggle="modal"
-                      data-bs-target={"#detailUserViewModal" + ele.id}
-                      key={ele.id}
-                    >
-                      <td className="border-bottom">{ele.id}</td>
-                      <td className="border-bottom">{ele.name}</td>
-                      <td className="border-bottom">{ele.category.name}</td>
-                      <td className="border-bottom">{ele.state}</td>
+                    <tr key={ele.id}>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.id}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.name}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.category.name}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.state}
+                      </td>
                       <td>
                         <button className="btn btn-outline-secondary border-0">
                           <EditIcon onClick={() => editAsset(ele.id)} />
