@@ -84,3 +84,12 @@
   font-style: italic;
   cursor: pointer;
 }
+button#dropdownMenuLink.btn.border.dropdown-toggle {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center;
+  height: 37px;
+}
+button#dropdownMenuLink.btn.border.dropdown-toggle::after {
+  margin-left: auto !important;
+}
