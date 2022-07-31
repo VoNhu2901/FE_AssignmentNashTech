@@ -21,6 +21,9 @@ const assetService = {
   },
   getAssetById: (id) => {
     return axiosClient.get(`/api/asset/${id}`);
+  },
+  checkAssetHistory: (id) => {
+    return axiosClient.get(`/api/asset/check/${id}`);
   }
 };
 

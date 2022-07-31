@@ -148,21 +148,29 @@ const ManageAsset = () => {
   const location = localStorage.getItem("location");
 
   const [disable, setDisable] = useState(null);
-
+  const newAssetId = localStorage.getItem("newAsset");
+  
   // get data from backend
   useEffect(() => {
     assetService
       .getAllAssets(location)
       .then((res) => {
         const resData = res.data;
+        
         if (resData.length === 0) {
           toast.error("No asset founded");
         }
 
-        console.log(resData);
-        let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
+        let newAsset = resData.filter((asset) => asset.id === newAssetId);
+        let _data;
+        if (newAssetId) {
+          _data = resData.filter((asset) => asset.id !== newAssetId);
+        }
 
-        const finalList = [...sorted];
+    
+        let sorted = _data.sort((a, b) => a.name.localeCompare(b.name));
+
+        const finalList = [...newAsset, ...sorted];
         setNumPage(Math.ceil(finalList.length / rowPerPage));
         setData(finalList); // get data to handle
 
@@ -299,35 +307,35 @@ const ManageAsset = () => {
 
   // handle delete user here
   const checkAssetAvailableToDisable = (code) => {
-    // assetService
-    //   .checkAssetCanDelete(code)
-    //   .then((res) => {
-    //     if (res.data) {
-    //       setDisable(code);
-    //     } else {
-    //       setDisable("Error");
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     setDisable("Error");
-    //   });
+    assetService
+      .checkAssetHistory(code)
+      .then((res) => {
+        if (res.data) {
+          setDisable(code);
+        } else {
+          setDisable("Error");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setDisable("Error");
+      });
   };
 
-  // const disableAsset = () => {
-  //   assetService
-  //     .disableAsset(disable)
-  //     .then((res) => {
-  //       if (res.status === 200) {
-  //         setDisable(null);
-  //         // initData();
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       toast.error("Internet interrupt. Try later");
-  //     });
-  // };
+  const disableAsset = () => {
+    assetService
+      .deleteAsset(disable)
+      .then((res) => {
+        if (res.status === 200) {
+          setDisable(null);
+          // initData();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Internet interrupt. Try later");
+      });
+  };
 
   return (
     <>
@@ -353,7 +361,7 @@ const ManageAsset = () => {
                 <button
                   className="btn btn-danger"
                   id="disable-button"
-                  // onClick={disableUser}
+                  onClick={disableAsset}
                 >
                   Delete
                 </button>

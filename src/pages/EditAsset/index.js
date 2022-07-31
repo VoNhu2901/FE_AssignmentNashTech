@@ -125,6 +125,7 @@ const EditAsset = () => {
                   type="radio"
                   id="available"
                   name="state"
+                  checked={state === "Available"}
                   value={"Available"}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
@@ -137,6 +138,7 @@ const EditAsset = () => {
                   type="radio"
                   id="notAvailable"
                   name="state"
+                  checked={state === "Not Available"}
                   value={"Not Available"}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
@@ -149,6 +151,7 @@ const EditAsset = () => {
                   type="radio"
                   id="notAvailable"
                   name="state"
+                  checked={state === "Waiting for recycling"}
                   value={"Waiting for recycling"}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
@@ -161,6 +164,7 @@ const EditAsset = () => {
                   type="radio"
                   id="notAvailable"
                   name="state"
+                  checked={state === "Recycled"}
                   value={"Recycled"}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
