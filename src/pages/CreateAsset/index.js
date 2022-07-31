@@ -25,7 +25,7 @@ const [isOpen, setIsOpen] = useState(false);
             <label for="category">Category</label>
             <div className="btn-group">
               <button
-                class="btn border dropdown-toggle"
+                className="btn border dropdown-toggle w-100"
                 type="button"
                 id="dropdownMenuLink"
                 data-bs-toggle="dropdown"
@@ -62,15 +62,15 @@ const [isOpen, setIsOpen] = useState(false);
                 ) : (
                   <>
                     <li>
-                      <div class="input-group px-3">
+                      <div className="input-group px-3">
                         <input
                           type="text"
-                          class="form-control w-50"
+                          className="form-control w-50"
                           placeholder="Bluetooth Mouse"
                         />
                         <input
                           type="text"
-                          class="form-control w-15"
+                          className="form-control w-15"
                           placeholder="BM"
                         />
                         <div style={{ padding: "5px", cursor: "pointer" }}>

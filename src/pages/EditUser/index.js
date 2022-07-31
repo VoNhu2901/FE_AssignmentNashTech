@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import userService from "../../api/userService";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import "./style.scss";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
+
 
 const EditUser = () => {
   const navigate = useNavigate();
@@ -28,37 +30,44 @@ const EditUser = () => {
     setLocation(_location);
   }, []);
 
-
   // get data
   useEffect(() => {
+    Loading.standard("Loading...");
+
     userService
       .getUserByStaffCode(staffCode)
       .then((res) => {
-        const [data] = [...res.data]
+        const [data] = [...res.data];
+        console.log(data);
+        const isMale = data.gender === "Male";
+        const isAdmin = data.role === "ADMIN" ? 1 : 2;
 
-        setFirstName(data.firstName)
-        setLastName(data.lastName)
-        setDateOfBirth(data.dateOfBirth)
-        setGender(data.gender)
-        setJoinedDate(data.joinedDate)
-        setRole(data.role)
-        setLocation(data.location)
+        setFirstName(data.firstName);
+        setLastName(data.lastName);
+        setDateOfBirth(data.dateOfBirth);
+        setGender(isMale);
+        setJoinedDate(data.joinedDate);
+        setRole(isAdmin);
+        setLocation(data.location);
+
+        Loading.remove();
       })
       .catch((error) => {
+        Loading.remove();
         console.log(error);
       });
-  }, [])
+  }, []);
 
   const handleEditUser = () => {
     if (dateOfBirth && joinedDate && role) {
       const payload = {
-        firstName: firstName,
-        lastName: lastName,
-        dateOfBirth: dateOfBirth,
-        gender: gender,
-        joinedDate: joinedDate,
-        role: role === "STAFF" ? 1 : 2,
-        location: location,
+        firstName,
+        lastName,
+        dateOfBirth,
+        gender,
+        joinedDate,
+        role,
+        location,
       };
 
       console.log(payload);
@@ -86,11 +95,11 @@ const EditUser = () => {
   const handleRole = (e) => {
     const value = e.target.value;
     setRole(parseInt(value));
-    if (value === "1") {
-      setOpenLocation(true);
-    } else if (value === "2") {
-      setOpenLocation(false);
-    }
+    // if (value === 1) {
+    //   setOpenLocation(true);
+    // } else if (value === 2) {
+    //   setOpenLocation(false);
+    // }
   };
   const calculateAge = (date, dob) => {
     let today = new Date(date);

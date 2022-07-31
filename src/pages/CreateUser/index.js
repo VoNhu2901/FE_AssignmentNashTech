@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import userService from "../../api/userService";
 import "./style.scss";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
+
 
 const CreateUser = () => {
   const navigate = useNavigate();
@@ -46,6 +48,8 @@ const CreateUser = () => {
         location,
       };
 
+    Loading.pulse("Creating...");
+
       userService
         .createUser(payload)
         .then((res) => {
@@ -54,8 +58,10 @@ const CreateUser = () => {
             localStorage.setItem("newUser", res.data.userId);
             navigate("/manage-user");
           }
+        Loading.remove();
         })
         .catch((error) => {
+        Loading.remove();
           console.log(error);
           if (error.response.data) {
             toast.error("ERROR: " + error.response.data.message);
