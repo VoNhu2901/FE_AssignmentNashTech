@@ -1,11 +1,102 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./style.scss";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
+import { useNavigate } from "react-router-dom";
+import assetService from "../../api/assetService";
+import { toast } from "react-toastify";
+import categoryService from "../../api/categoryService";
 
 const CreateAsset = () => {
-const [isOpen, setIsOpen] = useState(false);
-  
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const [categoryPrefix, setCategoryPrefix] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [listCategory, setListCategory] = useState([]);
+
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
+  const [specification, setSpecification] = useState("");
+  const [installedDate, setInstalledDate] = useState("");
+  const [state, setState] = useState("");
+
+  // get data Category
+  useEffect(() => {
+    categoryService
+      .getAllCategory()
+      .then((res) => {
+        console.log(res);
+        setListCategory(res.data);
+
+      })
+      .catch((error) => {
+        toast.error("ERROR SERVER")
+      });
+  }, [])
+
+  const handleCreateNewCategory = () => {
+    const payload = {
+      id:categoryPrefix,
+      name:categoryName,
+    }
+
+    categoryService
+      .createCategory(payload)
+      .then((res) => {
+        if (res.status === 201) {
+          toast.success("SUCCESSFULLY ADDED!!");
+        }
+      })
+      .catch((error) => {
+        if (error.response.data) {
+          toast.error("ERROR: " + error.response.data.message);
+        }
+        else if (error) {
+          toast.error("ADD NEW CATEGORY FAILED");
+        }
+      });
+  }
+
+  const handleCreateNewAsset = () => {
+    if (name && category && specification && installedDate && state) {
+      const payload = {
+        name,
+        category,
+        specification,
+        installedDate,
+        state,
+      };
+      console.log(payload)
+
+      assetService
+        .createAsset(payload)
+        .then((res) => {
+          if (res.status === 201) {
+            toast.success("SUCCESSFULLY ADDED!!");
+            localStorage.getItem("newAsset", res.data.id);
+            navigate("/manage-asset");
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+          if (error.response.data) {
+            toast.error("ERROR: " + error.response.data.message);
+          }
+          else if (error) {
+            toast.error("CREATE NEW ASSET FAILED!!");
+          }
+        });
+    }
+    else {
+      toast.error("ALL FIELDS ARE REQUIRED");
+    }
+  }
+
+  const handleCancelAsset = () => {
+    navigate("/manage-asset");
+  }
+
   return (
     <>
       <div className="form-create-asset">
@@ -19,6 +110,8 @@ const [isOpen, setIsOpen] = useState(false);
                 type="text"
                 id="name"
                 className="form-create-asset__input"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               ></input>
             </div>
 
@@ -30,18 +123,25 @@ const [isOpen, setIsOpen] = useState(false);
                 id="dropdownMenuLink"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-              ></button>
+
+              >{categoryName}</button>
+
               <ul className="dropdown-menu bg-light">
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Menu item
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Menu item
-                  </a>
-                </li>
+                {
+                  listCategory.map(category =>
+                    <li>
+                      <a className="dropdown-item"
+                        onClick={() => {
+                          setCategoryName(category.name)
+                          setCategory(category.id)
+                        }}
+                      >
+                      {category.name}
+                      </a>
+                    </li>
+                  )
+                }
+
                 <li>
                   <hr className="dropdown-divider" />
                 </li>
@@ -67,14 +167,20 @@ const [isOpen, setIsOpen] = useState(false);
                           type="text"
                           className="form-control w-50"
                           placeholder="Bluetooth Mouse"
+                          value={categoryName}
+                          onChange={(e) => setCategoryName(e.target.value)}
                         />
                         <input
                           type="text"
                           className="form-control w-15"
                           placeholder="BM"
+                          value={categoryPrefix}
+                          onChange={(e) => setCategoryPrefix(e.target.value)}
                         />
                         <div style={{ padding: "5px", cursor: "pointer" }}>
-                          <CheckIcon sx={{ color: "red" }} />
+                          <CheckIcon sx={{ color: "red" }} 
+                            onClick={handleCreateNewCategory}
+                          />
                           <CloseIcon
                             onClick={() => {
                               setIsOpen(false);
@@ -94,6 +200,8 @@ const [isOpen, setIsOpen] = useState(false);
                 type="text"
                 id="specification"
                 className="form-create-asset__input"
+                value={specification}
+                onChange={(e) => setSpecification(e.target.value)}
               ></textarea>
             </div>
 
@@ -103,6 +211,8 @@ const [isOpen, setIsOpen] = useState(false);
                 type="date"
                 id="installedDate"
                 className="form-create-asset__input"
+                value={installedDate}
+                onChange={(e) => setInstalledDate(e.target.value)}
               ></input>
             </div>
 
@@ -114,6 +224,7 @@ const [isOpen, setIsOpen] = useState(false);
                   type="radio"
                   id="available"
                   name="state"
+                  onClick={() => setState("Available")}
                 ></input>
                 <label htmlFor="available">Available</label>
               </div>
@@ -124,6 +235,7 @@ const [isOpen, setIsOpen] = useState(false);
                   type="radio"
                   id="notAvailable"
                   name="state"
+                  onClick={() => setState("Not Available")}
                 ></input>
                 <label htmlFor="notAvailable">Not Available</label>
               </div>
@@ -131,13 +243,24 @@ const [isOpen, setIsOpen] = useState(false);
           </div>
 
           <div className="form-create-asset__button-wrapper">
-            <button id="save" className="form-create-asset__button-item">
+            <button id="save" className="form-create-asset__button-item"
+              onClick={handleCreateNewAsset}
+              disabled={
+                !(
+                  name &&
+                  category &&
+                  specification &&
+                  installedDate &&
+                  state
+                )
+              }
+            >             
               Save
             </button>
             <button
               id="cancel"
               className="form-create-asset__button-item"
-              // onClick={handleCancel}
+              onClick={handleCancelAsset}
             >
               Cancel
             </button>
