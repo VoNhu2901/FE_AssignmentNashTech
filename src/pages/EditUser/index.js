@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import userService from "../../api/userService";
-import { useParams } from 'react-router-dom';
 import "./style.scss";
 
 const EditUser = () => {
@@ -12,10 +11,9 @@ const EditUser = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
-  const [gender, setGender] = useState(null);
+  const [gender, setGender] = useState("");
   const [joinedDate, setJoinedDate] = useState("");
-  const [role, setRole] = useState("2");
-  const [openLocation, setOpenLocation] = useState(false);
+  const [role, setRole] = useState("");
   const [location, setLocation] = useState("");
 
   const [validateDOB, setValidateDOB] = useState("");
@@ -28,26 +26,25 @@ const EditUser = () => {
     setLocation(_location);
   }, []);
 
-
   // get data
   useEffect(() => {
     userService
       .getUserByStaffCode(staffCode)
       .then((res) => {
-        const [data] = [...res.data]
-
-        setFirstName(data.firstName)
-        setLastName(data.lastName)
-        setDateOfBirth(data.dateOfBirth)
-        setGender(data.gender)
-        setJoinedDate(data.joinedDate)
-        setRole(data.role)
-        setLocation(data.location)
+        const [data] = [...res.data];
+        console.log(data);
+        setFirstName(data.firstName);
+        setLastName(data.lastName);
+        setDateOfBirth(data.dateOfBirth);
+        setGender(data.gender === "Male" ? true : false);
+        setJoinedDate(data.joinedDate);
+        setRole(data.role === "ADMIN" ? 1 : 2);
+        setLocation(data.location);
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [])
+  }, []);
 
   const handleEditUser = () => {
     if (dateOfBirth && joinedDate && role) {
@@ -57,7 +54,7 @@ const EditUser = () => {
         dateOfBirth: dateOfBirth,
         gender: gender,
         joinedDate: joinedDate,
-        role: role === "STAFF" ? 1 : 2,
+        role: role,
         location: location,
       };
 
@@ -86,12 +83,8 @@ const EditUser = () => {
   const handleRole = (e) => {
     const value = e.target.value;
     setRole(parseInt(value));
-    if (value === "1") {
-      setOpenLocation(true);
-    } else if (value === "2") {
-      setOpenLocation(false);
-    }
   };
+
   const calculateAge = (date, dob) => {
     let today = new Date(date);
     let dOB = new Date(dob);
@@ -236,23 +229,6 @@ const EditUser = () => {
                 STAFF
               </option>
             </select>
-
-            {/* {openLocation && (
-              <>
-                <label for="type">Location</label>
-                <select
-                  className="form-edit-user-information__input"
-                  name="cars"
-                  id="cars"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                >
-                  <option value={"HCM"}>Ho Chi Minh</option>
-                  <option value={"DN"}>Da Nang</option>
-                  <option value={"HN"}>Ha Noi</option>
-                </select>
-              </>
-            )} */}
           </div>
 
           <div className="form-edit-user-information__button-wrapper">
