@@ -265,7 +265,9 @@ const ManageAsset = () => {
       .then((res) => {
         const resData = res.data;
         if (resData.length === 0) {
-          toast.error("No asset founded");
+          toast.error(
+            `No result match with ${content}. Try again with correct format`
+          );
         }
 
         let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
@@ -277,7 +279,11 @@ const ManageAsset = () => {
       })
       .catch((err) => {
         console.log(err);
-        toast.info("No Asset Found");
+        setUserList([]);
+        setNumPage(1);
+        toast.info(
+          `No result match with ${content}. Try again with correct format`
+        );
       });
   };
 
