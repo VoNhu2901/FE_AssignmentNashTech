@@ -44,10 +44,14 @@ const ManageUser = () => {
           toast.error("No user founded");
         }
 
-        let _data = resData.filter((user) => user.staffCode !== userId);
+        let _data = [];
 
         if (newUserId) {
-          _data = resData.filter((user) => user.staffCode !== newUserId);
+          _data = resData.filter(
+            (user) => user.staffCode !== newUserId || user.staffCode !== userId
+          );
+        } else {
+          _data = resData.filter((user) => user.staffCode !== userId);
         }
         let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
 
@@ -81,14 +85,15 @@ const ManageUser = () => {
   };
 
   const sortByCol = (sortBy) => {
+    const _data = [...userList];
     switch (sortBy) {
       case "code":
         sortBy === currentCol
           ? setUserList(
-              data.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
+              _data.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
             )
           : setUserList(
-              data.sort((a, b) => b.staffCode.localeCompare(a.staffCode))
+              _data.sort((a, b) => b.staffCode.localeCompare(a.staffCode))
             );
 
         break;
@@ -96,27 +101,27 @@ const ManageUser = () => {
       case "name":
         sortBy === currentCol
           ? setUserList(
-              data.sort((a, b) => a.fullName.localeCompare(b.fullName))
+              _data.sort((a, b) => a.fullName.localeCompare(b.fullName))
             )
           : setUserList(
-              data.sort((a, b) => b.fullName.localeCompare(a.fullName))
+              _data.sort((a, b) => b.fullName.localeCompare(a.fullName))
             );
         break;
 
       case "date":
         sortBy === currentCol
           ? setUserList(
-              data.sort((a, b) => a.joinedDate.localeCompare(b.joinedDate))
+              _data.sort((a, b) => a.joinedDate.localeCompare(b.joinedDate))
             )
           : setUserList(
-              data.sort((a, b) => b.joinedDate.localeCompare(a.joinedDate))
+              _data.sort((a, b) => b.joinedDate.localeCompare(a.joinedDate))
             );
         break;
 
       case "type":
         sortBy === currentCol
-          ? setUserList(data.sort((a, b) => a.role.localeCompare(b.role)))
-          : setUserList(data.sort((a, b) => b.role.localeCompare(a.role)));
+          ? setUserList(_data.sort((a, b) => a.role.localeCompare(b.role)))
+          : setUserList(_data.sort((a, b) => b.role.localeCompare(a.role)));
         break;
 
       default:
