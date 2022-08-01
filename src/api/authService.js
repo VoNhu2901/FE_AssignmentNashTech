@@ -5,6 +5,7 @@ const authService = {
   login: (params) => axiosClient.post("/api/auth/login", params),
   logout: () => axiosClient.post("api/auth/logout"),
   verifyToken: () => axiosClient.post("auth/verify-token"),
+  changePassword: (params) => axiosClient.post(`/api/auth/user/changePassword`, params),
 };
 
 export default authService;

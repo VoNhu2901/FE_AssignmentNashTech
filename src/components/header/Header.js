@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import authService from "../../api/authService";
 import IconEyeClose from "../../components/icon/IconEyeClose";
 import IconEyeOpen from './../../components/icon/IconEyeOpen';
-import userService from "../../api/userService";
 import { toast } from "react-toastify";
 
 const Header = ({ header }) => {
@@ -26,6 +25,7 @@ const Header = ({ header }) => {
       .logout()
       .then(() => {
         localStorage.clear();
+        toast.success("Logout successfully!");
         navigate("/login");
       })
       .catch((err) => {
@@ -40,7 +40,7 @@ const Header = ({ header }) => {
       newPassword,
       oldPassword,
     };
-    userService
+    authService
       .changePassword(payload)
       .then(() => {
         setAction(1);
@@ -50,14 +50,17 @@ const Header = ({ header }) => {
       .catch((err) => {
         console.log(err);
         if (err.response.data) {
-          // toast.error("Old Password Incorrect!");
           setError("Password is incorrect");
         }
       });
   };
-
   const handleClose = () => {
     setAction(0);
+    setNewPassword("");
+    setOldPassword("");
+    setError("");
+    setTogglePasswordNew(false);
+    setTogglePasswordOld(false);
   };
 
   return (
@@ -121,8 +124,6 @@ const Header = ({ header }) => {
               </li>
               <li
                 className="dropdown-item"
-                // data-bs-toggle="modal"
-                // data-bs-target="#changePasswordModal"
                 id="li-bottom"
                 onClick={() => setAction(2)}
               >
@@ -172,12 +173,9 @@ const Header = ({ header }) => {
           {/* <!-- Modal change password --> */}
           <div
             className={action === 2 ? " modal show d-block" : " modal d-none"}
-            // id="changePasswordModal"
+            id="changePasswordModal"
             tabIndex="-1"
             role="dialog"
-
-            // aria-labelledby="ModalLabel"
-            // aria-hidden="true"
           >
             <div className="modal-dialog">
               <div className="modal-content">
@@ -204,6 +202,7 @@ const Header = ({ header }) => {
                               : "border rounded"
                           }
                           onChange={(e) => setOldPassword(e.target.value)}
+                          onFocus={() => setError("")}
                         />
                         {!togglePasswordOld ? (
                           <IconEyeClose
@@ -230,6 +229,7 @@ const Header = ({ header }) => {
                         className="border rounded"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
+                        onFocus={() => setError("")}
                       />
                       {!togglePasswordNew ? (
                         <IconEyeClose
@@ -258,7 +258,7 @@ const Header = ({ header }) => {
                         className="btn btn-primary ms-2"
                         data-bs-dismiss="modal"
                         id="btnCancel"
-                        onClick={() => setAction(0)}
+                        onClick={handleClose}
                       >
                         Cancel
                       </button>
