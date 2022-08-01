@@ -58,59 +58,6 @@ const state = [
   "Recycled",
 ];
 
-const filterCategory = [
-  {
-    id: "categoryAll",
-    value: "All",
-    checked: "ALL",
-  },
-  {
-    id: "categoryBluetoothMouse",
-    value: "Bluetooth Mouse",
-    checked: "BLUETOOTH_MOUSE",
-  },
-  {
-    id: "categoryHeadset",
-    value: "Headset",
-    checked: "HEADSET",
-  },
-  {
-    id: "categoryIpad",
-    value: "Ipad",
-    checked: "IPAD",
-  },
-  {
-    id: "categoryIphone",
-    value: "Iphone",
-    checked: "IPHONE",
-  },
-  {
-    id: "categoryLaptop",
-    value: "Laptop",
-    checked: "LAPTOP",
-  },
-  {
-    id: "categoryMobile",
-    value: "Mobile",
-    checked: "MOBILE",
-  },
-  {
-    id: "categoryMonitor",
-    value: "Monitor",
-    checked: "MONITOR",
-  },
-  {
-    id: "categoryPersonalComputer",
-    value: "Personal Computer",
-    checked: "PERSONAL_COMPUTER",
-  },
-  {
-    id: "categoryTablet",
-    value: "Tablet",
-    checked: "TABLET",
-  },
-];
-
 const tableHead = [
   {
     id: "assetcode",
@@ -155,12 +102,9 @@ const ManageAsset = () => {
   const location = localStorage.getItem("location");
 
   const [disable, setDisable] = useState(null);
-  // const newAssetId = localStorage.getItem("newAsset");
-  // console.log(newAssetId);
+  const newAssetId = localStorage.getItem("newAsset");
 
-  // get data from backend
-  useEffect(() => {
-    Loading.standard("Loading...");
+  const loadData = () => {
     assetService
       .getAllAssets(location)
       .then((res) => {
@@ -169,21 +113,24 @@ const ManageAsset = () => {
           toast.error("No asset founded");
         }
 
-        // let newAsset = resData.filter((asset) => asset.id === newAssetId);
-        // let _data;
-        // if (newAssetId) {
-        //   _data = resData.filter((asset) => asset.id !== newAssetId);
-        // }
-        // let sorted = _data.sort((a, b) => a.name.localeCompare(b.name));
-        // const finalList = [...newAsset, ...sorted];
+        let newAsset = resData.filter((asset) => asset.id === newAssetId);
+        let _data = [];
+        if (newAssetId) {
+          _data = resData.filter((asset) => asset.id !== newAssetId);
+        } else {
+          _data = [...resData];
+        }
+        console.log(resData);
+        const filterByDefault = _data.filter(isFilter);
+        let sorted = filterByDefault.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
 
-        let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
-        const finalList = [...sorted];
-        setNumPage(Math.ceil(finalList.length / rowPerPage));
-        setData(finalList); // get data to handle
+        setData(resData); // get data to handle
 
-        const filterByDefault = finalList.filter(isFilter);
-        setUserList(filterByDefault); // get data to display (have change)
+        const finalList = [...newAsset, ...sorted];
+        setUserList(finalList); // get data to display (have change)
+        setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
         Loading.remove();
       })
       .catch((err) => {
@@ -191,18 +138,23 @@ const ManageAsset = () => {
         console.log(err);
         toast.info("No Asset Found");
       });
-    
+
     //category
     categoryService
       .getAllCategory()
       .then((res) => {
-        console.log(res.data);
         setListCategory(res.data);
       })
       .catch((error) => {
         toast.error("ERROR SERVER");
       });
-    
+  };
+
+  // get data from backend
+  useEffect(() => {
+    Loading.standard("Loading...");
+    loadData();
+    localStorage.removeItem("newAsset");
   }, []);
 
   const isFilter = (asset) => {
@@ -225,11 +177,15 @@ const ManageAsset = () => {
     let a = filterByState[index];
     temp[index] = a === 1 ? 0 : 1;
     setFilterByState([...temp]);
+    setPage(1);
 
     if (filterByState[0]) {
       setUserList(data);
+      setNumPage(Math.ceil(data.length / rowPerPage));
     } else {
       let filtered = data.filter(isFilter);
+      setNumPage(Math.ceil(filtered.length / rowPerPage));
+      console.log(filtered.length);
       if (filtered.length === 0) {
         toast.info(
           `No asset in ${location} have state you choose. Choose another state.`
@@ -264,34 +220,36 @@ const ManageAsset = () => {
       // if click new column
       setCurrentCol(col); // set currentCol
     }
+    const _data = [...userList];
+
     switch (col) {
       case "assetcode":
         col === currentCol
-          ? setUserList(data.sort((a, b) => a.id.localeCompare(b.id)))
-          : setUserList(data.sort((a, b) => b.id.localeCompare(a.id)));
+          ? setUserList(_data.sort((a, b) => a.id.localeCompare(b.id)))
+          : setUserList(_data.sort((a, b) => b.id.localeCompare(a.id)));
         break;
       case "assetname":
         col === currentCol
-          ? setUserList(data.sort((a, b) => a.name.localeCompare(b.name)))
-          : setUserList(data.sort((a, b) => b.name.localeCompare(a.name)));
+          ? setUserList(_data.sort((a, b) => a.name.localeCompare(b.name)))
+          : setUserList(_data.sort((a, b) => b.name.localeCompare(a.name)));
         break;
       case "category":
         col === currentCol
           ? setUserList(
-              data.sort((a, b) =>
+              _data.sort((a, b) =>
                 a.category.name.localeCompare(b.category.name)
               )
             )
           : setUserList(
-              data.sort((a, b) =>
+              _data.sort((a, b) =>
                 b.category.name.localeCompare(a.category.name)
               )
             );
         break;
       case "state":
         col === currentCol
-          ? setUserList(data.sort((a, b) => a.state.localeCompare(b.state)))
-          : setUserList(data.sort((a, b) => b.state.localeCompare(a.state)));
+          ? setUserList(_data.sort((a, b) => a.state.localeCompare(b.state)))
+          : setUserList(_data.sort((a, b) => b.state.localeCompare(a.state)));
         break;
       default:
         break;
@@ -341,7 +299,6 @@ const ManageAsset = () => {
 
   // handle delete user here
   const checkAssetAvailableToDisable = (code) => {
-    Loading.standard("Loading...");
 
     assetService
       .checkAssetHistory(code)
@@ -351,30 +308,32 @@ const ManageAsset = () => {
         } else {
           setDisable("Error");
         }
-        Loading.remove();
       })
       .catch((err) => {
-        Loading.remove();
         console.log(err);
         setDisable("Error");
       });
   };
 
   const disableAsset = () => {
+    Loading.standard("Deleting...");
+
     assetService
       .deleteAsset(disable)
       .then((res) => {
         if (res.status === 200) {
           setDisable(null);
+          loadData();
+          toast.success("Asset Deleted");
         }
+        Loading.remove();
       })
       .catch((err) => {
+        Loading.remove();
         console.log(err);
-        toast.error("Internet interrupt. Try later");
+        toast.error("Cannot delete asset");
       });
   };
-
-  
 
   return (
     <>

@@ -81,7 +81,7 @@ const CreateAsset = () => {
         .then((res) => {
           if (res.status === 201) {
             toast.success("SUCCESSFULLY ADDED!!");
-            localStorage.getItem("newAsset", res.data.id);
+            localStorage.setItem("newAsset", res.data.id);
             navigate("/manage-asset");
           }
           Loading.remove();
