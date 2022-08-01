@@ -27,10 +27,6 @@ const userService = {
   disableUser: (staffCode) => {
     return axiosClient.patch(`/api/user/disable/${staffCode}`);
   },
-
-  changePassword: (params) => {
-    return axiosClient.post(`/api/user/changePassword`, params);
-  },
 };
 
 export default userService;
