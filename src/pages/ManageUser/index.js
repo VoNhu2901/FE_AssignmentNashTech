@@ -23,7 +23,6 @@ const ManageUser = () => {
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
   const rowPerPage = 20;
-
   const [disable, setDisable] = useState(null);
 
   /**
