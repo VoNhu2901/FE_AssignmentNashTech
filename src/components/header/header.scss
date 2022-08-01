@@ -1,5 +1,11 @@
 @use "../../scss/" as *;
 
+@media only screen and (max-width: 768px) {
+  label {
+    font-size: 0.9em;
+  }
+}
+
 .header {
   background-color: $header-bg;
   height: 70px;
@@ -11,15 +17,16 @@
   justify-content: space-between;
   padding: 25px;
 
-  &__username {
-    color: white;
-    font-size: 20px;
-  }
 
   button {
     background-color: #cf2338;
-    color: aliceblue;
+    color: white;
     border-style: none;
+    border-radius: 8px;  
+  }
+  button span{
+    font-size: 25px;
+    font-weight: bold;
   }
 
   button:hover {
@@ -27,7 +34,7 @@
   }
 
   button:not(:disabled):not(:disabled):active {
-    background-color: #e18293;
+    background-color: #cf2338;
   }
 
   #user_header {
@@ -65,4 +72,22 @@
   #btnLogout {
     border: 1px solid white;
   }
+
+  .new-password {
+    color: #20191a;
+    font-size: 17px;
+    position: relative;
+  }
+
+  .old-password {
+    color: #20191a;
+    font-size: 17px;
+    position: relative;
+  }
+
+  .icon-eye {
+    position: absolute;
+    right: 5px;
+  }
+
 }
