@@ -8,6 +8,7 @@ import {
   FilterAltIcon,
   HighlightOffIcon,
   SearchIcon,
+  EditOffIcon,
 } from "../../components/icon";
 import "./index.scss";
 import SubTable from "./SubTable";
@@ -105,6 +106,8 @@ const ManageAsset = () => {
   const newAssetId = localStorage.getItem("newAsset");
 
   const loadData = () => {
+    Loading.standard("Loading...");
+
     assetService
       .getAllAssets(location)
       .then((res) => {
@@ -152,7 +155,6 @@ const ManageAsset = () => {
 
   // get data from backend
   useEffect(() => {
-    Loading.standard("Loading...");
     loadData();
     localStorage.removeItem("newAsset");
   }, []);
@@ -611,7 +613,15 @@ const ManageAsset = () => {
                       </td>
                       <td>
                         <button className="btn btn-outline-secondary border-0">
-                          <EditIcon onClick={() => editAsset(ele.id)} />
+                          {ele.state === "Assigned" ? (
+                            <>
+                              <EditOffIcon/>
+                            </>
+                          ) : (
+                            <>
+                              <EditIcon onClick={() => editAsset(ele.id)} />
+                            </>
+                          )}
                         </button>
                         <button
                           className="btn btn-outline-danger border-0"
