@@ -76,7 +76,7 @@ const EditUser = () => {
             toast.success("Successfully edit!!");
             localStorage.setItem("newUser", res.data.userId);
             navigate("/manage-user");
-          Loading.remove();
+            Loading.remove();
           }
         })
         .catch((error) => {
@@ -118,8 +118,10 @@ const EditUser = () => {
   };
 
   const handleCheckJoinedDateUser = () => {
-    let date = new Date(joinedDate);
-    if (date.getDay() === 6 || date.getDay() === 0) {
+    let joindate = new Date(joinedDate);
+    let dob = new Date(dateOfBirth);
+    let date = new Date();
+    if (joindate.getDay() === 6 || joindate.getDay() === 0) {
       setValidateJD(
         "Joined date is Saturday or Sunday. Please select a different date"
       );
@@ -134,11 +136,12 @@ const EditUser = () => {
         "User joins when under 16 years old. Please select a different date"
       );
 
-    if (joindate.getFullYear() - date.getFullYear() > 3){
+    if (joindate.getFullYear() - date.getFullYear() > 3) {
       setValidateJD(
         "The year user joins is too far. Please select a different date"
       );
     }
+
   };
 
   return (
