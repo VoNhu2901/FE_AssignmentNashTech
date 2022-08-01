@@ -162,26 +162,26 @@ const EditAsset = () => {
                 <input
                   className="form-check-input"
                   type="radio"
-                  id="notAvailable"
+                  id="notWaitingForRecycling"
                   name="state"
                   checked={state === stateName[2]}
                   value={stateName[2]}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
-                <label htmlFor="notAvailable">{stateName[2]}</label>
+                <label htmlFor="notWaitingForRecycling">{stateName[2]}</label>
               </div>
 
               <div className="form-check">
                 <input
                   className="form-check-input"
                   type="radio"
-                  id="notAvailable"
+                  id="notRecycled"
                   name="state"
                   checked={state === stateName[3]}
                   value={stateName[3]}
                   onClick={(e) => setState(e.target.value)}
                 ></input>
-                <label htmlFor="notAvailable">{stateName[3]}</label>
+                <label htmlFor="notRecycled">{stateName[3]}</label>
               </div>
             </div>
           </div>
