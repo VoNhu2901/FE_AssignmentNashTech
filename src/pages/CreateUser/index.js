@@ -84,7 +84,7 @@ const CreateUser = () => {
 
   const handleCheckFirstName = () => {
     let regex = /^[A-Za-z0-9 ]+$/;
-    if (!firstName.match(regex) ) {
+    if (!firstName.match(regex)) {
       setvalidateFirstName("First name  not contain special symbols");
     }
     if (!firstName) {
@@ -125,22 +125,30 @@ const CreateUser = () => {
   };
 
   const handleCheckJoinedDateUser = () => {
-    let date = new Date(joinedDate);
-    if (date.getDay() === 6 || date.getDay() === 0) {
+    let joindate = new Date(joinedDate);
+    let dob = new Date(dateOfBirth);
+    let date = new Date();
+    if (joindate.getDay() === 6 || joindate.getDay() === 0) {
       setValidateJD(
         "Joined date is Saturday or Sunday. Please select a different date"
       );
     }
 
-    if (calculateAge(joinedDate, dateOfBirth) <= 0) {
+    if (joindate <= dob)
       setValidateJD(
         "Joined date is not later than Date of Birth. Please select a different date"
       );
-    }  
-    if (calculateAge(joinedDate, dateOfBirth) < 16)
+    else if (calculateAge(joinedDate, dateOfBirth) < 16)
       setValidateJD(
-        "User joins when under 18 years old. Please select a different date"
+        "User joins when under 16 years old. Please select a different date"
       );
+
+    if (joindate.getFullYear() - date.getFullYear() > 3){
+      setValidateJD(
+        "The year user joins is too far. Please select a different date"
+      );
+    }
+
   };
 
   return (
