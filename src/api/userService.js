@@ -10,6 +10,9 @@ const userService = {
 
   createUser: (params) => {
     return axiosClient.post("/api/user/register", params);
+  },
+  changePassword: (params) => {
+    return axiosClient.post(`/api/user/changePassword`, params);
   }
 };
 
