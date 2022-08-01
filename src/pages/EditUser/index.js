@@ -65,8 +65,6 @@ const EditUser = () => {
         location,
       };
 
-      console.log(payload);
-
       Loading.hourglass("Editing asset...");
 
       userService
@@ -82,7 +80,12 @@ const EditUser = () => {
         .catch((error) => {
           Loading.remove();
           console.log(error);
-          toast.error("EDIT FAILED!!");
+          if (error.response.status === 403) {
+            toast.error(error.response.data.message);
+            navigate("/manage-user");
+          } else {
+            toast.error("EDIT FAILED!!");
+          }
         });
     }
   };
