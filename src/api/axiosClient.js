@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:8080";
 // const baseUrl = "https://backend05.azurewebsites.net";
+const baseUrl = "http://localhost:8080";
 const getToken = () => localStorage.getItem("token");
 
 const axiosClient = axios.create({

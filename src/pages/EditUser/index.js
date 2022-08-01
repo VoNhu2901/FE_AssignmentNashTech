@@ -44,6 +44,8 @@ const EditUser = () => {
         setJoinedDate(data.joinedDate);
         setRole(data.role === "ADMIN" ? 1 : 2);
         setLocation(data.location);
+
+        Loading.remove();
       })
       .catch((error) => {
         Loading.remove();
