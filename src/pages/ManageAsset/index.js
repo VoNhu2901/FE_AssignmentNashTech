@@ -162,7 +162,7 @@ const ManageAsset = () => {
 
   const isFilter = (asset) => {
     if (state[1].localeCompare(asset.state) === 0) {
-      return filterByState[1];
+        return filterByState[1];
     } else if (state[2].localeCompare(asset.state) === 0) {
       return filterByState[2];
     } else if (state[3].localeCompare(asset.state) === 0) {
@@ -182,11 +182,17 @@ const ManageAsset = () => {
     setFilterByState([...temp]);
     setPage(1);
 
+      const _data = data.filter(
+        (asset) =>
+          asset.category.id.localeCompare(filterByCategory) === 0 ||
+          filterByCategory.localeCompare("ALL") === 0
+      );
+
     if (filterByState[0]) {
-      setUserList(data);
-      setNumPage(Math.ceil(data.length / rowPerPage));
+      setUserList(_data);
+      setNumPage(Math.ceil(_data.length / rowPerPage));
     } else {
-      let filtered = data.filter(isFilter);
+      let filtered = _data.filter(isFilter);
       setNumPage(Math.ceil(filtered.length / rowPerPage));
       console.log(filtered.length);
       if (filtered.length === 0) {
@@ -202,16 +208,18 @@ const ManageAsset = () => {
     setFilterByCategory(type);
     setPage(1);
     if (type === "ALL") {
-      setNumPage(Math.ceil(data.length / rowPerPage));
-      setUserList(data);
+      const _data = data.filter(isFilter);
+      setNumPage(Math.ceil(_data.length / rowPerPage));
+      setUserList(_data);
     } else {
       let filtered = data.filter((asset) => asset.category.id === type);
-      if (filtered.length === 0) {
+      const filterState = filtered.filter(isFilter);
+      if (filterState.length === 0) {
         toast.info(
           `No asset in ${location} have category you choose. Choose another category.`
         );
       }
-      setUserList(filtered);
+      setUserList(filterState);
     }
   };
 

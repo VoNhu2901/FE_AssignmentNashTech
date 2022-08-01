@@ -175,7 +175,9 @@ const CreateAsset = () => {
                           className="form-control w-50"
                           placeholder="Bluetooth Mouse"
                           value={categoryName}
-                          onChange={(e) => {setCategoryName(e.target.value)}}
+                          onChange={(e) => {
+                            setCategoryName(e.target.value);
+                          }}
                         />
                         <input
                           type="text"
@@ -243,9 +245,9 @@ const CreateAsset = () => {
                   type="radio"
                   id="notAvailable"
                   name="state"
-                  onClick={() => setState("Not Available")}
+                  onClick={() => setState("Not available")}
                 ></input>
-                <label htmlFor="notAvailable">Not Available</label>
+                <label htmlFor="notAvailable">Not available</label>
               </div>
             </div>
           </div>
