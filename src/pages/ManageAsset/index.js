@@ -9,6 +9,7 @@ import {
   HighlightOffIcon,
   SearchIcon,
   EditOffIcon,
+  HighlightOffTwoToneIcon,
 } from "../../components/icon";
 import "./index.scss";
 import SubTable from "./SubTable";
@@ -615,7 +616,7 @@ const ManageAsset = () => {
                         <button className="btn btn-outline-secondary border-0">
                           {ele.state === "Assigned" ? (
                             <>
-                              <EditOffIcon/>
+                              <EditOffIcon />
                             </>
                           ) : (
                             <>
@@ -623,11 +624,20 @@ const ManageAsset = () => {
                             </>
                           )}
                         </button>
-                        <button
-                          className="btn btn-outline-danger border-0"
-                          onClick={() => checkAssetAvailableToDisable(ele.id)}
-                        >
-                          <HighlightOffIcon />
+                        <button className="btn btn-outline-danger border-0">
+                          {ele.state === "Assigned" ? (
+                            <>
+                              <HighlightOffTwoToneIcon />
+                            </>
+                          ) : (
+                            <>
+                              <HighlightOffIcon
+                                onClick={() =>
+                                  checkAssetAvailableToDisable(ele.id)
+                                }
+                              />
+                            </>
+                          )}
                         </button>{" "}
                       </td>
                     </tr>
