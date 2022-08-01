@@ -193,7 +193,9 @@ const CreateAsset = () => {
                           />
                           <CloseIcon
                             onClick={() => {
-                              setIsOpen(false);
+                                setIsOpen(false);
+                                setCategoryName("");
+                                setCategoryPrefix("");
                             }}
                           />
                         </div>
@@ -258,7 +260,7 @@ const CreateAsset = () => {
               className="form-create-asset__button-item"
               onClick={handleCreateNewAsset}
               disabled={
-                !(name && category && specification && installedDate && state)
+                !(name && category && specification && installedDate && state && categoryName)
               }
             >
               Save
