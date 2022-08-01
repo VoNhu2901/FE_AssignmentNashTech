@@ -125,15 +125,20 @@ const EditUser = () => {
       );
     }
 
-    if (calculateAge(joinedDate, dateOfBirth) <= 0) {
+    if (joindate <= dob)
       setValidateJD(
         "Joined date is not later than Date of Birth. Please select a different date"
       );
-    }
-    if (calculateAge(joinedDate, dateOfBirth) < 16)
+    else if (calculateAge(joinedDate, dateOfBirth) < 16)
       setValidateJD(
-        "User joins when under 18 years old. Please select a different date"
+        "User joins when under 16 years old. Please select a different date"
       );
+
+    if (joindate.getFullYear() - date.getFullYear() > 3){
+      setValidateJD(
+        "The year user joins is too far. Please select a different date"
+      );
+    }
   };
 
   return (
