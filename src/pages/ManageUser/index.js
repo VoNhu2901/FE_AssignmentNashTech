@@ -40,7 +40,6 @@ const ManageUser = () => {
       .getAllUsers(location)
       .then((res) => {
         const resData = res.data;
-        console.log(resData);
         let newUser = resData.filter((user) => user.staffCode === newUserId);
         if (resData.length === 0) {
           toast.error("No user founded");
@@ -61,10 +60,10 @@ const ManageUser = () => {
         setNumPage(Math.ceil(finalList.length / rowPerPage));
         setData(finalList);
         setUserList(finalList);
-          Loading.remove();
+        Loading.remove();
       })
       .catch((err) => {
-          Loading.remove();
+        Loading.remove();
         console.log(err);
         toast.info("No User Found");
       });
@@ -163,9 +162,14 @@ const ManageUser = () => {
           setDisable("Error");
         }
       })
-      .catch((err) => {
-        console.log(err);
-        setDisable("Error");
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status === 403) {
+          toast.error(error.response.data.message);
+          initData();
+        } else {
+          setDisable("Error");
+        }
       });
   };
 
@@ -174,13 +178,22 @@ const ManageUser = () => {
       .disableUser(disable)
       .then((res) => {
         if (res.status === 200) {
+          toast.info("User is disabled");
+
           setDisable(null);
           initData();
         }
       })
       .catch((err) => {
         console.log(err);
-        toast.error("Internet interrupt. Try later");
+        if (err.response.status === 403) {
+          toast.error(err.response.data.message);
+          setDisable(null);
+
+          initData();
+        } else {
+          toast.error("Internet interrupt. Try later");
+        }
       });
   };
 
