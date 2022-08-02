@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowDropDownIcon,
   CloseIcon,
@@ -162,7 +162,7 @@ const ManageAsset = () => {
 
   const isFilter = (asset) => {
     if (state[1].localeCompare(asset.state) === 0) {
-        return filterByState[1];
+      return filterByState[1];
     } else if (state[2].localeCompare(asset.state) === 0) {
       return filterByState[2];
     } else if (state[3].localeCompare(asset.state) === 0) {
@@ -182,11 +182,11 @@ const ManageAsset = () => {
     setFilterByState([...temp]);
     setPage(1);
 
-      const _data = data.filter(
-        (asset) =>
-          asset.category.id.localeCompare(filterByCategory) === 0 ||
-          filterByCategory.localeCompare("ALL") === 0
-      );
+    const _data = data.filter(
+      (asset) =>
+        asset.category.id.localeCompare(filterByCategory) === 0 ||
+        filterByCategory.localeCompare("ALL") === 0
+    );
 
     if (filterByState[0]) {
       setUserList(_data);
@@ -295,7 +295,6 @@ const ManageAsset = () => {
           );
         });
     }
-    
   };
 
   // handle edit asset here
@@ -319,7 +318,6 @@ const ManageAsset = () => {
 
   // handle delete user here
   const checkAssetAvailableToDisable = (code) => {
-
     assetService
       .checkAssetHistory(code)
       .then((res) => {
@@ -422,18 +420,13 @@ const ManageAsset = () => {
                 historical assignments. <br />
                 If the asset is not able to be used anymore, please update its
                 state in{" "}
-                <span
-                  style={{
-                    color: "dodgerblue",
-                    textDecoration: "underline",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => {
-                    navigate(`/edit-asset/${disable}`);
-                  }}
+                <Link
+                  to={`/edit-asset/${disable}`}
+                  className="text-primary"
+                  onClick={() => setDisable(null)}
                 >
                   Edit Asset page
-                </span>
+                </Link>
               </div>
             </div>
           </div>

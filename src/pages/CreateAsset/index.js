@@ -129,6 +129,7 @@ const CreateAsset = () => {
                 type="button"
                 id="dropdownMenuLink"
                 data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
                 aria-expanded="false"
               >
                 {categoryName}
@@ -137,7 +138,7 @@ const CreateAsset = () => {
               <ul className="dropdown-menu bg-light">
                 {listCategory.map((category) => (
                   <li>
-                    <a
+                    <span
                       className="dropdown-item"
                       onClick={() => {
                         setCategoryName(category.name);
@@ -145,7 +146,7 @@ const CreateAsset = () => {
                       }}
                     >
                       {category.name}
-                    </a>
+                    </span>
                   </li>
                 ))}
 
@@ -193,9 +194,9 @@ const CreateAsset = () => {
                           />
                           <CloseIcon
                             onClick={() => {
-                                setIsOpen(false);
-                                setCategoryName("");
-                                setCategoryPrefix("");
+                              setIsOpen(false);
+                              setCategoryName("");
+                              setCategoryPrefix("");
                             }}
                           />
                         </div>
@@ -260,7 +261,14 @@ const CreateAsset = () => {
               className="form-create-asset__button-item"
               onClick={handleCreateNewAsset}
               disabled={
-                !(name && category && specification && installedDate && state && categoryName)
+                !(
+                  name &&
+                  category &&
+                  specification &&
+                  installedDate &&
+                  state &&
+                  categoryName
+                )
               }
             >
               Save
