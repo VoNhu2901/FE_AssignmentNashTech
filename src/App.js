@@ -2,7 +2,6 @@ import "./App.css";
 import { Fragment, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import Main from "./components/layout/Main";
-import ManageAssignmentPage from "./pages/ManageAssignmentPage";
 import RequestPage from "./pages/RequestPage";
 import ReportPage from "./pages/ReportPage";
 
@@ -15,6 +14,7 @@ import {
   CreateUser,
   EditAsset,
   CreateAsset,
+  ManageAssignment,
 } from "./pages";
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
             <Route path="/manage-asset" element={<ManageAsset></ManageAsset>} />
             <Route
               path="/manage-assignment"
-              element={<ManageAssignmentPage></ManageAssignmentPage>}
+              element={<ManageAssignment></ManageAssignment>}
             />
             <Route
               path="/manage-request"
