@@ -122,7 +122,6 @@ const ManageAsset = () => {
         } else {
           _data = [...resData];
         }
-        console.log(resData);
         const filterByDefault = _data.filter(isFilter);
         let sorted = filterByDefault.sort((a, b) =>
           a.name.localeCompare(b.name)
@@ -189,6 +188,7 @@ const ManageAsset = () => {
     if (filterByState[0]) {
       setUserList(_data);
       setNumPage(Math.ceil(_data.length / rowPerPage));
+      setFilterByState([1, 1, 1, 1, 1, 1]);
     } else {
       let filtered = _data.filter(isFilter);
       setNumPage(Math.ceil(filtered.length / rowPerPage));

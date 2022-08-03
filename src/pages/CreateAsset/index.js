@@ -27,7 +27,6 @@ const CreateAsset = () => {
     categoryService
       .getAllCategory()
       .then((res) => {
-        console.log(res);
         setListCategory(res.data);
         Loading.remove();
       })
@@ -53,6 +52,8 @@ const CreateAsset = () => {
         if (res.status === 201) {
           toast.success("SUCCESSFULLY ADDED!!");
           loadCategory();
+          setCategoryPrefix(res.data.id);
+          setCategory(payload.id);
         }
       })
       .catch((error) => {
@@ -62,6 +63,7 @@ const CreateAsset = () => {
           toast.error("ADD NEW CATEGORY FAILED");
         }
       });
+    setCategoryName(categoryName);
   };
 
   const handleCreateNewAsset = () => {
@@ -142,6 +144,7 @@ const CreateAsset = () => {
                       className="dropdown-item"
                       onClick={() => {
                         setCategoryName(category.name);
+                        setCategoryPrefix(category.id);
                         setCategory(category.id);
                       }}
                     >
@@ -266,8 +269,7 @@ const CreateAsset = () => {
                   category &&
                   specification &&
                   installedDate &&
-                  state &&
-                  categoryName
+                  state
                 )
               }
             >
