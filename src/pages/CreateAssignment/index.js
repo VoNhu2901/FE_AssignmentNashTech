@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SearchIcon } from "../../components/icon";
+import SelectAsset from "./SelectAsset";
+import SelectUser from "./SelectUser";
+import "./style.scss";
 
 const CreateAssignment = () => {
   const navigate = useNavigate();
+  // const [isOpenSelectUser, setIsOpenSelectUser] = useState(true);
 
   const handleCancelAssignment = () => {
     navigate("/manage-assignment");
   };
+
 
   return (
     <>
@@ -20,22 +25,32 @@ const CreateAssignment = () => {
             <div>
               <button
                 id="user"
-                className="btn border w-100 d-flex justify-content-end"
+                className="btn border w-100 d-flex justify-content-between"
                 type="button"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
+                data-bs-target="#selectUserModal"
               >
+                User
                 <SearchIcon />
               </button>
+              <SelectUser />
             </div>
 
-            <label for="asset">Asset</label>
+            <label for="user">Asset</label>
             <div>
               <button
-                id="asset"
-                className="btn border w-100 d-flex justify-content-end"
+                id="user"
+                className="btn border w-100 d-flex justify-content-between"
                 type="button"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
+                data-bs-target="#selectUserModal"
               >
+                Asset
                 <SearchIcon />
               </button>
+              <SelectAsset />
             </div>
 
             <label for="assignedDate">Assignment Date</label>
@@ -44,6 +59,7 @@ const CreateAssignment = () => {
                 type="date"
                 id="assignedDate"
                 className="form-create-asset__input"
+                defaultValue={new Date().toISOString().split("T")[0]}
                 // value={assignedDate}
                 // onChange={(e) => setAssignedDate(e.target.value)}
               ></input>
