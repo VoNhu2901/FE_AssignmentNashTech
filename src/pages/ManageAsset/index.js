@@ -8,8 +8,6 @@ import {
   FilterAltIcon,
   HighlightOffIcon,
   SearchIcon,
-  EditOffIcon,
-  HighlightOffTwoToneIcon,
 } from "../../components/icon";
 import "./index.scss";
 import SubTable from "./SubTable";
@@ -621,34 +619,37 @@ const ManageAsset = () => {
                         data-bs-target={"#detailUserViewModal" + ele.id}
                       >
                         {ele.state}
-                      </td>
+                      </td>                     
                       <td>
-                        <button className="btn btn-outline-secondary border-0">
-                          {ele.state === "Assigned" ? (
-                            <>
-                              <EditOffIcon />
-                            </>
-                          ) : (
-                            <>
+                        {ele.state === "Assigned" ? (
+                          <>
+                            <button
+                              className="btn btn-outline-secondary border-0"
+                              disabled
+                            >
+                              <EditIcon />
+                            </button>
+                            <button
+                              className="btn btn-outline-danger border-0"
+                              disabled
+                            >
+                              <HighlightOffIcon />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button className="btn btn-outline-secondary border-0">
                               <EditIcon onClick={() => editAsset(ele.id)} />
-                            </>
-                          )}
-                        </button>
-                        <button className="btn btn-outline-danger border-0">
-                          {ele.state === "Assigned" ? (
-                            <>
-                              <HighlightOffTwoToneIcon />
-                            </>
-                          ) : (
-                            <>
+                            </button>
+                            <button className="btn btn-outline-danger border-0">
                               <HighlightOffIcon
                                 onClick={() =>
                                   checkAssetAvailableToDisable(ele.id)
                                 }
                               />
-                            </>
-                          )}
-                        </button>{" "}
+                            </button>
+                          </>
+                        )}
                       </td>
                     </tr>
 

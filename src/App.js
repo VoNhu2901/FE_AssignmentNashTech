@@ -15,6 +15,8 @@ import {
   EditAsset,
   CreateAsset,
   ManageAssignment,
+  CreateAssignment,
+  EditAssignment,
 } from "./pages";
 
 function App() {
@@ -44,6 +46,14 @@ function App() {
             <Route
               path="/edit-asset/:assetCode"
               element={<EditAsset></EditAsset>}
+            />
+            <Route
+              path="/create-assignment"
+              element={<CreateAssignment></CreateAssignment>}
+            />
+            <Route
+              path="/edit-assignment/:assignmentCode"
+              element={<EditAssignment></EditAssignment>}
             />
           </Route>
           <Route path="/login" element={<Login></Login>} />

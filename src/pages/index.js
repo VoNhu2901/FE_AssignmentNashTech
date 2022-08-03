@@ -7,6 +7,8 @@ import CreateUser from './CreateUser';
 import CreateAsset from './CreateAsset';
 import EditAsset from './EditAsset';
 import ManageAssignment from './ManageAssignment';
+import CreateAssignment from './CreateAssignment';
+import EditAssignment from './EditAssignment';
 
 export {
   ManageUser,
@@ -18,4 +20,6 @@ export {
   CreateAsset,
   EditAsset,
   ManageAssignment,
+  CreateAssignment,
+  EditAssignment,
 };

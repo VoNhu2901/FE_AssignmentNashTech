@@ -10,12 +10,18 @@ import {
   SearchIcon,
   EditOffIcon,
   HighlightOffTwoToneIcon,
+  RestartAltSharpIcon,
 } from "../../components/icon";
 import "./style.scss";
 
 const state = ["All", "Accepted", "Waiting for acceptance"];
 
 const tableHead = [
+  {
+    id: "no",
+    name: "No.",
+    isDropdown: true,
+  },
   {
     id: "assetcode",
     name: "Asset Code",
@@ -27,8 +33,18 @@ const tableHead = [
     isDropdown: true,
   },
   {
-    id: "category",
-    name: "Category",
+    id: "assignedto",
+    name: "Assigned To",
+    isDropdown: true,
+  },
+  {
+    id: "assignedby",
+    name: "Assigned By",
+    isDropdown: true,
+  },
+  {
+    id: "assigneddate",
+    name: "Assigned Date",
     isDropdown: true,
   },
   {
@@ -38,12 +54,90 @@ const tableHead = [
   },
 ];
 
+const tableBody = [
+  {
+    no: 1,
+    assetcode: "A00001",
+    assetname: "Asset 1",
+    assignedto: "John Doe",
+    assignedby: "User 2",
+    assigneddate: "2020-01-01",
+    state: "Accepted",
+    specification: "Specification 1",
+    note: "Note 1",
+  },
+  {
+    no: 2,
+    assetcode: "A00002",
+    assetname: "Asset 2",
+    assignedto: "John Doe",
+    assignedby: "User 1",
+    assigneddate: "2020-01-01",
+    state: "Waiting for acceptance",
+    specification: "Specification 2",
+    note: "Note 2",
+  },
+];
+
 const ManageAssignment = () => {
+  const navigate = useNavigate();
+
+  const [disable, setDisable] = useState(null);
+
+  const disableAsset = () => {
+    alert("Disable asset");
+  };
+
+  const editAssignment = (code) => {
+    navigate(`/edit-assignment/${code}`);
+  };
   return (
     <>
+      {/* start dialog */}
+      <div
+        className={
+          "modal fade" +
+          (disable && disable !== "Error" ? " show d-block" : " d-none")
+        }
+        // className="modal fade show d-block"
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Are you sure?</h5>
+            </div>
+            <div className="modal-body confirm-disable">
+              <div className="modal-subtitle">
+                Do you want to delete this assignment?
+              </div>
+              <div className="button">
+                <button
+                  className="btn btn-danger"
+                  id="disable-button"
+                  onClick={disableAsset}
+                >
+                  Delete
+                </button>
+                <button
+                  className="btn btn-outline-secondary"
+                  id="cancel-button"
+                  onClick={() => setDisable(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* end dialog */}
+
+
       <div className="user-list">
         <div className="title">
-          <h3>Asset List</h3>
+          <h3>Assignment List</h3>
         </div>
 
         {/* start Toolbar */}
@@ -89,15 +183,13 @@ const ManageAssignment = () => {
               {/* end filter State*/}
 
               {/* start filter Assigned Date*/}
-              <input
-                type="date"></input>
+
               <input
                 type="date"
-                id="installedDate"
-                className="form-create-asset__input"
+                id="assignedDate"
+                className="form-create-asset__input btn btn-outline-secondary"
                 placeholder="Assigned Date"
-                // value={installedDate}
-                // onChange={(e) => setInstalledDate(e.target.value)}
+                // onChange={(e) => setAssignedDate(e.target.value)}
               ></input>
               {/* end filter Assigned Date*/}
             </div>
@@ -129,9 +221,9 @@ const ManageAssignment = () => {
               <button
                 type="button"
                 className="btn btn-danger"
-                // onClick={() => {
-                //   navigate("/create-assignment");
-                // }}
+                onClick={() => {
+                  navigate("/create-assignment");
+                }}
               >
                 Create new assignment
               </button>
@@ -159,74 +251,110 @@ const ManageAssignment = () => {
                 ))}
               </tr>
             </thead>
-            {/* <tbody>
-              {(
-                userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
-              ).map((ele, index) => {
+            <tbody>
+              {(tableBody || []).map((ele, index) => {
                 return (
                   <>
-                    <tr key={ele.id}>
+                    <tr key={ele.index}>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
+                        data-bs-target={"#detailUserViewModal" + ele.no}
                       >
-                        {ele.id}
+                        {ele.no}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
+                        data-bs-target={"#detailUserViewModal" + ele.no}
                       >
-                        {ele.name}
+                        {ele.assetcode}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
+                        data-bs-target={"#detailUserViewModal" + ele.no}
                       >
-                        {ele.category.name}
+                        {ele.assetname}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
+                        data-bs-target={"#detailUserViewModal" + ele.no}
+                      >
+                        {ele.assignedto}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.no}
+                      >
+                        {ele.assignedby}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.no}
+                      >
+                        {moment(ele.assigneddate).format("L")}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.no}
                       >
                         {ele.state}
                       </td>
+
                       <td>
-                        <button className="btn btn-outline-secondary border-0">
-                          {ele.state === "Assigned" ? (
-                            <>
-                              <EditOffIcon />
-                            </>
-                          ) : (
-                            <>
-                              <EditIcon onClick={() => editAsset(ele.id)} />
-                            </>
-                          )}
-                        </button>
-                        <button className="btn btn-outline-danger border-0">
-                          {ele.state === "Assigned" ? (
-                            <>
-                              <HighlightOffTwoToneIcon />
-                            </>
-                          ) : (
-                            <>
-                              <HighlightOffIcon
-                                onClick={() =>
-                                  checkAssetAvailableToDisable(ele.id)
-                                }
+                        {ele.state !== "Waiting for acceptance" &&
+                        ele.state !== "Declined" ? (
+                          <>
+                            <button
+                              className="btn btn-outline-secondary border-0"
+                              disabled
+                            >
+                              <EditIcon />
+                            </button>
+                            <button
+                              className="btn btn-outline-danger border-0"
+                              disabled
+                            >
+                              <HighlightOffIcon />
+                            </button>
+                            <button className="btn btn-outline-primary border-0">
+                              <RestartAltSharpIcon
+                              // onClick={() => checkAssetAvailableToDisable(ele.id)}
                               />
-                            </>
-                          )}
-                        </button>{" "}
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button className="btn btn-outline-secondary border-0">
+                              <EditIcon
+                                onClick={() => editAssignment(ele.no)}
+                              />
+                            </button>
+                            <button className="btn btn-outline-danger border-0">
+                              <HighlightOffIcon
+                              // onClick={() =>
+                              //   checkAssetAvailableToDisable(ele.id)
+                              // }
+                              />
+                            </button>
+                            <button className="btn btn-outline-secondary border-0">
+                              <RestartAltSharpIcon
+                              // onClick={() => checkAssetAvailableToDisable(ele.id)}
+                              />
+                            </button>
+                          </>
+                        )}
                       </td>
                     </tr>
 
                     <div
                       className="modal fade"
-                      id={"detailUserViewModal" + ele.id}
+                      id={"detailUserViewModal" + ele.no}
                       tabIndex="-1"
                       aria-labelledby="exampleModalLabel"
                       aria-hidden="true"
@@ -238,7 +366,7 @@ const ManageAssignment = () => {
                               className="modal-title text-danger"
                               id="exampleModalLabel"
                             >
-                              Detailed Asset Information
+                              Detailed Assignment Information
                             </h5>
                             <button
                               type="button"
@@ -252,20 +380,28 @@ const ManageAssignment = () => {
                             <div className="detail">
                               <div className="detail-item">
                                 <div className="label">Asset Code</div>
-                                <div className="value">{ele.id}</div>
+                                <div className="value">{ele.assetcode}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Asset Name</div>
-                                <div className="value">{ele.name}</div>
+                                <div className="value">{ele.assetname}</div>
                               </div>
                               <div className="detail-item">
-                                <div className="label">Category</div>
-                                <div className="value">{ele.category.name}</div>
+                                <div className="label">Specification</div>
+                                <div className="value">{ele.specification}</div>
                               </div>
                               <div className="detail-item">
-                                <div className="label">Installed Date</div>
+                                <div className="label">Assigned to</div>
+                                <div className="value">{ele.assignedto}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Assigned by</div>
+                                <div className="value">{ele.assignedby}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Assigned Date</div>
                                 <div className="value">
-                                  {moment(ele.installedDate).format("L")}
+                                  {moment(ele.assigneddate).format("L")}
                                 </div>
                               </div>
                               <div className="detail-item">
@@ -273,18 +409,8 @@ const ManageAssignment = () => {
                                 <div className="value">{ele.state}</div>
                               </div>
                               <div className="detail-item">
-                                <div className="label">Location</div>
-                                <div className="value">{location}</div>
-                              </div>
-                              <div className="detail-item">
-                                <div className="label">Specification</div>
-                                <div className="value">{ele.specification}</div>
-                              </div>
-                              <div className="detail-item">
-                                <div className="label">History</div>
-                                <div className="value">
-                                  <SubTable history={ele.history}></SubTable>
-                                </div>
+                                <div className="label">Note</div>
+                                <div className="value">{ele.note} </div>
                               </div>
                             </div>
                           </div>
@@ -294,7 +420,7 @@ const ManageAssignment = () => {
                   </>
                 );
               })}
-            </tbody> */}
+            </tbody>
           </table>
         </div>
         {/* end Table list */}

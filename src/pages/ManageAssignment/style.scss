@@ -1,0 +1,9 @@
+.left-board {
+  input[type="date"]::before {
+    content: attr(placeholder) ":";
+  }
+}
+
+input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
