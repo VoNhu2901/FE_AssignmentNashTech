@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowDropDownIcon } from "../../components/icon";
 
 const tableHead = [
@@ -45,22 +45,111 @@ const tableBody = [
     total: "100",
     assigned: "50",
     available: "50",
-    notAvailable: "0",
-    waiting: "0",
-    recycled: "0",
+    notAvailable: "1",
+    waiting: "1",
+    recycled: "1",
   },
   {
     category: "Category 2",
-    total: "100",
+    total: "200",
     assigned: "450",
     available: "350",
-    notAvailable: "0",
-    waiting: "0",
-    recycled: "0",
+    notAvailable: "2",
+    waiting: "2",
+    recycled: "2",
   },
 ];
 
+
 const Report = () => {
+  const [currentCol, setCurrentCol] = useState("");
+  const [reportList, setReportList] = useState([]);
+
+  useEffect(() => {
+    setReportList(tableBody);
+  } , []);
+
+   const sortByCol = (col) => {
+     if (col === currentCol) {
+       // if click same column
+       setCurrentCol(""); // reset currentCol
+     } else {
+       // if click new column
+       setCurrentCol(col); // set currentCol
+     }
+     const _data = [...reportList];
+
+     switch (col) {
+       case "category":
+         col === currentCol
+           ? setReportList(
+               _data.sort((a, b) => a.category.localeCompare(b.category))
+             )
+           : setReportList(
+               _data.sort((a, b) => b.category.localeCompare(a.category))
+             );
+         break;
+       case "total":
+         col === currentCol
+           ? setReportList(_data.sort((a, b) => a.total.localeCompare(b.total)))
+           : setReportList(
+               _data.sort((a, b) => b.total.localeCompare(a.total))
+             );
+         break;
+       case "assigned":
+         col === currentCol
+           ? setReportList(
+               _data.sort((a, b) => a.assigned.localeCompare(b.assigned))
+             )
+           : setReportList(
+               _data.sort((a, b) => b.assigned.localeCompare(a.assigned))
+             );
+         break;
+       case "available":
+         col === currentCol
+           ? setReportList(
+               _data.sort((a, b) => a.available.localeCompare(b.available))
+             )
+           : setReportList(
+               _data.sort((a, b) => b.available.localeCompare(a.available))
+             );
+         break;
+       case "notAvailable":
+         col === currentCol
+           ? setReportList(
+               _data.sort((a, b) =>
+                 a.notAvailable.localeCompare(b.notAvailable)
+               )
+             )
+           : setReportList(
+               _data.sort((a, b) =>
+                 b.notAvailable.localeCompare(a.notAvailable)
+               )
+             );
+         break;
+       case "waiting":
+         col === currentCol
+           ? setReportList(
+               _data.sort((a, b) => a.waiting.localeCompare(b.waiting))
+             )
+           : setReportList(
+               _data.sort((a, b) => b.waiting.localeCompare(a.waiting))
+             );
+         break;
+       case "recycled":
+         col === currentCol
+           ? setReportList(
+               _data.sort((a, b) => a.recycled.localeCompare(b.recycled))
+             )
+           : setReportList(
+               _data.sort((a, b) => b.recycled.localeCompare(a.recycled))
+             );
+         break;
+       default:
+         break;
+     }
+   };
+
   return (
     <div className="user-list">
       <div className="title">
@@ -83,7 +172,7 @@ const Report = () => {
                   {item.name}
                   <button
                     className="btn border-0"
-                    // onClick={() => sortByCol(item.id)}
+                    onClick={() => sortByCol(item.id)}
                   >
                     {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                   </button>
@@ -92,7 +181,7 @@ const Report = () => {
             </tr>
           </thead>
           <tbody>
-            {(tableBody || []).map((ele, index) => {
+            {(reportList || []).map((ele, index) => {
               return (
                 <>
                   <tr key={ele.index}>
