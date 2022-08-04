@@ -3,7 +3,6 @@ import { Fragment, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import Main from "./components/layout/Main";
 import ManageAssignmentPage from "./pages/ManageAssignmentPage";
-import RequestPage from "./pages/RequestPage";
 import ReportPage from "./pages/ReportPage";
 
 import {
@@ -15,6 +14,7 @@ import {
   CreateUser,
   EditAsset,
   CreateAsset,
+  RequestPage
 } from "./pages";
 
 function App() {

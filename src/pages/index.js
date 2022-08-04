@@ -6,5 +6,16 @@ import EditUser from './EditUser';
 import CreateUser from './CreateUser';
 import CreateAsset from './CreateAsset';
 import EditAsset from './EditAsset';
+import RequestPage from "./RequestPage";
 
-export { ManageUser, HomePage, Login, ManageAsset, EditUser, CreateUser, CreateAsset, EditAsset };
+export {
+  ManageUser,
+  HomePage,
+  Login,
+  ManageAsset,
+  EditUser,
+  CreateUser,
+  CreateAsset,
+  EditAsset,
+  RequestPage,
+};
