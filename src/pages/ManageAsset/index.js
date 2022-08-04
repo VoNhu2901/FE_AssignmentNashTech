@@ -84,12 +84,10 @@ const tableHead = [
 const ManageAsset = () => {
   const navigate = useNavigate();
 
-  const [categoryPrefix, setCategoryPrefix] = useState("");
-  const [categoryName, setCategoryName] = useState("");
   const [listCategory, setListCategory] = useState([]);
 
   const [page, setPage] = useState(1);
-  const [userList, setUserList] = useState([]);
+  const [assetList, setAssetList] = useState([]);
   const [data, setData] = useState([]);
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
@@ -130,7 +128,7 @@ const ManageAsset = () => {
         setData(resData); // get data to handle
 
         const finalList = [...newAsset, ...sorted];
-        setUserList(finalList); // get data to display (have change)
+        setAssetList(finalList); // get data to display (have change)
         setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
         Loading.remove();
       })
@@ -186,7 +184,7 @@ const ManageAsset = () => {
     );
 
     if (filterByState[0]) {
-      setUserList(_data);
+      setAssetList(_data);
       setNumPage(Math.ceil(_data.length / rowPerPage));
       setFilterByState([1, 1, 1, 1, 1, 1]);
     } else {
@@ -198,7 +196,7 @@ const ManageAsset = () => {
           `No asset in ${location} have state you choose. Choose another state.`
         );
       }
-      setUserList(filtered);
+      setAssetList(filtered);
     }
   };
 
@@ -208,7 +206,7 @@ const ManageAsset = () => {
     if (type === "ALL") {
       const _data = data.filter(isFilter);
       setNumPage(Math.ceil(_data.length / rowPerPage));
-      setUserList(_data);
+      setAssetList(_data);
     } else {
       let filtered = data.filter((asset) => asset.category.id === type);
       const filterState = filtered.filter(isFilter);
@@ -217,7 +215,7 @@ const ManageAsset = () => {
           `No asset in ${location} have category you choose. Choose another category.`
         );
       }
-      setUserList(filterState);
+      setAssetList(filterState);
     }
   };
 
@@ -229,27 +227,27 @@ const ManageAsset = () => {
       // if click new column
       setCurrentCol(col); // set currentCol
     }
-    const _data = [...userList];
+    const _data = [...assetList];
 
     switch (col) {
       case "assetcode":
         col === currentCol
-          ? setUserList(_data.sort((a, b) => a.id.localeCompare(b.id)))
-          : setUserList(_data.sort((a, b) => b.id.localeCompare(a.id)));
+          ? setAssetList(_data.sort((a, b) => a.id.localeCompare(b.id)))
+          : setAssetList(_data.sort((a, b) => b.id.localeCompare(a.id)));
         break;
       case "assetname":
         col === currentCol
-          ? setUserList(_data.sort((a, b) => a.name.localeCompare(b.name)))
-          : setUserList(_data.sort((a, b) => b.name.localeCompare(a.name)));
+          ? setAssetList(_data.sort((a, b) => a.name.localeCompare(b.name)))
+          : setAssetList(_data.sort((a, b) => b.name.localeCompare(a.name)));
         break;
       case "category":
         col === currentCol
-          ? setUserList(
+          ? setAssetList(
               _data.sort((a, b) =>
                 a.category.name.localeCompare(b.category.name)
               )
             )
-          : setUserList(
+          : setAssetList(
               _data.sort((a, b) =>
                 b.category.name.localeCompare(a.category.name)
               )
@@ -257,8 +255,8 @@ const ManageAsset = () => {
         break;
       case "state":
         col === currentCol
-          ? setUserList(_data.sort((a, b) => a.state.localeCompare(b.state)))
-          : setUserList(_data.sort((a, b) => b.state.localeCompare(a.state)));
+          ? setAssetList(_data.sort((a, b) => a.state.localeCompare(b.state)))
+          : setAssetList(_data.sort((a, b) => b.state.localeCompare(a.state)));
         break;
       default:
         break;
@@ -284,7 +282,7 @@ const ManageAsset = () => {
           const finalList = [...sorted];
           setNumPage(Math.ceil(finalList.length / rowPerPage));
           setData(finalList); // get data to handle
-          setUserList(finalList); // get data to display (have change)
+          setAssetList(finalList); // get data to display (have change)
         })
         .catch((err) => {
           console.log(err);
@@ -587,7 +585,7 @@ const ManageAsset = () => {
             </thead>
             <tbody>
               {(
-                userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
+                assetList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
               ).map((ele, index) => {
                 return (
                   <>

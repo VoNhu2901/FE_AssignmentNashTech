@@ -11,6 +11,9 @@ import {
   SearchIcon,
 } from "../../components/icon";
 import "./style.scss";
+import assignmentService from "./../../api/assignmentService";
+import { toast } from "react-toastify";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
 
 const state = ["All", "Accepted", "Waiting for acceptance"];
 
@@ -52,37 +55,194 @@ const tableHead = [
   },
 ];
 
-const tableBody = [
-  {
-    no: 1,
-    assetcode: "A00001",
-    assetname: "Asset 1",
-    assignedto: "John Doe",
-    assignedby: "User 2",
-    assigneddate: "2020-01-01",
-    state: "Accepted",
-    specification: "Specification 1",
-    note: "Note 1",
-  },
-  {
-    no: 2,
-    assetcode: "A00002",
-    assetname: "Asset 2",
-    assignedto: "John Doe",
-    assignedby: "User 1",
-    assigneddate: "2020-01-01",
-    state: "Waiting for acceptance",
-    specification: "Specification 2",
-    note: "Note 2",
-  },
-];
-
 const ManageAssignment = () => {
   const navigate = useNavigate();
+  const [currentCol, setCurrentCol] = useState("");
+  const [assignmentList, setAssignmentList] = useState([]);
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [numPage, setNumPage] = useState(0);
+  const [content, setContent] = useState("");
 
   const [disable, setDisable] = useState(null);
+  const newAssignmentId = localStorage.getItem("newAssignmentId");
+  const rowPerPage = 3;
+  const location = localStorage.getItem("location");
 
-  useEffect(() => {}, []);
+  const loadData = () => {
+    Loading.standard("Loading...");
+
+    assignmentService
+      .getAllAssignments(location)
+      .then((res) => {
+        const resData = res.data;
+        if (resData.length === 0) {
+          toast.error("No assignment founded");
+        }
+
+        let newAssignment = resData.filter(
+          (assignment) => assignment.id === newAssignmentId
+        );
+        let _data = [];
+        if (newAssignment) {
+          _data = resData.filter(
+            (assignment) => assignment.id !== newAssignmentId
+          );
+        } else {
+          _data = [...resData];
+        }
+
+        let sorted = _data.sort((a, b) => a.id - b.id);
+        setData(resData); // get data to handle
+
+        const finalList = [...newAssignment, ...sorted];
+        setAssignmentList(finalList); // get data to display (have change)
+        setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+        Loading.remove();
+      })
+      .catch((err) => {
+        Loading.remove();
+        console.log(err);
+        toast.info("No Assignment Found");
+      });
+  };
+
+  useEffect(() => {
+    loadData();
+    localStorage.removeItem("newAssignmentId");
+  }, []);
+
+  const sortByCol = (col) => {
+    if (col === currentCol) {
+      // if click same column
+      setCurrentCol(""); // reset currentCol
+    } else {
+      // if click new column
+      setCurrentCol(col); // set currentCol
+    }
+    const _data = [...assignmentList];
+
+    switch (col) {
+      case "no":
+        col === currentCol
+          ? setAssignmentList(_data.sort((a, b) => a.id - b.id))
+          : setAssignmentList(_data.sort((a, b) => b.id - a.id));
+        break;
+      case "assetcode":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assetcode.localeCompare(b.assetcode))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assetcode.localeCompare(a.assetcode))
+            );
+        break;
+      case "assetname":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assetname.localeCompare(b.assetname))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assetname.localeCompare(a.assetname))
+            );
+        break;
+      case "assignedto":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assignedto.localeCompare(b.assignedto))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assignedto.localeCompare(a.assignedto))
+            );
+        break;
+      case "assignedby":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assignedby.localeCompare(b.assignedby))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assignedby.localeCompare(a.assignedby))
+            );
+        break;
+      case "assigneddate":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assigneddate.localeCompare(b.assigneddate))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assigneddate.localeCompare(a.assigneddate))
+            );
+        break;
+      case "state":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.state.localeCompare(b.state))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.state.localeCompare(a.state))
+            );
+        break;
+      case "specification":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) =>
+                a.specification.localeCompare(b.specification)
+              )
+            )
+          : setAssignmentList(
+              _data.sort((a, b) =>
+                b.specification.localeCompare(a.specification)
+              )
+            );
+        break;
+      case "note":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.note.localeCompare(b.note))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.note.localeCompare(a.note))
+            );
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSearch = () => {
+    if (!content) {
+      loadData();
+    } else {
+      assignmentService.searchAssignment(location, content).then((res) => {
+        const resData = res.data;
+        if (resData.length === 0) {
+          toast.error(
+            `No result match with ${content}. Try again with correct format`
+          );
+        }
+        let sorted = resData.sort((a, b) => a.id - b.id);
+        const finalList = [...sorted];
+        setData(finalList); // get data to handle
+        setAssignmentList(finalList); // get data to display (have change)
+        setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+      }).catch((err) => {
+        console.log(err);
+        toast.info("No Assignment Found");
+      });
+    }
+  };
+
+  const handleNext = () => {
+    if (page < numPage) {
+      setPage(page + 1);
+    }
+  };
+
+  const handlePre = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
 
   const disableAssignment = () => {
     alert("Disable assignment");
@@ -200,14 +360,14 @@ const ManageAssignment = () => {
               <div className="input">
                 <input
                   type="text"
-                  // value={content}
-                  // onChange={(e) => setContent(e.target.value)}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
                 />
               </div>
               <div>
                 <button
                   className="btn border-0"
-                  // onClick={handleSearch}
+                  onClick={handleSearch}
                 >
                   <SearchIcon />
                 </button>
@@ -242,7 +402,7 @@ const ManageAssignment = () => {
                     {item.name}
                     <button
                       className="btn border-0"
-                      // onClick={() => sortByCol(item.id)}
+                      onClick={() => sortByCol(item.id)}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -251,61 +411,66 @@ const ManageAssignment = () => {
               </tr>
             </thead>
             <tbody>
-              {(tableBody || []).map((ele, index) => {
+              {(
+                assignmentList.slice(
+                  (page - 1) * rowPerPage,
+                  page * rowPerPage
+                ) || []
+              ).map((ele, index) => {
                 return (
                   <>
-                    <tr key={ele.index}>
+                    <tr key={index}>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
+                        data-bs-target={"#detailUserViewModal" + ele.id}
                       >
-                        {ele.no}
+                        {ele.id}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
+                        data-bs-target={"#detailUserViewModal" + ele.id}
                       >
-                        {ele.assetcode}
+                        {ele.assetCode}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
+                        data-bs-target={"#detailUserViewModal" + ele.id}
                       >
-                        {ele.assetname}
+                        {ele.assetName}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
+                        data-bs-target={"#detailUserViewModal" + ele.id}
                       >
-                        {ele.assignedto}
+                        {ele.assignedTo}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
+                        data-bs-target={"#detailUserViewModal" + ele.id}
                       >
-                        {ele.assignedby}
+                        {ele.assignedBy}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
+                        data-bs-target={"#detailUserViewModal" + ele.id}
                       >
-                        {moment(ele.assigneddate).format("L")}
+                        {moment(ele.assignedDate).format("L")}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
+                        data-bs-target={"#detailUserViewModal" + ele.id}
                       >
                         {ele.state}
                       </td>
 
-                      <td style={{width: "10rem"}}>
+                      <td style={{ width: "10rem" }}>
                         {ele.state !== "Waiting for acceptance" &&
                         ele.state !== "Declined" ? (
                           <>
@@ -331,7 +496,7 @@ const ManageAssignment = () => {
                           <>
                             <button className="btn btn-outline-secondary border-0">
                               <EditIcon
-                                onClick={() => editAssignment(ele.no)}
+                                onClick={() => editAssignment(ele.id)}
                               />
                             </button>
                             <button className="btn btn-outline-danger border-0">
@@ -353,7 +518,7 @@ const ManageAssignment = () => {
 
                     <div
                       className="modal fade"
-                      id={"detailUserViewModal" + ele.no}
+                      id={"detailUserViewModal" + ele.id}
                       tabIndex="-1"
                       aria-labelledby="exampleModalLabel"
                       aria-hidden="true"
@@ -425,7 +590,7 @@ const ManageAssignment = () => {
         {/* end Table list */}
 
         {/* start Pagination */}
-        {/* <div className="paging">
+        <div className="paging">
           {numPage > 1 ? (
             <div className="paging text-end">
               <button
@@ -457,7 +622,7 @@ const ManageAssignment = () => {
           ) : (
             <></>
           )}
-        </div> */}
+        </div>
         {/* end Pagination */}
       </div>
     </>
