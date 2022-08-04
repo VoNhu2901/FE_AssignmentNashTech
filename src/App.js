@@ -3,7 +3,6 @@ import { Fragment, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import Main from "./components/layout/Main";
 import RequestPage from "./pages/RequestPage";
-import ReportPage from "./pages/ReportPage";
 
 import {
   ManageUser,
@@ -17,6 +16,7 @@ import {
   ManageAssignment,
   CreateAssignment,
   EditAssignment,
+  Report,
 } from "./pages";
 
 function App() {
@@ -36,7 +36,7 @@ function App() {
               path="/manage-request"
               element={<RequestPage></RequestPage>}
             />
-            <Route path="/report" element={<ReportPage></ReportPage>} />
+            <Route path="/report" element={<Report></Report>} />
             <Route path="/create-user" element={<CreateUser></CreateUser>} />
             <Route
               path="/edit-user/:staffCode"

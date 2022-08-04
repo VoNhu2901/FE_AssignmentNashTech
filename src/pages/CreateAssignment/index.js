@@ -60,6 +60,7 @@ const CreateAssignment = () => {
                 id="assignedDate"
                 className="form-create-asset__input"
                 defaultValue={new Date().toISOString().split("T")[0]}
+                min={new Date().toISOString().split("T")[0]}
                 // value={assignedDate}
                 // onChange={(e) => setAssignedDate(e.target.value)}
               ></input>
