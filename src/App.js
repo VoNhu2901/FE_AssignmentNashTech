@@ -16,6 +16,7 @@ import {
   EditAsset,
   CreateAsset,
 } from "./pages";
+import ManageReport from "./pages/ManageReport";
 
 function App() {
   return (
@@ -34,7 +35,7 @@ function App() {
               path="/manage-request"
               element={<RequestPage></RequestPage>}
             />
-            <Route path="/report" element={<ReportPage></ReportPage>} />
+            <Route path="/report" element={<ManageReport></ManageReport>} />
             <Route path="/create-user" element={<CreateUser></CreateUser>} />
             <Route
               path="/edit-user/:staffCode"
