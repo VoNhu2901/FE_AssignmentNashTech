@@ -49,7 +49,7 @@ const SelectUser = ({ handleClose }) => {
 
   return (
     <>
-      <div className="container dropdown-menu p-3">
+      <div className="container dropdown-menu p-3 border border-dark">
         <div class="d-flex justify-content-between">
           <h4 className="form-create-asset__title">Select User</h4>
           <div className="search">

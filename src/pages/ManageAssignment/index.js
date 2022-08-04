@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from "react";
 import moment from "moment";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowDropDownIcon,
   CloseIcon,
   EditIcon,
   FilterAltIcon,
   HighlightOffIcon,
-  SearchIcon,
-  EditOffIcon,
-  HighlightOffTwoToneIcon,
   RestartAltSharpIcon,
+  SearchIcon,
 } from "../../components/icon";
 import "./style.scss";
 
@@ -84,8 +82,10 @@ const ManageAssignment = () => {
 
   const [disable, setDisable] = useState(null);
 
-  const disableAsset = () => {
-    alert("Disable asset");
+  useEffect(() => {}, []);
+
+  const disableAssignment = () => {
+    alert("Disable assignment");
   };
 
   const editAssignment = (code) => {
@@ -116,7 +116,7 @@ const ManageAssignment = () => {
                 <button
                   className="btn btn-danger"
                   id="disable-button"
-                  onClick={disableAsset}
+                  onClick={disableAssignment}
                 >
                   Delete
                 </button>
@@ -133,7 +133,6 @@ const ManageAssignment = () => {
         </div>
       </div>
       {/* end dialog */}
-
 
       <div className="user-list">
         <div className="title">
@@ -306,7 +305,7 @@ const ManageAssignment = () => {
                         {ele.state}
                       </td>
 
-                      <td>
+                      <td style={{width: "10rem"}}>
                         {ele.state !== "Waiting for acceptance" &&
                         ele.state !== "Declined" ? (
                           <>
