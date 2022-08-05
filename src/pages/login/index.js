@@ -23,8 +23,8 @@ const Login = () => {
         headers: {
           "content-type": "application/json",
         },
-        url: "https://backend05.azurewebsites.net/api/auth/login",
-        // url: "http://localhost:8080/api/auth/login",
+       // url: "https://backend05.azurewebsites.net/api/auth/login",
+        url: "http://localhost:8080/api/auth/login",
         data: payload,
         method: "POST",
       })
@@ -36,7 +36,7 @@ const Login = () => {
           localStorage.setItem("location", res.data.location);
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("username", res.data.username);
-
+          localStorage.setItem("role", res.data.role.name);
           Loading.remove();
           toast.success("Login success!!!");
           navigate("/");
