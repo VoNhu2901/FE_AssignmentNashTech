@@ -64,14 +64,15 @@ const ManageAssignment = () => {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(0);
-  const [content, setContent] = useState("");
+  const rowPerPage = 20;
 
+  const [content, setContent] = useState("");
   const [filterByState, setFilterByState] = useState("All");
   const [filterByDate, setFilterByDate] = useState(null);
 
   const [disable, setDisable] = useState(null);
+
   const newAssignmentId = localStorage.getItem("newAssignmentId");
-  const rowPerPage = 20;
   const location = localStorage.getItem("location");
 
   const loadData = () => {
@@ -103,6 +104,7 @@ const ManageAssignment = () => {
         const finalList = [...newAssignment, ...sorted];
         setAssignmentList(finalList); // get data to display (have change)
         setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+
         Loading.remove();
       })
       .catch((err) => {
@@ -156,46 +158,46 @@ const ManageAssignment = () => {
       case "assetcode":
         col === currentCol
           ? setAssignmentList(
-              _data.sort((a, b) => a.assetcode.localeCompare(b.assetcode))
+              _data.sort((a, b) => a.assetCode.localeCompare(b.assetCode))
             )
           : setAssignmentList(
-              _data.sort((a, b) => b.assetcode.localeCompare(a.assetcode))
+              _data.sort((a, b) => b.assetCode.localeCompare(a.assetCode))
             );
         break;
       case "assetname":
         col === currentCol
           ? setAssignmentList(
-              _data.sort((a, b) => a.assetname.localeCompare(b.assetname))
+              _data.sort((a, b) => a.assetName.localeCompare(b.assetName))
             )
           : setAssignmentList(
-              _data.sort((a, b) => b.assetname.localeCompare(a.assetname))
+              _data.sort((a, b) => b.assetName.localeCompare(a.assetName))
             );
         break;
       case "assignedto":
         col === currentCol
           ? setAssignmentList(
-              _data.sort((a, b) => a.assignedto.localeCompare(b.assignedto))
+              _data.sort((a, b) => a.assignedTo.localeCompare(b.assignedTo))
             )
           : setAssignmentList(
-              _data.sort((a, b) => b.assignedto.localeCompare(a.assignedto))
+              _data.sort((a, b) => b.assignedTo.localeCompare(a.assignedTo))
             );
         break;
       case "assignedby":
         col === currentCol
           ? setAssignmentList(
-              _data.sort((a, b) => a.assignedby.localeCompare(b.assignedby))
+              _data.sort((a, b) => a.assignedBy.localeCompare(b.assignedBy))
             )
           : setAssignmentList(
-              _data.sort((a, b) => b.assignedby.localeCompare(a.assignedby))
+              _data.sort((a, b) => b.assignedBy.localeCompare(a.assignedBy))
             );
         break;
       case "assigneddate":
         col === currentCol
           ? setAssignmentList(
-              _data.sort((a, b) => a.assigneddate.localeCompare(b.assigneddate))
+              _data.sort((a, b) => a.assignedDate.localeCompare(b.assignedDate))
             )
           : setAssignmentList(
-              _data.sort((a, b) => b.assigneddate.localeCompare(a.assigneddate))
+              _data.sort((a, b) => b.assignedDate.localeCompare(a.assignedDate))
             );
         break;
       case "state":
@@ -272,13 +274,32 @@ const ManageAssignment = () => {
     }
   };
 
-  const disableAssignment = () => {
-    alert("Disable assignment");
-  };
-
   const editAssignment = (code) => {
     navigate(`/edit-assignment/${code}`);
   };
+
+//handle delete assignment
+  const handleDelete = (code) => {
+    setDisable(code);
+  }
+
+  const deleteAssignment = () => {
+    assignmentService
+      .deleteAssignment(disable)
+      .then((res) => {
+        if (res.status === 200) {
+          toast.success("Assignment Deleted");
+          loadData();
+          setDisable(null);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setDisable(null);
+        toast.error(err.response.data.message);
+      });
+  }
+
   return (
     <>
       {/* start dialog */}
@@ -287,7 +308,6 @@ const ManageAssignment = () => {
           "modal fade" +
           (disable && disable !== "Error" ? " show d-block" : " d-none")
         }
-        // className="modal fade show d-block"
         tabIndex="-1"
         role="dialog"
       >
@@ -304,7 +324,7 @@ const ManageAssignment = () => {
                 <button
                   className="btn btn-danger"
                   id="disable-button"
-                  onClick={disableAssignment}
+                  onClick={deleteAssignment}
                 >
                   Delete
                 </button>
@@ -449,103 +469,102 @@ const ManageAssignment = () => {
               ).map((ele, index) => {
                 return (
                   <>
-                    <tr key={index}>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.id}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.assetCode}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.assetName}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.assignedTo}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.assignedBy}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {moment(ele.assignedDate).format("L")}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.state}
-                      </td>
+                    {ele.status && (
+                      <tr key={index}>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.id}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.assetCode}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.assetName}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.assignedTo}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.assignedBy}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {moment(ele.assignedDate).format("L")}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.state}
+                        </td>
 
-                      <td style={{ width: "10rem" }}>
-                        {ele.state !== "Waiting for acceptance" &&
-                        ele.state !== "Declined" ? (
-                          <>
-                            <button
-                              className="btn btn-outline-secondary border-0"
-                              disabled
-                            >
-                              <EditIcon />
-                            </button>
-                            <button
-                              className="btn btn-outline-danger border-0"
-                              disabled
-                            >
-                              <HighlightOffIcon />
-                            </button>
-                            <button className="btn btn-outline-primary border-0">
-                              <RestartAltSharpIcon
-                              // onClick={() => checkAssetAvailableToDisable(ele.id)}
-                              />
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button className="btn btn-outline-secondary border-0">
-                              <EditIcon
-                                onClick={() => editAssignment(ele.id)}
-                              />
-                            </button>
-                            <button className="btn btn-outline-danger border-0">
-                              <HighlightOffIcon
-                              // onClick={() =>
-                              //   checkAssetAvailableToDisable(ele.id)
-                              // }
-                              />
-                            </button>
-                            <button className="btn btn-outline-secondary border-0">
-                              <RestartAltSharpIcon
-                              // onClick={() => checkAssetAvailableToDisable(ele.id)}
-                              />
-                            </button>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-
+                        <td style={{ width: "10rem" }}>
+                          {ele.state !== "Waiting for acceptance" &&
+                          ele.state !== "Declined" ? (
+                            <>
+                              <button
+                                className="btn btn-outline-secondary border-0"
+                                disabled
+                              >
+                                <EditIcon />
+                              </button>
+                              <button
+                                className="btn btn-outline-danger border-0"
+                                disabled
+                              >
+                                <HighlightOffIcon />
+                              </button>
+                              <button className="btn btn-outline-primary border-0">
+                                <RestartAltSharpIcon
+                                // onClick={() => checkAssetAvailableToDisable(ele.id)}
+                                />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button className="btn btn-outline-secondary border-0">
+                                <EditIcon
+                                  onClick={() => editAssignment(ele.id)}
+                                />
+                              </button>
+                              <button className="btn btn-outline-danger border-0">
+                                <HighlightOffIcon
+                                  onClick={() => handleDelete(ele.id)}
+                                />
+                              </button>
+                              <button className="btn btn-outline-secondary border-0">
+                                <RestartAltSharpIcon
+                                // onClick={() => checkAssetAvailableToDisable(ele.id)}
+                                />
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    )}
                     <div
                       className="modal fade"
                       id={"detailUserViewModal" + ele.id}
@@ -574,11 +593,11 @@ const ManageAssignment = () => {
                             <div className="detail">
                               <div className="detail-item">
                                 <div className="label">Asset Code</div>
-                                <div className="value">{ele.assetcode}</div>
+                                <div className="value">{ele.assetCode}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Asset Name</div>
-                                <div className="value">{ele.assetname}</div>
+                                <div className="value">{ele.assetName}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Specification</div>
@@ -586,16 +605,16 @@ const ManageAssignment = () => {
                               </div>
                               <div className="detail-item">
                                 <div className="label">Assigned to</div>
-                                <div className="value">{ele.assignedto}</div>
+                                <div className="value">{ele.assignedTo}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Assigned by</div>
-                                <div className="value">{ele.assignedby}</div>
+                                <div className="value">{ele.assignedBy}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Assigned Date</div>
                                 <div className="value">
-                                  {moment(ele.assigneddate).format("L")}
+                                  {moment(ele.assignedDate).format("L")}
                                 </div>
                               </div>
                               <div className="detail-item">

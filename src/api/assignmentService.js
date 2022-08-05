@@ -20,10 +20,10 @@ const assignmentService = {
     return axiosClient.put(`/api/assignment/edit/${id}`, params);
   },
   deleteAssignment: (id) => {
-    return axiosClient.delete(`/api/assignment/${id}`);
+    return axiosClient.delete(`/api/assignment/disable/${id}`);
   },
   getAssignmentById: (id) => {
-    return axiosClient.get(`/api/assignment/${id}`);
+    return axiosClient.get(`/api/assignment/getAssignment/${id}`);
   },
 };
 
