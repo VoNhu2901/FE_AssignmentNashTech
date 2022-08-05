@@ -63,21 +63,6 @@ const Report = () => {
       });
   };
 
-  const handleExportReport = () => {
-    Loading.standard("Loading...");
-    reportService
-      .getExportReport()
-      .then((res) => {
-        console.log(res.data);
-        toast.success("Export Success!");
-        Loading.remove();
-      })
-      .catch((error) => {
-        toast.error("ERROR SERVER");
-        Loading.remove();
-      });
-  };
-
   const exportToXLSX = () => {
     const fileType =
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
