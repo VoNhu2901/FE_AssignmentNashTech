@@ -38,9 +38,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        border: 1px solid black;
+        border: 1px solid black !important;
         border-radius: 9px;
         margin-right: 0.5rem;
+        padding: 0.5rem !important;
         div > input {
           border: none;
         }

@@ -297,12 +297,11 @@ const RequestPage = () => {
                 onChange={(e) => setSearchContent(e.target.value)}
               />
             </div>
-            <button
-              className="btn btn-light border-dark border-start border-bottom-0 border-end-0 border-top-0 rounded-0 me-1"
-              onClick={handleSearch}
-            >
-              <SearchIcon />
-            </button>
+            <div>
+              <button className="btn border-0" onClick={handleSearch}>
+                <SearchIcon />
+              </button>
+            </div>
           </div>
         </div>
       </div>

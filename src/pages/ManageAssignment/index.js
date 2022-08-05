@@ -17,6 +17,8 @@ import { Loading } from "notiflix/build/notiflix-loading-aio";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import returningService from "../../api/returningService";
+
 const state = ["All", "Accepted", "Waiting for acceptance"];
 
 const tableHead = [
@@ -70,9 +72,14 @@ const ManageAssignment = () => {
   const [filterByDate, setFilterByDate] = useState(null);
 
   const [disable, setDisable] = useState(null);
+
+  const [createReturn, setCreateReturn] = useState();
+
   const newAssignmentId = localStorage.getItem("newAssignmentId");
   const rowPerPage = 20;
   const location = localStorage.getItem("location");
+
+  // TODO: check when action is disable
 
   const loadData = () => {
     Loading.standard("Loading...");
@@ -80,6 +87,7 @@ const ManageAssignment = () => {
     assignmentService
       .getAllAssignments(location)
       .then((res) => {
+        console.log(res.data);
         const resData = res.data;
         if (resData.length === 0) {
           toast.error("No assignment founded");
@@ -279,8 +287,65 @@ const ManageAssignment = () => {
   const editAssignment = (code) => {
     navigate(`/edit-assignment/${code}`);
   };
+
+  const handleCreateReturning = () => {
+    const assId = createReturn;
+    const requestBy = localStorage.getItem("username");
+
+    returningService
+      .createNewReturning(assId, requestBy)
+      .then((res) => {
+        if (res.status === 201) {
+          toast.success(
+            "Request for return successfully!. Forward to request for returning tab to view."
+          );
+          loadData();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("cannot create request for returning. Try later");
+      });
+    setCreateReturn(null);
+  };
+
   return (
     <>
+      {/* Modal to show confirm  create new request for returning */}
+      <div
+        className={"modal fade " + (createReturn ? " show d-block" : " d-none")}
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Are you sure?</h5>
+            </div>
+            <div className="modal-body confirm-disable">
+              <div className="modal-subtitle">
+                Do you want to create a returning request for this asset?
+              </div>
+              <div className="button">
+                <button
+                  className="btn btn-danger"
+                  id="disable-button"
+                  onClick={handleCreateReturning}
+                >
+                  Yes
+                </button>
+                <button
+                  className="btn btn-outline-secondary"
+                  id="cancel-button"
+                  onClick={() => setCreateReturn(null)}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {/* start dialog */}
       <div
         className={
@@ -516,9 +581,14 @@ const ManageAssignment = () => {
                             >
                               <HighlightOffIcon />
                             </button>
-                            <button className="btn btn-outline-primary border-0">
+                            <button
+                              className="btn btn-outline-primary border-0"
+                              disabled={
+                                ele.state === "Accepted" || ele.hasReturning
+                              }
+                            >
                               <RestartAltSharpIcon
-                              // onClick={() => checkAssetAvailableToDisable(ele.id)}
+                                onClick={() => setCreateReturn(ele.id)}
                               />
                             </button>
                           </>
@@ -536,9 +606,14 @@ const ManageAssignment = () => {
                               // }
                               />
                             </button>
-                            <button className="btn btn-outline-secondary border-0">
+                            <button
+                              className="btn btn-outline-secondary border-0"
+                              disabled={
+                                ele.state === "Accepted" || ele.hasReturning
+                              }
+                            >
                               <RestartAltSharpIcon
-                              // onClick={() => checkAssetAvailableToDisable(ele.id)}
+                                onClick={() => setCreateReturn(ele.id)}
                               />
                             </button>
                           </>
