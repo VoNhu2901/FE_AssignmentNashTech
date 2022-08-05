@@ -14,7 +14,9 @@ import "./style.scss";
 import assignmentService from "./../../api/assignmentService";
 import { toast } from "react-toastify";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
-
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const state = ["All", "Accepted", "Waiting for acceptance"];
 
 const tableHead = [
@@ -64,9 +66,12 @@ const ManageAssignment = () => {
   const [numPage, setNumPage] = useState(0);
   const [content, setContent] = useState("");
 
+  const [filterByState, setFilterByState] = useState("All");
+  const [filterByDate, setFilterByDate] = useState(null);
+
   const [disable, setDisable] = useState(null);
   const newAssignmentId = localStorage.getItem("newAssignmentId");
-  const rowPerPage = 3;
+  const rowPerPage = 20;
   const location = localStorage.getItem("location");
 
   const loadData = () => {
@@ -112,12 +117,32 @@ const ManageAssignment = () => {
     localStorage.removeItem("newAssignmentId");
   }, []);
 
+  const isEqual = (date1, date2) => {
+    const d1 = moment(date1).format("L");
+    const d2 = moment(date2).format("L");
+    return d1.localeCompare(d2) === 0;
+  };
+
+  useEffect(() => {
+    let list = [...data];
+    if (filterByState !== "All" && filterByState !== null) {
+      list = list.filter(
+        (item) => item.state.localeCompare(filterByState) === 0
+      );
+    }
+
+    if (filterByDate) {
+      list = list.filter((item) => isEqual(filterByDate, item.assignedDate));
+    }
+
+    setNumPage(Math.ceil(list.length / rowPerPage));
+    setAssignmentList(list);
+  }, [filterByDate, filterByState, data]);
+
   const sortByCol = (col) => {
     if (col === currentCol) {
-      // if click same column
       setCurrentCol(""); // reset currentCol
     } else {
-      // if click new column
       setCurrentCol(col); // set currentCol
     }
     const _data = [...assignmentList];
@@ -213,22 +238,25 @@ const ManageAssignment = () => {
     if (!content) {
       loadData();
     } else {
-      assignmentService.searchAssignment(location, content).then((res) => {
-        const resData = res.data;
-        if (resData.length === 0) {
-          toast.error(
-            `No result match with ${content}. Try again with correct format`
-          );
-        }
-        let sorted = resData.sort((a, b) => a.id - b.id);
-        const finalList = [...sorted];
-        setData(finalList); // get data to handle
-        setAssignmentList(finalList); // get data to display (have change)
-        setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
-      }).catch((err) => {
-        console.log(err);
-        toast.info("No Assignment Found");
-      });
+      assignmentService
+        .searchAssignment(location, content)
+        .then((res) => {
+          const resData = res.data;
+          if (resData.length === 0) {
+            toast.error(
+              `No result match with ${content}. Try again with correct format`
+            );
+          }
+          let sorted = resData.sort((a, b) => a.id - b.id);
+          const finalList = [...sorted];
+          setData(finalList); // get data to handle
+          setAssignmentList(finalList); // get data to display (have change)
+          setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.info("No Assignment Found");
+        });
     }
   };
 
@@ -328,8 +356,8 @@ const ManageAssignment = () => {
                           type="checkbox"
                           value={type}
                           id={type}
-                          // checked={filterByState[index] === 1}
-                          // onChange={() => handleFilterByState(index)}
+                          checked={filterByState === type}
+                          onChange={() => setFilterByState(type)}
                         />
                         <label className="form-check-label" htmlFor={type}>
                           {type}
@@ -343,14 +371,18 @@ const ManageAssignment = () => {
 
               {/* start filter Assigned Date*/}
 
-              <input
-                type="date"
-                id="assignedDate"
-                className="form-create-asset__input btn btn-outline-secondary"
-                placeholder="Assigned Date"
-                // onChange={(e) => setAssignedDate(e.target.value)}
-              ></input>
-              {/* end filter Assigned Date*/}
+              <div className="filterDate">
+                <div>
+                  <DatePicker
+                    selected={filterByDate}
+                    onChange={(date) => setFilterByDate(date)}
+                  />
+                </div>
+                <div className="iconDate border-start border-dark">
+                  <DateRangeIcon />
+                </div>
+                {/* end filter Assigned Date*/}
+              </div>
             </div>
           </div>
 
@@ -365,10 +397,7 @@ const ManageAssignment = () => {
                 />
               </div>
               <div>
-                <button
-                  className="btn border-0"
-                  onClick={handleSearch}
-                >
+                <button className="btn border-0" onClick={handleSearch}>
                   <SearchIcon />
                 </button>
               </div>

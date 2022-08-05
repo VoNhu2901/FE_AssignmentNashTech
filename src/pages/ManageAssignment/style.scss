@@ -8,6 +8,31 @@ input::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
-.td-button{
+.td-button {
   // width: ;
+}
+
+.table-board {
+  .left-board {
+    .filterDate {
+      border: 1px solid black;
+      border-radius: 9px;
+      flex-direction: row;
+      align-items: center;
+      display: flex;
+      margin-left: 1rem;
+
+      input {
+        border: none;
+        margin: 0rem 1rem;
+      }
+      input:focus {
+        outline: 0;
+      }
+
+      .iconDate {
+        padding: 0.4rem;
+      }
+    }
+  }
 }
