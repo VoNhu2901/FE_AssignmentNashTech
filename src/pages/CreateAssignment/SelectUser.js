@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SearchIcon, ArrowDropDownIcon } from "../../components/icon";
+import userService from "./../../api/userService";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
+import { toast } from "react-toastify";
 
 const tableHead = [
   {
@@ -24,28 +27,131 @@ const tableHead = [
   },
 ];
 
-const tableBody = [
-  {
-    staffcode: "STAFF001",
-    fullname: "Nguyen Van A",
-    type: "Staff",
-  },
-  {
-    staffcode: "STAFF002",
-    fullname: "Nguyen Van B",
-    type: "Admin",
-  },
-  {
-    staffcode: "STAFF003",
-    fullname: "Nguyen Van C",
-    type: "Staff",
-  },
-];
-
 const SelectUser = ({ handleClose }) => {
+  const [userList, setUserList] = useState([]);
+  const [numPage, setNumPage] = useState(0);
+  const [page, setPage] = useState(1);
+  const rowPerPage = 10;
+
+  const [currentCol, setCurrentCol] = useState("")
+  const [content, setContent] = useState("");
+  const location = localStorage.getItem("location");
+
+  const loadData = () => {
+    Loading.standard("Loading...");
+    userService
+      .getAllUsers(location)
+      .then((res) => {
+        const resData = res.data;
+        if (resData.length === 0) {
+          toast.error("No user founded");
+        }
+
+        let sorted = resData.sort((a, b) =>
+          a.fullName.localeCompare(b.fullName)
+        );
+
+        const finalList = [...sorted];
+        setUserList(finalList);
+        setNumPage(Math.ceil(finalList.length / rowPerPage));
+        Loading.remove();
+      })
+      .catch((err) => {
+        Loading.remove();
+        console.log(err);
+        toast.info("No User Found");
+      });
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleSearch = () => {
+    if (!content) {
+      loadData();
+    } else {
+      userService
+        .searchUser(location, content)
+        .then((res) => {
+          console.log(res);
+          if (res.data.length === 0) {
+            toast.error("No user founded");
+          }
+          const _data = res.data;
+          let sorted = _data.sort((a, b) =>
+            a.fullName.localeCompare(b.fullName)
+          );
+
+          setNumPage(Math.ceil(sorted.length / rowPerPage));
+          setUserList(sorted);
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.info(
+            `No user match with "${content}". Try again with correct format.`
+          );
+        });
+    }
+  };
+
   const handleSave = () => {
     alert("Save");
   };
+
+  const handleNext = () => {
+    if (page < numPage) {
+      setPage(page + 1);
+    }
+  };
+
+  const handlePre = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
+  const sortByCol = (sortBy) => {
+      if (sortBy === currentCol) {
+        setCurrentCol("");
+      } else {
+        setCurrentCol(sortBy);
+      }
+     const _data = [...userList];
+     switch (sortBy) {
+       case "staffcode":
+         sortBy === currentCol
+           ? setUserList(
+               _data.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
+             )
+           : setUserList(
+               _data.sort((a, b) => b.staffCode.localeCompare(a.staffCode))
+             );
+
+         break;
+
+       case "fullname":
+         sortBy === currentCol
+           ? setUserList(
+               _data.sort((a, b) => a.fullName.localeCompare(b.fullName))
+             )
+           : setUserList(
+               _data.sort((a, b) => b.fullName.localeCompare(a.fullName))
+             );
+         break;
+
+       case "type":
+         sortBy === currentCol
+           ? setUserList(_data.sort((a, b) => a.role.localeCompare(b.role)))
+           : setUserList(_data.sort((a, b) => b.role.localeCompare(a.role)));
+         break;
+
+       default:
+         break;
+     }
+    
+   };
+
 
   return (
     <>
@@ -56,13 +162,13 @@ const SelectUser = ({ handleClose }) => {
             <div className="input">
               <input
                 type="text"
-                // value={content}
-                // onChange={(e) => setContent(e.target.value)}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
               />
             </div>
             <button
               className="btn border-dark border-start border-bottom-0 border-end-0 border-top-0 rounded-0 me-1"
-              // onClick={handleSearch}
+              onClick={handleSearch}
             >
               <SearchIcon />
             </button>
@@ -79,7 +185,7 @@ const SelectUser = ({ handleClose }) => {
                     {item.name}
                     <button
                       className="btn border-0"
-                      // onClick={() => sortByCol(item.id)}
+                      onClick={() => sortByCol(item.id)}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -88,26 +194,28 @@ const SelectUser = ({ handleClose }) => {
               </tr>
             </thead>
             <tbody>
-              {(tableBody || []).map((ele, index) => {
+              {(
+                userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
+              ).map((ele, index) => {
                 return (
                   <>
-                    <tr key={ele.index}>
+                    <tr key={index}>
                       <td>
                         <input
                           className="form-check-input"
                           type="radio"
-                          id={ele.staffcode}
+                          id={ele.staffCode}
                           name="state"
                         ></input>
                       </td>
                       <td className="border-bottom">
-                        <label htmlFor={ele.staffcode}>{ele.staffcode}</label>
+                        <label htmlFor={ele.staffCode}>{ele.staffCode}</label>
                       </td>
                       <td className="border-bottom">
-                        <label htmlFor={ele.staffcode}>{ele.fullname}</label>
+                        <label htmlFor={ele.staffCode}>{ele.fullName}</label>
                       </td>
                       <td className="border-bottom">
-                        <label htmlFor={ele.staffcode}>{ele.type}</label>
+                        <label htmlFor={ele.staffCode}>{ele.role}</label>
                       </td>
                     </tr>
                   </>
@@ -115,6 +223,44 @@ const SelectUser = ({ handleClose }) => {
               })}
             </tbody>
           </table>
+
+          {/* start Pagination */}
+          <div className="paging">
+            {numPage > 1 ? (
+              <div className="paging text-end">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={handlePre}
+                >
+                  Previous
+                </button>
+                {Array.from({ length: numPage }, (_, i) => (
+                  <button
+                    type="button"
+                    onClick={() => setPage(i + 1)}
+                    className={
+                      page === i + 1
+                        ? "btn btn-danger"
+                        : "btn btn-outline-danger"
+                    }
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-outline-danger"
+                  onClick={handleNext}
+                >
+                  Next
+                </button>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+          {/* end Pagination */}
 
           <div className="d-flex justify-content-end gap-4">
             <button
