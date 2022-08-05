@@ -15,8 +15,7 @@ input::-webkit-calendar-picker-indicator {
 .table-board {
   .left-board {
     .filterDate {
-      border: 1px solid black;
-      border-radius: 9px;
+      border-radius: 8px;
       flex-direction: row;
       align-items: center;
       display: flex;
@@ -31,7 +30,7 @@ input::-webkit-calendar-picker-indicator {
       }
 
       .iconDate {
-        padding: 0.4rem;
+        padding: 0.3rem;
       }
     }
   }

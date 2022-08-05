@@ -371,14 +371,15 @@ const ManageAssignment = () => {
 
               {/* start filter Assigned Date*/}
 
-              <div className="filterDate">
+              <div className="filterDate border border-secondary">
                 <div>
                   <DatePicker
+                    placeholderText="Assigned Date"
                     selected={filterByDate}
                     onChange={(date) => setFilterByDate(date)}
                   />
                 </div>
-                <div className="iconDate border-start border-dark">
+                <div className="iconDate border-start border-secondary text-secondary">
                   <DateRangeIcon />
                 </div>
                 {/* end filter Assigned Date*/}
