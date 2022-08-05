@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ArrowDropDownIcon } from "../../components/icon";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
+import reportService from "../../api/reportService";
+import { toast } from "react-toastify";
 
 const tableHead = [
   {
@@ -39,34 +42,63 @@ const tableHead = [
     isDropdown: true,
   },
 ];
-const tableBody = [
-  {
-    category: "Category 1",
-    total: "100",
-    assigned: "50",
-    available: "50",
-    notAvailable: "1",
-    waiting: "1",
-    recycled: "1",
-  },
-  {
-    category: "Category 2",
-    total: "200",
-    assigned: "450",
-    available: "350",
-    notAvailable: "2",
-    waiting: "2",
-    recycled: "2",
-  },
-];
+// const tableBody = [
+//   {
+//     category: "Category 1",
+//     total: "100",
+//     assigned: "50",
+//     available: "50",
+//     notAvailable: "1",
+//     waiting: "1",
+//     recycled: "1",
+//   },
+//   {
+//     category: "Category 2",
+//     total: "200",
+//     assigned: "450",
+//     available: "350",
+//     notAvailable: "2",
+//     waiting: "2",
+//     recycled: "2",
+//   },
+// ];
 
 
 const Report = () => {
   const [currentCol, setCurrentCol] = useState("");
   const [reportList, setReportList] = useState([]);
 
+  const loadReportList = () => {
+    Loading.standard("Loading...");
+    reportService
+      .getReportList()
+      .then((res) => {
+        setReportList(res.data);   
+        Loading.remove();     
+      })
+      .catch((error) => {
+        toast.error("ERROR SERVER");
+        Loading.remove();
+      });
+  };
+
+  const handleExportReport = () => {
+    Loading.standard("Loading...");
+    reportService
+      .getExportReport()
+      .then((res) => {
+        console.log(res.data)
+        toast.success("Export Success!");
+        Loading.remove();
+      })
+      .catch((error) => {
+        toast.error("ERROR SERVER");
+        Loading.remove();
+      });
+  };
+
   useEffect(() => {
-    setReportList(tableBody);
+    loadReportList();
   } , []);
 
    const sortByCol = (col) => {
@@ -157,7 +189,8 @@ const Report = () => {
       </div>
 
       <div className="button d-flex justify-content-end mb-4">
-        <button type="button" className="btn btn-danger">
+        <button type="button" className="btn btn-danger"
+        onClick={handleExportReport}>
           Export
         </button>
       </div>
@@ -185,12 +218,12 @@ const Report = () => {
               return (
                 <>
                   <tr key={ele.index}>
-                    <td className="border-bottom">{ele.category}</td>
+                    <td className="border-bottom">{ele.name}</td>
                     <td className="border-bottom">{ele.total}</td>
                     <td className="border-bottom">{ele.assigned}</td>
                     <td className="border-bottom">{ele.available}</td>
                     <td className="border-bottom">{ele.notAvailable}</td>
-                    <td className="border-bottom">{ele.waiting}</td>
+                    <td className="border-bottom">{ele.waitingForRecycling}</td>
                     <td className="border-bottom">{ele.recycled}</td>
                   </tr>
                 </>
