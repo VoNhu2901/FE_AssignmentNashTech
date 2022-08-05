@@ -3,6 +3,8 @@ import { ArrowDropDownIcon } from "../../components/icon";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import reportService from "../../api/reportService";
 import { toast } from "react-toastify";
+import FileSaver from "file-saver";
+import * as XLSX from "xlsx";
 
 const tableHead = [
   {
@@ -42,27 +44,6 @@ const tableHead = [
     isDropdown: true,
   },
 ];
-// const tableBody = [
-//   {
-//     category: "Category 1",
-//     total: "100",
-//     assigned: "50",
-//     available: "50",
-//     notAvailable: "1",
-//     waiting: "1",
-//     recycled: "1",
-//   },
-//   {
-//     category: "Category 2",
-//     total: "200",
-//     assigned: "450",
-//     available: "350",
-//     notAvailable: "2",
-//     waiting: "2",
-//     recycled: "2",
-//   },
-// ];
-
 
 const Report = () => {
   const [currentCol, setCurrentCol] = useState("");
@@ -73,8 +54,8 @@ const Report = () => {
     reportService
       .getReportList()
       .then((res) => {
-        setReportList(res.data);   
-        Loading.remove();     
+        setReportList(res.data);
+        Loading.remove();
       })
       .catch((error) => {
         toast.error("ERROR SERVER");
@@ -87,7 +68,7 @@ const Report = () => {
     reportService
       .getExportReport()
       .then((res) => {
-        console.log(res.data)
+        console.log(res.data);
         toast.success("Export Success!");
         Loading.remove();
       })
@@ -97,90 +78,74 @@ const Report = () => {
       });
   };
 
+  const exportToXLSX = () => {
+    const fileType =
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+    const fileExtension = ".xlsx";
+    const date = new Date();
+    const fileName = `Report_AssetsByCategoryAndState-${date.toUTCString()}`;
+    const ws = XLSX.utils.json_to_sheet(reportList);
+    const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    FileSaver.saveAs(data, fileName + fileExtension);
+  };
   useEffect(() => {
     loadReportList();
-  } , []);
+  }, []);
 
-   const sortByCol = (col) => {
-     if (col === currentCol) {
-       // if click same column
-       setCurrentCol(""); // reset currentCol
-     } else {
-       // if click new column
-       setCurrentCol(col); // set currentCol
-     }
-     const _data = [...reportList];
+  const sortByCol = (col) => {
+    if (col === currentCol) {
+      // if click same column
+      setCurrentCol(""); // reset currentCol
+    } else {
+      // if click new column
+      setCurrentCol(col); // set currentCol
+    }
+    const _data = [...reportList];
 
-     switch (col) {
-       case "category":
-         col === currentCol
-           ? setReportList(
-               _data.sort((a, b) => a.category.localeCompare(b.category))
-             )
-           : setReportList(
-               _data.sort((a, b) => b.category.localeCompare(a.category))
-             );
-         break;
-       case "total":
-         col === currentCol
-           ? setReportList(_data.sort((a, b) => a.total.localeCompare(b.total)))
-           : setReportList(
-               _data.sort((a, b) => b.total.localeCompare(a.total))
-             );
-         break;
-       case "assigned":
-         col === currentCol
-           ? setReportList(
-               _data.sort((a, b) => a.assigned.localeCompare(b.assigned))
-             )
-           : setReportList(
-               _data.sort((a, b) => b.assigned.localeCompare(a.assigned))
-             );
-         break;
-       case "available":
-         col === currentCol
-           ? setReportList(
-               _data.sort((a, b) => a.available.localeCompare(b.available))
-             )
-           : setReportList(
-               _data.sort((a, b) => b.available.localeCompare(a.available))
-             );
-         break;
-       case "notAvailable":
-         col === currentCol
-           ? setReportList(
-               _data.sort((a, b) =>
-                 a.notAvailable.localeCompare(b.notAvailable)
-               )
-             )
-           : setReportList(
-               _data.sort((a, b) =>
-                 b.notAvailable.localeCompare(a.notAvailable)
-               )
-             );
-         break;
-       case "waiting":
-         col === currentCol
-           ? setReportList(
-               _data.sort((a, b) => a.waiting.localeCompare(b.waiting))
-             )
-           : setReportList(
-               _data.sort((a, b) => b.waiting.localeCompare(a.waiting))
-             );
-         break;
-       case "recycled":
-         col === currentCol
-           ? setReportList(
-               _data.sort((a, b) => a.recycled.localeCompare(b.recycled))
-             )
-           : setReportList(
-               _data.sort((a, b) => b.recycled.localeCompare(a.recycled))
-             );
-         break;
-       default:
-         break;
-     }
-   };
+    switch (col) {
+      case "category":
+        col === currentCol
+          ? setReportList(_data.sort((a, b) => a.name.localeCompare(b.name)))
+          : setReportList(_data.sort((a, b) => b.name.localeCompare(a.name)));
+        break;
+      case "total":
+        col === currentCol
+          ? setReportList(_data.sort((a, b) => a.total - b.total))
+          : setReportList(_data.sort((a, b) => b.total - a.total));
+        break;
+      case "assigned":
+        col === currentCol
+          ? setReportList(_data.sort((a, b) => a.assigned - b.assigned))
+          : setReportList(_data.sort((a, b) => b.assigned - a.assigned));
+        break;
+      case "available":
+        col === currentCol
+          ? setReportList(_data.sort((a, b) => a.available - b.available))
+          : setReportList(_data.sort((a, b) => b.available - a.available));
+        break;
+      case "notAvailable":
+        col === currentCol
+          ? setReportList(_data.sort((a, b) => a.notAvailable - b.notAvailable))
+          : setReportList(
+              _data.sort((a, b) => b.notAvailable - a.notAvailable)
+            );
+        break;
+      case "waiting":
+        col === currentCol
+          ? setReportList(_data.sort((a, b) => a.waiting - b.waiting))
+          : setReportList(_data.sort((a, b) => b.waiting - a.waiting));
+        break;
+      case "recycled":
+        col === currentCol
+          ? setReportList(_data.sort((a, b) => a.recycled - b.recycled))
+          : setReportList(_data.sort((a, b) => b.recycled - a.recycled));
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <div className="user-list">
@@ -189,8 +154,11 @@ const Report = () => {
       </div>
 
       <div className="button d-flex justify-content-end mb-4">
-        <button type="button" className="btn btn-danger"
-        onClick={handleExportReport}>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={exportToXLSX}
+        >
           Export
         </button>
       </div>
