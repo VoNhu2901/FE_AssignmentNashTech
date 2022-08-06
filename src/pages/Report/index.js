@@ -49,12 +49,19 @@ const Report = () => {
   const [currentCol, setCurrentCol] = useState("");
   const [reportList, setReportList] = useState([]);
 
+    const [page, setPage] = useState(1);
+    const [numPage, setNumPage] = useState(0);
+    const rowPerPage = 20;
+
   const loadReportList = () => {
     Loading.standard("Loading...");
     reportService
       .getReportList()
       .then((res) => {
-        setReportList(res.data);
+        const resData = res.data;
+        setReportList(resData);
+        setNumPage(Math.ceil(resData.length / rowPerPage)); // get number of page
+
         Loading.remove();
       })
       .catch((error) => {
@@ -132,6 +139,18 @@ const Report = () => {
     }
   };
 
+  const handleNext = () => {
+    if (page < numPage) {
+      setPage(page + 1);
+    }
+  };
+
+  const handlePre = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
+  };
+
   return (
     <div className="user-list">
       <div className="title">
@@ -139,11 +158,7 @@ const Report = () => {
       </div>
 
       <div className="button d-flex justify-content-end mb-4">
-        <button
-          type="button"
-          className="btn btn-danger"
-          onClick={exportToXLSX}
-        >
+        <button type="button" className="btn btn-danger" onClick={exportToXLSX}>
           Export
         </button>
       </div>
@@ -167,7 +182,7 @@ const Report = () => {
             </tr>
           </thead>
           <tbody>
-            {(reportList || []).map((ele, index) => {
+            {(reportList.slice((page-1)*rowPerPage, page*rowPerPage) || []).map((ele, index) => {
               return (
                 <>
                   <tr key={ele.index}>
@@ -186,6 +201,42 @@ const Report = () => {
         </table>
       </div>
       {/* end Table list */}
+
+      {/* start Pagination */}
+      <div className="paging">
+        {numPage > 1 ? (
+          <div className="paging text-end">
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={handlePre}
+            >
+              Previous
+            </button>
+            {Array.from({ length: numPage }, (_, i) => (
+              <button
+                type="button"
+                onClick={() => setPage(i + 1)}
+                className={
+                  page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
+                }
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              type="button"
+              className="btn btn-outline-danger"
+              onClick={handleNext}
+            >
+              Next
+            </button>
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
+      {/* end Pagination */}
     </div>
   );
 };

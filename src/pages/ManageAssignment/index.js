@@ -284,11 +284,10 @@ const ManageAssignment = () => {
     navigate(`/edit-assignment/${code}`);
   };
 
-
-//handle delete assignment
+  //handle delete assignment
   const handleDelete = (code) => {
     setDisable(code);
-  }
+  };
 
   const deleteAssignment = () => {
     assignmentService
@@ -305,7 +304,7 @@ const ManageAssignment = () => {
         setDisable(null);
         toast.error(err.response.data.message);
       });
-  }
+  };
 
   const handleCreateReturning = () => {
     const assId = createReturn;
@@ -318,6 +317,7 @@ const ManageAssignment = () => {
           toast.success(
             "Request for return successfully!. Forward to request for returning tab to view."
           );
+          setCreateReturn(null);
           loadData();
         }
       })
@@ -325,9 +325,7 @@ const ManageAssignment = () => {
         console.log(error);
         toast.error("cannot create request for returning. Try later");
       });
-    setCreateReturn(null);
   };
-
 
   return (
     <>
@@ -533,183 +531,187 @@ const ManageAssignment = () => {
               ).map((ele, index) => {
                 return (
                   <>
-                    {ele.status && (<>
- <tr key={index}>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.id}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.assetCode}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.assetName}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.assignedTo}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.assignedBy}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {moment(ele.assignedDate).format("L")}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.id}
-                      >
-                        {ele.state}
-                      </td>
+                    {ele.status && (
+                      <>
+                        <tr key={index}>
+                          <td
+                            className="border-bottom"
+                            data-bs-toggle="modal"
+                            data-bs-target={"#detailUserViewModal" + ele.id}
+                          >
+                            {ele.id}
+                          </td>
+                          <td
+                            className="border-bottom"
+                            data-bs-toggle="modal"
+                            data-bs-target={"#detailUserViewModal" + ele.id}
+                          >
+                            {ele.assetCode}
+                          </td>
+                          <td
+                            className="border-bottom"
+                            data-bs-toggle="modal"
+                            data-bs-target={"#detailUserViewModal" + ele.id}
+                          >
+                            {ele.assetName}
+                          </td>
+                          <td
+                            className="border-bottom"
+                            data-bs-toggle="modal"
+                            data-bs-target={"#detailUserViewModal" + ele.id}
+                          >
+                            {ele.assignedTo}
+                          </td>
+                          <td
+                            className="border-bottom"
+                            data-bs-toggle="modal"
+                            data-bs-target={"#detailUserViewModal" + ele.id}
+                          >
+                            {ele.assignedBy}
+                          </td>
+                          <td
+                            className="border-bottom"
+                            data-bs-toggle="modal"
+                            data-bs-target={"#detailUserViewModal" + ele.id}
+                          >
+                            {moment(ele.assignedDate).format("L")}
+                          </td>
+                          <td
+                            className="border-bottom"
+                            data-bs-toggle="modal"
+                            data-bs-target={"#detailUserViewModal" + ele.id}
+                          >
+                            {ele.state}
+                          </td>
 
-                      <td style={{ width: "10rem" }}>
-                        {ele.state !== "Waiting for acceptance" &&
-                        ele.state !== "Declined" ? (
-                          <>
-                            <button
-                              className="btn btn-outline-secondary border-0"
-                              disabled
-                            >
-                              <EditIcon />
-                            </button>
-                            <button
-                              className="btn btn-outline-danger border-0"
-                              disabled
-                            >
-                              <HighlightOffIcon />
-                            </button>
-                            <button
-                              className="btn btn-outline-primary border-0"
-                              disabled={
-                                ele.state === "Accepted" || ele.hasReturning
-                              }
-                            >
-                              <RestartAltSharpIcon
-                                onClick={() => setCreateReturn(ele.id)}
-                              />
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button className="btn btn-outline-secondary border-0">
-                              <EditIcon
-                                onClick={() => editAssignment(ele.id)}
-                              />
-                            </button>
-                            <button className="btn btn-outline-danger border-0">
-                              <HighlightOffIcon
-                              // onClick={() =>
-                              //   checkAssetAvailableToDisable(ele.id)
-                              // }
-                              />
-                            </button>
-                            <button
-                              className="btn btn-outline-secondary border-0"
-                              disabled={
-                                ele.state === "Accepted" || ele.hasReturning
-                              }
-                            >
-                              <RestartAltSharpIcon
-                                onClick={() => setCreateReturn(ele.id)}
-                              />
-                            </button>
-                          </>
-                        )}
-                      </td>
-                      </tr>
-                    <div
-                      className="modal fade"
-                      id={"detailUserViewModal" + ele.id}
-                      tabIndex="-1"
-                      aria-labelledby="exampleModalLabel"
-                      aria-hidden="true"
-                    >
-                      <div className="modal-dialog modal-dialog-centered modal-lg">
-                        <div className="modal-content ">
-                          <div className="modal-header">
-                            <h5
-                              className="modal-title text-danger"
-                              id="exampleModalLabel"
-                            >
-                              Detailed Assignment Information
-                            </h5>
-                            <button
-                              type="button"
-                              className="btn btn-outline-danger border-4"
-                              data-bs-dismiss="modal"
-                            >
-                              <CloseIcon />
-                            </button>
-                          </div>
-                          <div className="modal-body">
-                            <div className="detail">
-                              <div className="detail-item">
-                                <div className="label">Asset Code</div>
-                                <div className="value">{ele.assetCode}</div>
+                          <td style={{ width: "10rem" }}>
+                            {ele.state !== "Waiting for acceptance" &&
+                            ele.state !== "Declined" ? (
+                              <>
+                                <button
+                                  className="btn btn-outline-secondary border-0"
+                                  disabled
+                                >
+                                  <EditIcon />
+                                </button>
+                                <button
+                                  className="btn btn-outline-danger border-0"
+                                  disabled
+                                >
+                                  <HighlightOffIcon />
+                                </button>
+                                <button
+                                  className="btn btn-outline-primary border-0"
+                                  disabled={
+                                    ele.state === "Accepted" || ele.hasReturning
+                                  }
+                                >
+                                  <RestartAltSharpIcon
+                                    onClick={() => setCreateReturn(ele.id)}
+                                  />
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button className="btn btn-outline-secondary border-0">
+                                  <EditIcon
+                                    onClick={() => editAssignment(ele.id)}
+                                  />
+                                </button>
+                                <button className="btn btn-outline-danger border-0">
+                                  <HighlightOffIcon
+                                  // onClick={() =>
+                                  //   checkAssetAvailableToDisable(ele.id)
+                                  // }
+                                  />
+                                </button>
+                                <button
+                                  className="btn btn-outline-secondary border-0"
+                                  disabled={
+                                    ele.state === "Accepted" || ele.hasReturning
+                                  }
+                                >
+                                  <RestartAltSharpIcon
+                                    onClick={() => setCreateReturn(ele.id)}
+                                  />
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                        <div
+                          className="modal fade"
+                          id={"detailUserViewModal" + ele.id}
+                          tabIndex="-1"
+                          aria-labelledby="exampleModalLabel"
+                          aria-hidden="true"
+                        >
+                          <div className="modal-dialog modal-dialog-centered modal-lg">
+                            <div className="modal-content ">
+                              <div className="modal-header">
+                                <h5
+                                  className="modal-title text-danger"
+                                  id="exampleModalLabel"
+                                >
+                                  Detailed Assignment Information
+                                </h5>
+                                <button
+                                  type="button"
+                                  className="btn btn-outline-danger border-4"
+                                  data-bs-dismiss="modal"
+                                >
+                                  <CloseIcon />
+                                </button>
                               </div>
-                              <div className="detail-item">
-                                <div className="label">Asset Name</div>
-                                <div className="value">{ele.assetName}</div>
-                              </div>
-                              <div className="detail-item">
-                                <div className="label">Specification</div>
-                                <div className="value">{ele.specification}</div>
-                              </div>
-                              <div className="detail-item">
-                                <div className="label">Assigned to</div>
-                                <div className="value">{ele.assignedTo}</div>
-                              </div>
-                              <div className="detail-item">
-                                <div className="label">Assigned by</div>
-                                <div className="value">{ele.assignedBy}</div>
-                              </div>
-                              <div className="detail-item">
-                                <div className="label">Assigned Date</div>
-                                <div className="value">
-                                  {moment(ele.assignedDate).format("L")}
+                              <div className="modal-body">
+                                <div className="detail">
+                                  <div className="detail-item">
+                                    <div className="label">Asset Code</div>
+                                    <div className="value">{ele.assetCode}</div>
+                                  </div>
+                                  <div className="detail-item">
+                                    <div className="label">Asset Name</div>
+                                    <div className="value">{ele.assetName}</div>
+                                  </div>
+                                  <div className="detail-item">
+                                    <div className="label">Specification</div>
+                                    <div className="value">
+                                      {ele.specification}
+                                    </div>
+                                  </div>
+                                  <div className="detail-item">
+                                    <div className="label">Assigned to</div>
+                                    <div className="value">
+                                      {ele.assignedTo}
+                                    </div>
+                                  </div>
+                                  <div className="detail-item">
+                                    <div className="label">Assigned by</div>
+                                    <div className="value">
+                                      {ele.assignedBy}
+                                    </div>
+                                  </div>
+                                  <div className="detail-item">
+                                    <div className="label">Assigned Date</div>
+                                    <div className="value">
+                                      {moment(ele.assignedDate).format("L")}
+                                    </div>
+                                  </div>
+                                  <div className="detail-item">
+                                    <div className="label">State</div>
+                                    <div className="value">{ele.state}</div>
+                                  </div>
+                                  <div className="detail-item">
+                                    <div className="label">Note</div>
+                                    <div className="value">{ele.note} </div>
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="detail-item">
-                                <div className="label">State</div>
-                                <div className="value">{ele.state}</div>
-                              </div>
-                              <div className="detail-item">
-                                <div className="label">Note</div>
-                                <div className="value">{ele.note} </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    </>
+                      </>
                     )}
-                   
-
-                    
                   </>
                 );
               })}

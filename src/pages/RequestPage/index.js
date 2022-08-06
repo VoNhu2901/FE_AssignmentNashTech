@@ -279,6 +279,7 @@ const RequestPage = () => {
             <div>
               <DatePicker
                 selected={filterByDate}
+                placeholderText="Return Date"
                 onChange={(date) => setFilterByDate(date)}
               />
             </div>
