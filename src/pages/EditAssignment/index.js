@@ -12,10 +12,12 @@ const EditAssignment = () => {
   const navigate = useNavigate();
   const { assignmentCode } = useParams();
 
-  const [user, setUser] = useState("user");
-  const [asset, setAsset] = useState("asset");
+  const [userName, setUserName] = useState("");
+  const [assetName, setAssetName] = useState("");
   const [assignedDate, setAssignedDate] = useState("2022-08-05");
-  const [note, setNote] = useState("bjdf");
+  const [note, setNote] = useState("");
+  const [userId, setUserId] = useState("");
+  const [assetId, setAssetId] = useState("");
 
   useEffect(() => {
     Loading.standard("Loading...");
@@ -23,10 +25,12 @@ const EditAssignment = () => {
     assignmentService
       .getAssignmentById(assignmentCode)
       .then((res) => {
-        // setUser(res.data.user);
-        // setAsset(res.data.asset);
-        // setAssignedDate(res.data.assignedDate);
-        // setNote(res.data.note);
+        setUserName(res.data.assignedTo);
+        setAssetName(res.data.assetName);
+        setAssignedDate(res.data.assignedDate);
+        setNote(res.data.note);
+        setUserId(res.data.assignedToId);
+        setAssetId(res.data.assetCode);
 
         Loading.remove();
       })
@@ -37,10 +41,10 @@ const EditAssignment = () => {
   }, []);
 
   const handleEditAssignment = () => {
-    if (user && asset && assignedDate && note) {
+    if (userId && assetId && assignedDate && note) {
       const payload = {
-        user,
-        asset,
+        asset: assetId,
+        user: userId,
         assignedDate,
         note,
       };
@@ -89,7 +93,7 @@ const EditAssignment = () => {
                 data-bs-auto-close="outside"
                 data-bs-target="#selectUserModal"
               >
-                {user}
+                {userName}
                 <ArrowDropDownIcon />
               </button>
               <SelectUser />
@@ -105,7 +109,7 @@ const EditAssignment = () => {
                 data-bs-auto-close="outside"
                 data-bs-target="#selectUserModal"
               >
-                {asset}
+                {assetName}
                 <ArrowDropDownIcon />
               </button>
               <SelectAsset />
@@ -139,7 +143,7 @@ const EditAssignment = () => {
               id="save"
               className="form-create-asset__button-item"
               onClick={handleEditAssignment}
-              disabled={!(user && asset && assignedDate && note)}
+              disabled={!(userId && assetId && assignedDate && note)}
             >
               Save
             </button>

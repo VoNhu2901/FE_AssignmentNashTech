@@ -38,7 +38,7 @@ const SelectAsset = () => {
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
 
-  const [selectAsset, setSelectAsset] = useState("");
+  // const [selectAsset, setSelectAsset] = useState("");
 
   const loadData = () => {
     Loading.standard("Loading...");
