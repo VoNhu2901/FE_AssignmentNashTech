@@ -36,7 +36,7 @@ const Login = () => {
           localStorage.setItem("location", res.data.location);
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("username", res.data.username);
-
+          localStorage.setItem("role", res.data.role.name);
           Loading.remove();
           toast.success("Login success!!!");
           navigate("/");

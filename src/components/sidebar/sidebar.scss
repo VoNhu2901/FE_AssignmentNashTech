@@ -1,7 +1,7 @@
 @use "../../scss/" as *;
 
 .sidebar {
-  margin-right: 8rem;
+  margin-right: 2rem;
 }
 
 .logo {
@@ -24,7 +24,6 @@
   font-size: 1.2em;
   font-weight: bold;
   margin-top: 30px;
-
   &-navlink {
     text-decoration: none;
     display: block;
@@ -42,8 +41,7 @@
   }
 }
 
-a.menu-navlink:hover{
+a.menu-navlink:hover {
   color: red !important;
   background-color: $menu-hover-bg;
-
 }
