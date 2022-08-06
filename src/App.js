@@ -2,7 +2,6 @@ import "./App.css";
 import { Fragment, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import Main from "./components/layout/Main";
-import RequestPage from "./pages/RequestPage";
 
 import {
   ManageUser,
@@ -13,6 +12,7 @@ import {
   CreateUser,
   EditAsset,
   CreateAsset,
+  RequestPage,
   ManageAssignment,
   CreateAssignment,
   EditAssignment,

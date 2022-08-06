@@ -6,6 +6,7 @@ import EditUser from "./EditUser";
 import CreateUser from "./CreateUser";
 import CreateAsset from "./CreateAsset";
 import EditAsset from "./EditAsset";
+import RequestPage from "./RequestPage";
 import ManageAssignment from "./ManageAssignment";
 import CreateAssignment from "./CreateAssignment";
 import EditAssignment from "./EditAssignment";
@@ -20,6 +21,7 @@ export {
   CreateUser,
   CreateAsset,
   EditAsset,
+  RequestPage,
   ManageAssignment,
   CreateAssignment,
   EditAssignment,

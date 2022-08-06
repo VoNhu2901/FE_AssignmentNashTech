@@ -17,6 +17,8 @@ import { Loading } from "notiflix/build/notiflix-loading-aio";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import returningService from "../../api/returningService";
+
 const state = ["All", "Accepted", "Waiting for acceptance"];
 
 const tableHead = [
@@ -71,9 +73,12 @@ const ManageAssignment = () => {
   const [filterByDate, setFilterByDate] = useState(null);
 
   const [disable, setDisable] = useState(null);
+  const [createReturn, setCreateReturn] = useState();
 
   const newAssignmentId = localStorage.getItem("newAssignmentId");
   const location = localStorage.getItem("location");
+
+  // TODO: check when action is disable
 
   const loadData = () => {
     Loading.standard("Loading...");
@@ -81,6 +86,7 @@ const ManageAssignment = () => {
     assignmentService
       .getAllAssignments(location)
       .then((res) => {
+        console.log(res.data);
         const resData = res.data;
         if (resData.length === 0) {
           toast.error("No assignment founded");
@@ -278,6 +284,7 @@ const ManageAssignment = () => {
     navigate(`/edit-assignment/${code}`);
   };
 
+
 //handle delete assignment
   const handleDelete = (code) => {
     setDisable(code);
@@ -300,8 +307,65 @@ const ManageAssignment = () => {
       });
   }
 
+  const handleCreateReturning = () => {
+    const assId = createReturn;
+    const requestBy = localStorage.getItem("username");
+
+    returningService
+      .createNewReturning(assId, requestBy)
+      .then((res) => {
+        if (res.status === 201) {
+          toast.success(
+            "Request for return successfully!. Forward to request for returning tab to view."
+          );
+          loadData();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("cannot create request for returning. Try later");
+      });
+    setCreateReturn(null);
+  };
+
+
   return (
     <>
+      {/* Modal to show confirm  create new request for returning */}
+      <div
+        className={"modal fade " + (createReturn ? " show d-block" : " d-none")}
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Are you sure?</h5>
+            </div>
+            <div className="modal-body confirm-disable">
+              <div className="modal-subtitle">
+                Do you want to create a returning request for this asset?
+              </div>
+              <div className="button">
+                <button
+                  className="btn btn-danger"
+                  id="disable-button"
+                  onClick={handleCreateReturning}
+                >
+                  Yes
+                </button>
+                <button
+                  className="btn btn-outline-secondary"
+                  id="cancel-button"
+                  onClick={() => setCreateReturn(null)}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {/* start dialog */}
       <div
         className={
@@ -469,102 +533,113 @@ const ManageAssignment = () => {
               ).map((ele, index) => {
                 return (
                   <>
-                    {ele.status && (
-                      <tr key={index}>
-                        <td
-                          className="border-bottom"
-                          data-bs-toggle="modal"
-                          data-bs-target={"#detailUserViewModal" + ele.id}
-                        >
-                          {ele.id}
-                        </td>
-                        <td
-                          className="border-bottom"
-                          data-bs-toggle="modal"
-                          data-bs-target={"#detailUserViewModal" + ele.id}
-                        >
-                          {ele.assetCode}
-                        </td>
-                        <td
-                          className="border-bottom"
-                          data-bs-toggle="modal"
-                          data-bs-target={"#detailUserViewModal" + ele.id}
-                        >
-                          {ele.assetName}
-                        </td>
-                        <td
-                          className="border-bottom"
-                          data-bs-toggle="modal"
-                          data-bs-target={"#detailUserViewModal" + ele.id}
-                        >
-                          {ele.assignedTo}
-                        </td>
-                        <td
-                          className="border-bottom"
-                          data-bs-toggle="modal"
-                          data-bs-target={"#detailUserViewModal" + ele.id}
-                        >
-                          {ele.assignedBy}
-                        </td>
-                        <td
-                          className="border-bottom"
-                          data-bs-toggle="modal"
-                          data-bs-target={"#detailUserViewModal" + ele.id}
-                        >
-                          {moment(ele.assignedDate).format("L")}
-                        </td>
-                        <td
-                          className="border-bottom"
-                          data-bs-toggle="modal"
-                          data-bs-target={"#detailUserViewModal" + ele.id}
-                        >
-                          {ele.state}
-                        </td>
+                    {ele.status && (<>
+ <tr key={index}>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.id}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.assetCode}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.assetName}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.assignedTo}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.assignedBy}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {moment(ele.assignedDate).format("L")}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailUserViewModal" + ele.id}
+                      >
+                        {ele.state}
+                      </td>
 
-                        <td style={{ width: "10rem" }}>
-                          {ele.state !== "Waiting for acceptance" &&
-                          ele.state !== "Declined" ? (
-                            <>
-                              <button
-                                className="btn btn-outline-secondary border-0"
-                                disabled
-                              >
-                                <EditIcon />
-                              </button>
-                              <button
-                                className="btn btn-outline-danger border-0"
-                                disabled
-                              >
-                                <HighlightOffIcon />
-                              </button>
-                              <button className="btn btn-outline-primary border-0">
-                                <RestartAltSharpIcon
-                                // onClick={() => checkAssetAvailableToDisable(ele.id)}
-                                />
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button className="btn btn-outline-secondary border-0">
-                                <EditIcon
-                                  onClick={() => editAssignment(ele.id)}
-                                />
-                              </button>
-                              <button className="btn btn-outline-danger border-0">
-                                <HighlightOffIcon
-                                  onClick={() => handleDelete(ele.id)}
-                                />
-                              </button>
-                              <button className="btn btn-outline-secondary border-0">
-                                <RestartAltSharpIcon
-                                // onClick={() => checkAssetAvailableToDisable(ele.id)}
-                                />
-                              </button>
-                            </>
-                          )}
-                        </td>
+                      <td style={{ width: "10rem" }}>
+                        {ele.state !== "Waiting for acceptance" &&
+                        ele.state !== "Declined" ? (
+                          <>
+                            <button
+                              className="btn btn-outline-secondary border-0"
+                              disabled
+                            >
+                              <EditIcon />
+                            </button>
+                            <button
+                              className="btn btn-outline-danger border-0"
+                              disabled
+                            >
+                              <HighlightOffIcon />
+                            </button>
+                            <button
+                              className="btn btn-outline-primary border-0"
+                              disabled={
+                                ele.state === "Accepted" || ele.hasReturning
+                              }
+                            >
+                              <RestartAltSharpIcon
+                                onClick={() => setCreateReturn(ele.id)}
+                              />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button className="btn btn-outline-secondary border-0">
+                              <EditIcon
+                                onClick={() => editAssignment(ele.id)}
+                              />
+                            </button>
+                            <button className="btn btn-outline-danger border-0">
+                              <HighlightOffIcon
+                              // onClick={() =>
+                              //   checkAssetAvailableToDisable(ele.id)
+                              // }
+                              />
+                            </button>
+                            <button
+                              className="btn btn-outline-secondary border-0"
+                              disabled={
+                                ele.state === "Accepted" || ele.hasReturning
+                              }
+                            >
+                              <RestartAltSharpIcon
+                                onClick={() => setCreateReturn(ele.id)}
+                              />
+                            </button>
+                          </>
+                        )}
+                      </td>
                       </tr>
-                    )}
                     <div
                       className="modal fade"
                       id={"detailUserViewModal" + ele.id}
@@ -630,6 +705,11 @@ const ManageAssignment = () => {
                         </div>
                       </div>
                     </div>
+                    </>
+                    )}
+                   
+
+                    
                   </>
                 );
               })}
