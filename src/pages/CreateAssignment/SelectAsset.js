@@ -139,7 +139,7 @@ const SelectAsset = (props) => {
   };
 
   const handleSave = () => {
-    alert("Save");
+    // alert("Save");
   };
 
   const handlePre = () => {

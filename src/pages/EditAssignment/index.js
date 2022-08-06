@@ -48,7 +48,6 @@ const EditAssignment = () => {
         assignedDate,
         note,
       };
-      console.log(payload);
 
       Loading.hourglass("Editing assignment...");
 

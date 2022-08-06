@@ -31,7 +31,6 @@ const CreateAssignment = () => {
         assignedDate,
         note,
       };
-      console.log(payload);
 
       Loading.hourglass("Creating assignment...");
       assignmentService
