@@ -4,15 +4,62 @@ import { SearchIcon } from "../../components/icon";
 import SelectAsset from "./SelectAsset";
 import SelectUser from "./SelectUser";
 import "./style.scss";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
+import assignmentService from "../../api/assignmentService";
+import { toast } from "react-toastify";
 
 const CreateAssignment = () => {
   const navigate = useNavigate();
+  const assignedBy = localStorage.getItem("username");
+  const [assetName, setAssetName] = useState("");
+  const [userId, setUserId] = useState("");
   // const [isOpenSelectUser, setIsOpenSelectUser] = useState(true);
+
+  //data
+  const [userName, setUserName] = useState("");
+  const [assetCode, setAssetCode] = useState("");
+  const [assignedDate, setAssignedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [note, setNote] = useState("");
+
+  const handleCreateNewAssignment = () => {
+    if (userName && assetCode && assignedDate && note) {
+      const payload = {
+        asset: assetCode,
+        user: userName,
+        assignedDate,
+        note,
+      };
+      console.log(payload);
+
+      Loading.hourglass("Creating assignment...");
+      assignmentService
+        .createAssignment(assignedBy, payload)
+        .then((res) => {
+          if (res.status === 201) {
+            toast.success("SUCCESSFULLY ADDED!!");
+            localStorage.setItem("newAssignmentId", res.data.id);
+            navigate("/manage-assignment");
+          }
+          Loading.remove();
+        })
+        .catch((error) => {
+          Loading.remove();
+          if (error.response.data) {
+            toast.error(error.response.data.message);
+          } else {
+            toast.error("ERROR SERVER");
+          }
+        });
+    } else {
+      toast.error("Please fill all fields");
+    }
+  };
 
   const handleCancelAssignment = () => {
     navigate("/manage-assignment");
   };
-
 
   return (
     <>
@@ -31,10 +78,10 @@ const CreateAssignment = () => {
                 data-bs-auto-close="outside"
                 data-bs-target="#selectUserModal"
               >
-                User
+                {userName ? userName : "Select User"}
                 <SearchIcon />
               </button>
-              <SelectUser />
+              <SelectUser setUserName={setUserName} setUserId={setUserId} />
             </div>
 
             <label for="user">Asset</label>
@@ -47,10 +94,13 @@ const CreateAssignment = () => {
                 data-bs-auto-close="outside"
                 data-bs-target="#selectUserModal"
               >
-                Asset
+                {assetName ? assetName : "Select Asset"}
                 <SearchIcon />
               </button>
-              <SelectAsset />
+              <SelectAsset
+                setAssetCode={setAssetCode}
+                setAssetName={setAssetName}
+              />
             </div>
 
             <label for="assignedDate">Assignment Date</label>
@@ -59,10 +109,13 @@ const CreateAssignment = () => {
                 type="date"
                 id="assignedDate"
                 className="form-create-asset__input"
-                defaultValue={new Date().toISOString().split("T")[0]}
                 min={new Date().toISOString().split("T")[0]}
-                // value={assignedDate}
-                // onChange={(e) => setAssignedDate(e.target.value)}
+                value={
+                  assignedDate
+                    ? assignedDate
+                    : new Date().toISOString().split("T")[0]
+                }
+                onChange={(e) => setAssignedDate(e.target.value)}
               ></input>
             </div>
 
@@ -72,8 +125,8 @@ const CreateAssignment = () => {
                 type="text"
                 id="note"
                 className="form-create-asset__input"
-                // value={note}
-                // onChange={(e) => setNote(e.target.value)}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
               ></textarea>
             </div>
           </div>
@@ -82,17 +135,8 @@ const CreateAssignment = () => {
             <button
               id="save"
               className="form-create-asset__button-item"
-              // onClick={handleCreateNewAsset}
-              // disabled={
-              //   !(
-              //     name &&
-              //     category &&
-              //     specification &&
-              //     installedDate &&
-              //     state &&
-              //     categoryName
-              //   )
-              // }
+              onClick={handleCreateNewAssignment}
+              disabled={!(userName && assetCode && assignedDate && note)}
             >
               Save
             </button>

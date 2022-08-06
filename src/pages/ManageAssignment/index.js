@@ -11,7 +11,12 @@ import {
   SearchIcon,
 } from "../../components/icon";
 import "./style.scss";
-
+import assignmentService from "./../../api/assignmentService";
+import { toast } from "react-toastify";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 const state = ["All", "Accepted", "Waiting for acceptance"];
 
 const tableHead = [
@@ -52,45 +57,249 @@ const tableHead = [
   },
 ];
 
-const tableBody = [
-  {
-    no: 1,
-    assetcode: "A00001",
-    assetname: "Asset 1",
-    assignedto: "John Doe",
-    assignedby: "User 2",
-    assigneddate: "2020-01-01",
-    state: "Accepted",
-    specification: "Specification 1",
-    note: "Note 1",
-  },
-  {
-    no: 2,
-    assetcode: "A00002",
-    assetname: "Asset 2",
-    assignedto: "John Doe",
-    assignedby: "User 1",
-    assigneddate: "2020-01-01",
-    state: "Waiting for acceptance",
-    specification: "Specification 2",
-    note: "Note 2",
-  },
-];
-
 const ManageAssignment = () => {
   const navigate = useNavigate();
+  const [currentCol, setCurrentCol] = useState("");
+  const [assignmentList, setAssignmentList] = useState([]);
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [numPage, setNumPage] = useState(0);
+  const rowPerPage = 20;
+
+  const [content, setContent] = useState("");
+  const [filterByState, setFilterByState] = useState("All");
+  const [filterByDate, setFilterByDate] = useState(null);
 
   const [disable, setDisable] = useState(null);
 
-  useEffect(() => {}, []);
+  const newAssignmentId = localStorage.getItem("newAssignmentId");
+  const location = localStorage.getItem("location");
 
-  const disableAssignment = () => {
-    alert("Disable assignment");
+  const loadData = () => {
+    Loading.standard("Loading...");
+
+    assignmentService
+      .getAllAssignments(location)
+      .then((res) => {
+        const resData = res.data;
+        if (resData.length === 0) {
+          toast.error("No assignment founded");
+        }
+
+        let newAssignment = resData.filter(
+          (assignment) => assignment.id === newAssignmentId
+        );
+        let _data = [];
+        if (newAssignmentId) {
+          _data = resData.filter(
+            (assignment) => assignment.id !== newAssignmentId
+          );
+        } else {
+          _data = [...resData];
+        }
+
+        let sorted = _data.sort((a, b) => a.id - b.id);
+        setData(resData); // get data to handle
+
+        const finalList = [...newAssignment, ...sorted];
+        setAssignmentList(finalList); // get data to display (have change)
+        setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+
+        Loading.remove();
+      })
+      .catch((err) => {
+        Loading.remove();
+        console.log(err);
+        toast.info("No Assignment Found");
+      });
+  };
+
+  useEffect(() => {
+    loadData();
+    localStorage.removeItem("newAssignmentId");
+  }, []);
+
+  const isEqual = (date1, date2) => {
+    const d1 = moment(date1).format("L");
+    const d2 = moment(date2).format("L");
+    return d1.localeCompare(d2) === 0;
+  };
+
+  useEffect(() => {
+    let list = [...data];
+    if (filterByState !== "All" && filterByState !== null) {
+      list = list.filter(
+        (item) => item.state.localeCompare(filterByState) === 0
+      );
+    }
+
+    if (filterByDate) {
+      list = list.filter((item) => isEqual(filterByDate, item.assignedDate));
+    }
+
+    setNumPage(Math.ceil(list.length / rowPerPage));
+    setAssignmentList(list);
+  }, [filterByDate, filterByState, data]);
+
+  const sortByCol = (col) => {
+    if (col === currentCol) {
+      setCurrentCol(""); // reset currentCol
+    } else {
+      setCurrentCol(col); // set currentCol
+    }
+    const _data = [...assignmentList];
+
+    switch (col) {
+      case "no":
+        col === currentCol
+          ? setAssignmentList(_data.sort((a, b) => a.id - b.id))
+          : setAssignmentList(_data.sort((a, b) => b.id - a.id));
+        break;
+      case "assetcode":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assetCode.localeCompare(b.assetCode))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assetCode.localeCompare(a.assetCode))
+            );
+        break;
+      case "assetname":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assetName.localeCompare(b.assetName))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assetName.localeCompare(a.assetName))
+            );
+        break;
+      case "assignedto":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assignedTo.localeCompare(b.assignedTo))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assignedTo.localeCompare(a.assignedTo))
+            );
+        break;
+      case "assignedby":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assignedBy.localeCompare(b.assignedBy))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assignedBy.localeCompare(a.assignedBy))
+            );
+        break;
+      case "assigneddate":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.assignedDate.localeCompare(b.assignedDate))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.assignedDate.localeCompare(a.assignedDate))
+            );
+        break;
+      case "state":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.state.localeCompare(b.state))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.state.localeCompare(a.state))
+            );
+        break;
+      case "specification":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) =>
+                a.specification.localeCompare(b.specification)
+              )
+            )
+          : setAssignmentList(
+              _data.sort((a, b) =>
+                b.specification.localeCompare(a.specification)
+              )
+            );
+        break;
+      case "note":
+        col === currentCol
+          ? setAssignmentList(
+              _data.sort((a, b) => a.note.localeCompare(b.note))
+            )
+          : setAssignmentList(
+              _data.sort((a, b) => b.note.localeCompare(a.note))
+            );
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSearch = () => {
+    if (!content) {
+      loadData();
+    } else {
+      assignmentService
+        .searchAssignment(location, content)
+        .then((res) => {
+          const resData = res.data;
+          if (resData.length === 0) {
+            toast.error(
+              `No result match with ${content}. Try again with correct format`
+            );
+          }
+          let sorted = resData.sort((a, b) => a.id - b.id);
+          const finalList = [...sorted];
+          setData(finalList); // get data to handle
+          setAssignmentList(finalList); // get data to display (have change)
+          setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.info("No Assignment Found");
+        });
+    }
+  };
+
+  const handleNext = () => {
+    if (page < numPage) {
+      setPage(page + 1);
+    }
+  };
+
+  const handlePre = () => {
+    if (page > 1) {
+      setPage(page - 1);
+    }
   };
 
   const editAssignment = (code) => {
     navigate(`/edit-assignment/${code}`);
   };
+
+//handle delete assignment
+  const handleDelete = (code) => {
+    setDisable(code);
+  }
+
+  const deleteAssignment = () => {
+    assignmentService
+      .deleteAssignment(disable)
+      .then((res) => {
+        if (res.status === 200) {
+          toast.success("Assignment Deleted");
+          loadData();
+          setDisable(null);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setDisable(null);
+        toast.error(err.response.data.message);
+      });
+  }
+
   return (
     <>
       {/* start dialog */}
@@ -99,7 +308,6 @@ const ManageAssignment = () => {
           "modal fade" +
           (disable && disable !== "Error" ? " show d-block" : " d-none")
         }
-        // className="modal fade show d-block"
         tabIndex="-1"
         role="dialog"
       >
@@ -116,7 +324,7 @@ const ManageAssignment = () => {
                 <button
                   className="btn btn-danger"
                   id="disable-button"
-                  onClick={disableAssignment}
+                  onClick={deleteAssignment}
                 >
                   Delete
                 </button>
@@ -168,8 +376,8 @@ const ManageAssignment = () => {
                           type="checkbox"
                           value={type}
                           id={type}
-                          // checked={filterByState[index] === 1}
-                          // onChange={() => handleFilterByState(index)}
+                          checked={filterByState === type}
+                          onChange={() => setFilterByState(type)}
                         />
                         <label className="form-check-label" htmlFor={type}>
                           {type}
@@ -183,14 +391,19 @@ const ManageAssignment = () => {
 
               {/* start filter Assigned Date*/}
 
-              <input
-                type="date"
-                id="assignedDate"
-                className="form-create-asset__input btn btn-outline-secondary"
-                placeholder="Assigned Date"
-                // onChange={(e) => setAssignedDate(e.target.value)}
-              ></input>
-              {/* end filter Assigned Date*/}
+              <div className="filterDate border border-secondary">
+                <div>
+                  <DatePicker
+                    placeholderText="Assigned Date"
+                    selected={filterByDate}
+                    onChange={(date) => setFilterByDate(date)}
+                  />
+                </div>
+                <div className="iconDate border-start border-secondary text-secondary">
+                  <DateRangeIcon />
+                </div>
+                {/* end filter Assigned Date*/}
+              </div>
             </div>
           </div>
 
@@ -200,15 +413,12 @@ const ManageAssignment = () => {
               <div className="input">
                 <input
                   type="text"
-                  // value={content}
-                  // onChange={(e) => setContent(e.target.value)}
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
                 />
               </div>
               <div>
-                <button
-                  className="btn border-0"
-                  // onClick={handleSearch}
-                >
+                <button className="btn border-0" onClick={handleSearch}>
                   <SearchIcon />
                 </button>
               </div>
@@ -242,7 +452,7 @@ const ManageAssignment = () => {
                     {item.name}
                     <button
                       className="btn border-0"
-                      // onClick={() => sortByCol(item.id)}
+                      onClick={() => sortByCol(item.id)}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -251,109 +461,113 @@ const ManageAssignment = () => {
               </tr>
             </thead>
             <tbody>
-              {(tableBody || []).map((ele, index) => {
+              {(
+                assignmentList.slice(
+                  (page - 1) * rowPerPage,
+                  page * rowPerPage
+                ) || []
+              ).map((ele, index) => {
                 return (
                   <>
-                    <tr key={ele.index}>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
-                      >
-                        {ele.no}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
-                      >
-                        {ele.assetcode}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
-                      >
-                        {ele.assetname}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
-                      >
-                        {ele.assignedto}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
-                      >
-                        {ele.assignedby}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
-                      >
-                        {moment(ele.assigneddate).format("L")}
-                      </td>
-                      <td
-                        className="border-bottom"
-                        data-bs-toggle="modal"
-                        data-bs-target={"#detailUserViewModal" + ele.no}
-                      >
-                        {ele.state}
-                      </td>
+                    {ele.status && (
+                      <tr key={index}>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.id}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.assetCode}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.assetName}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.assignedTo}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.assignedBy}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {moment(ele.assignedDate).format("L")}
+                        </td>
+                        <td
+                          className="border-bottom"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#detailUserViewModal" + ele.id}
+                        >
+                          {ele.state}
+                        </td>
 
-                      <td style={{width: "10rem"}}>
-                        {ele.state !== "Waiting for acceptance" &&
-                        ele.state !== "Declined" ? (
-                          <>
-                            <button
-                              className="btn btn-outline-secondary border-0"
-                              disabled
-                            >
-                              <EditIcon />
-                            </button>
-                            <button
-                              className="btn btn-outline-danger border-0"
-                              disabled
-                            >
-                              <HighlightOffIcon />
-                            </button>
-                            <button className="btn btn-outline-primary border-0">
-                              <RestartAltSharpIcon
-                              // onClick={() => checkAssetAvailableToDisable(ele.id)}
-                              />
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button className="btn btn-outline-secondary border-0">
-                              <EditIcon
-                                onClick={() => editAssignment(ele.no)}
-                              />
-                            </button>
-                            <button className="btn btn-outline-danger border-0">
-                              <HighlightOffIcon
-                              // onClick={() =>
-                              //   checkAssetAvailableToDisable(ele.id)
-                              // }
-                              />
-                            </button>
-                            <button className="btn btn-outline-secondary border-0">
-                              <RestartAltSharpIcon
-                              // onClick={() => checkAssetAvailableToDisable(ele.id)}
-                              />
-                            </button>
-                          </>
-                        )}
-                      </td>
-                    </tr>
-
+                        <td style={{ width: "10rem" }}>
+                          {ele.state !== "Waiting for acceptance" &&
+                          ele.state !== "Declined" ? (
+                            <>
+                              <button
+                                className="btn btn-outline-secondary border-0"
+                                disabled
+                              >
+                                <EditIcon />
+                              </button>
+                              <button
+                                className="btn btn-outline-danger border-0"
+                                disabled
+                              >
+                                <HighlightOffIcon />
+                              </button>
+                              <button className="btn btn-outline-primary border-0">
+                                <RestartAltSharpIcon
+                                // onClick={() => checkAssetAvailableToDisable(ele.id)}
+                                />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button className="btn btn-outline-secondary border-0">
+                                <EditIcon
+                                  onClick={() => editAssignment(ele.id)}
+                                />
+                              </button>
+                              <button className="btn btn-outline-danger border-0">
+                                <HighlightOffIcon
+                                  onClick={() => handleDelete(ele.id)}
+                                />
+                              </button>
+                              <button className="btn btn-outline-secondary border-0">
+                                <RestartAltSharpIcon
+                                // onClick={() => checkAssetAvailableToDisable(ele.id)}
+                                />
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    )}
                     <div
                       className="modal fade"
-                      id={"detailUserViewModal" + ele.no}
+                      id={"detailUserViewModal" + ele.id}
                       tabIndex="-1"
                       aria-labelledby="exampleModalLabel"
                       aria-hidden="true"
@@ -379,11 +593,11 @@ const ManageAssignment = () => {
                             <div className="detail">
                               <div className="detail-item">
                                 <div className="label">Asset Code</div>
-                                <div className="value">{ele.assetcode}</div>
+                                <div className="value">{ele.assetCode}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Asset Name</div>
-                                <div className="value">{ele.assetname}</div>
+                                <div className="value">{ele.assetName}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Specification</div>
@@ -391,16 +605,16 @@ const ManageAssignment = () => {
                               </div>
                               <div className="detail-item">
                                 <div className="label">Assigned to</div>
-                                <div className="value">{ele.assignedto}</div>
+                                <div className="value">{ele.assignedTo}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Assigned by</div>
-                                <div className="value">{ele.assignedby}</div>
+                                <div className="value">{ele.assignedBy}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Assigned Date</div>
                                 <div className="value">
-                                  {moment(ele.assigneddate).format("L")}
+                                  {moment(ele.assignedDate).format("L")}
                                 </div>
                               </div>
                               <div className="detail-item">
@@ -425,7 +639,7 @@ const ManageAssignment = () => {
         {/* end Table list */}
 
         {/* start Pagination */}
-        {/* <div className="paging">
+        <div className="paging">
           {numPage > 1 ? (
             <div className="paging text-end">
               <button
@@ -457,7 +671,7 @@ const ManageAssignment = () => {
           ) : (
             <></>
           )}
-        </div> */}
+        </div>
         {/* end Pagination */}
       </div>
     </>
