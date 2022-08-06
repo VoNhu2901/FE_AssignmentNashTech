@@ -25,35 +25,6 @@ const HomePage = () => {
   const [numPage, setNumPage] = useState(0);
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    let status = localStorage.getItem("status");
-    if (status === "NEW") {
-      setIsNew(true);
-    }
-  }, []);
-
-  const loadData = () => {
-    Loading.standard("Loading...");
-    staffService.getListAssignments()
-      .then((res) => {
-        const resData = res.data;
-        if (resData.length === 0) {
-          toast.error("No assignment found!");
-        }
-        setData(resData);
-        setNumPage(Math.ceil(resData.length / rowPerPage));
-        Loading.remove();
-      }).catch((err) => {
-        Loading.remove();
-        console.log(err);
-        toast.error("No assignment found");
-      });
-
-  }
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const tableHeader = [
     {
       id: "assetCode",
@@ -92,6 +63,80 @@ const HomePage = () => {
     },
 
   ];
+
+  useEffect(() => {
+    let status = localStorage.getItem("status");
+    if (status === "NEW") {
+      setIsNew(true);
+    }
+  }, []);
+
+  const loadData = () => {
+    const userId = localStorage.getItem("userId");
+    Loading.standard("Loading...");
+    staffService.getListAssignments(userId)
+      .then((res) => {
+        const resData = res.data;
+        if (resData.length === 0) {
+          toast.info("No assignment found!");
+        }
+        setData(resData);
+        setNumPage(Math.ceil(resData.length / rowPerPage));
+        Loading.remove();
+      }).catch((err) => {
+        Loading.remove();
+        console.log(err);
+        toast.error("No assignment found");
+      });
+  }
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleAccept = (id) => {
+    const state = "Accepted";
+    Loading.standard("Loading...");
+    staffService.updateStateAssignment(id, state)
+      .then(() => {
+        loadData();
+        toast.success("Accept success!");
+        Loading.remove();
+      }).catch((err) => {
+        console.log(err);
+        Loading.remove();
+        toast.error("Accept failed");
+      });
+  }
+
+  const handleDecline = (id) => {
+    const state = "Declined";
+    Loading.standard("Loading...");
+    staffService.updateStateAssignment(id, state)
+      .then(() => {
+        loadData();
+        toast.success("Decline success!");
+        Loading.remove();
+      }).catch((err) => {
+        console.log(err);
+        Loading.remove();
+        toast.error("Decline failed");
+      });
+  }
+
+  const handleNext = () => {
+    let temp = page + 1;
+    if (temp <= numPage) {
+      setPage(temp);
+    }
+  };
+
+  const handlePre = () => {
+    let temp = page - 1;
+    if (temp >= 1) {
+      setPage(temp);
+    }
+  };
 
   const handleSavePassword = () => {
     if (newPassword) {
@@ -198,7 +243,7 @@ const HomePage = () => {
           <tbody>
             {(
               data.slice((page - 1) * rowPerPage, page * rowPerPage) || []
-            ).map((ele, index) => {
+            ).map((ele) => {
               return (
                 <>
                   <tr key={ele.id}>
@@ -251,24 +296,37 @@ const HomePage = () => {
                     >
                       {ele.state}
                     </td>
-                    <td className="btn btn-outline-danger border-0">
+                    <td >
                       {ele.state === "Waiting for acceptance" ? (
-                        <> <CheckIcon /> </>
+                        <button className="btn btn-outline-danger border-0"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#modalAccept" + ele.id}>
+                          <CheckIcon />
+                        </button>
                       ) : (
-                        <> <CheckIcon disabled={true} /> </>
+                        <button className="btn btn-outline-danger border-0" disabled>
+                          <CheckIcon />
+                        </button>
                       )}
                     </td>
-                    <td className="btn btn-outline-danger border-0">
+                    <td>
                       {ele.state === "Waiting for acceptance" ? (
-                        <> <ClearIcon className="btnClear"/> </>
+                        <button className="btn btn-outline-danger border-0"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#modalDecline" + ele.id}>
+                          <ClearIcon className="btnClear" />
+                        </button>
                       ) : (
-                        <> <ClearIcon className="btnClear" disabled={true} /> </>
+                        <button className="btn btn-outline-danger border-0" disabled>
+                          <ClearIcon className="btnClear" />
+                        </button>
                       )}
                     </td>
-                    <td className="btn btn-outline-danger border-0">
-                      <ReplayIcon 
-                      className="btnReload"
-                      onClick={loadData}/>
+                    <td>
+                      <button className="btn btn-outline-info border-0" onClick={loadData}>
+                        <ReplayIcon className="btnReload" />
+                      </button>
+
                     </td>
                   </tr>
 
@@ -335,11 +393,126 @@ const HomePage = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* modal confirm acceptance */}
+                  <div
+                    className="modal fade"
+                    tabIndex="-1"
+                    role="dialog"
+                    id={"modalAccept" + ele.id}
+                  >
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title text-danger">Are you sure?</h5>
+                        </div>
+                        <div class="modal-body">
+                          <div className="text">
+                            <h6>
+                              Do you want to accept this assignment?
+                            </h6>
+                          </div>
+                          <div className="button-group">
+                            <button
+                              type="button"
+                              className="btn btn-danger me-4 "
+                              onClick={() => handleAccept(ele.id)}
+                              data-bs-dismiss="modal"
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-outline-dark"
+                              data-bs-dismiss="modal"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* modal confirm declined */}
+                  <div
+                    className="modal fade"
+                    tabIndex="-1"
+                    role="dialog"
+                    id={"modalDecline" + ele.id}
+                  >
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title text-danger">Are you sure?</h5>
+                        </div>
+                        <div class="modal-body">
+                          <div className="text">
+                            <h6>
+                              Do you want to decline this assignment?
+                            </h6>
+                          </div>
+                          <div className="button-group">
+                            <button
+                              type="button"
+                              className="btn btn-danger me-4"
+                              onClick={() => handleDecline(ele.id)}
+                              data-bs-dismiss="modal"
+                            >
+                              Save
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-outline-dark"
+                              data-bs-dismiss="modal"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </>
               );
             })}
           </tbody>
         </table>
+        {/* start Pagination */}
+        <div className="paging">
+          {numPage > 1 ? (
+            <div className="paging text-end">
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={handlePre}
+              >
+                Previous
+              </button>
+              {Array.from({ length: numPage }, (_, i) => (
+                <button
+                  type="button"
+                  onClick={() => setPage(i + 1)}
+                  className={
+                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
+                  }
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={handleNext}
+              >
+                Next
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+        {/* end Pagination */}
       </div>
       {/* end Table list */}
     </>
