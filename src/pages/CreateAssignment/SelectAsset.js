@@ -27,9 +27,8 @@ const tableHead = [
   },
 ];
 
-const SelectAsset = () => {
+const SelectAsset = (props) => {
   const location = localStorage.getItem("location");
-  const [data, setData] = useState([]);
   const [assetList, setAssetList] = useState([]);
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(0);
@@ -53,8 +52,6 @@ const SelectAsset = () => {
 
         let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
 
-        setData(resData); // get data to handle
-
         const finalList = [...sorted];
         setAssetList(finalList); // get data to display (have change)
         setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
@@ -75,6 +72,7 @@ const SelectAsset = () => {
     if (!content) {
       loadData();
     } else {
+      Loading.standard("Searching...");
       assetService
         .searchAsset(location, content)
         .then((res) => {
@@ -89,11 +87,11 @@ const SelectAsset = () => {
 
           const finalList = [...sorted];
           setNumPage(Math.ceil(finalList.length / rowPerPage));
-          setData(finalList); // get data to handle
           setAssetList(finalList); // get data to display (have change)
+          Loading.remove();
         })
         .catch((err) => {
-          console.log(err);
+          Loading.remove();
           toast.info(
             `No result match with ${content}. Try again with correct format`
           );
@@ -156,6 +154,11 @@ const SelectAsset = () => {
     }
   };
 
+  const handleSelect = (id) => {
+    props.setAssetCode(id);
+    props.setAssetName(assetList.find((item) => item.id === id).name);
+  };
+
   return (
     <>
       <div className="container dropdown-menu p-3 border border-dark">
@@ -203,7 +206,7 @@ const SelectAsset = () => {
               ).map((ele, index) => {
                 return (
                   <>
-                    <tr key={index}>
+                    <tr key={index} onClick={() => handleSelect(ele.id)}>
                       <td>
                         <input
                           className="form-check-input"

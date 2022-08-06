@@ -90,7 +90,7 @@ const ManageAssignment = () => {
           (assignment) => assignment.id === newAssignmentId
         );
         let _data = [];
-        if (newAssignment) {
+        if (newAssignmentId) {
           _data = resData.filter(
             (assignment) => assignment.id !== newAssignmentId
           );

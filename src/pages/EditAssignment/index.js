@@ -14,7 +14,7 @@ const EditAssignment = () => {
 
   const [userName, setUserName] = useState("");
   const [assetName, setAssetName] = useState("");
-  const [assignedDate, setAssignedDate] = useState("2022-08-05");
+  const [assignedDate, setAssignedDate] = useState("");
   const [note, setNote] = useState("");
   const [userId, setUserId] = useState("");
   const [assetId, setAssetId] = useState("");
@@ -57,7 +57,7 @@ const EditAssignment = () => {
         .then((res) => {
           if (res.status === 200) {
             toast.success("SUCCESSFULLY EDIT!!");
-            localStorage.setItem("newAsset", res.data.id);
+            localStorage.setItem("newAssignmentId", res.data.id);
             navigate("/manage-assignment");
             Loading.remove();
           }
@@ -93,10 +93,10 @@ const EditAssignment = () => {
                 data-bs-auto-close="outside"
                 data-bs-target="#selectUserModal"
               >
-                {userName}
+                {userName ? userName : "Select User"}
                 <ArrowDropDownIcon />
               </button>
-              <SelectUser />
+              <SelectUser setUserName={setUserName} setUserId={setUserId} />
             </div>
 
             <label for="asset">Asset</label>
@@ -109,10 +109,13 @@ const EditAssignment = () => {
                 data-bs-auto-close="outside"
                 data-bs-target="#selectUserModal"
               >
-                {assetName}
+                {assetName ? assetName : "Select Asset"}
                 <ArrowDropDownIcon />
               </button>
-              <SelectAsset />
+              <SelectAsset
+                setAssetCode={setAssetId}
+                setAssetName={setAssetName}
+              />
             </div>
 
             <label for="assignedDate">Assignment Date</label>

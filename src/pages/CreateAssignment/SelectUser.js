@@ -27,13 +27,13 @@ const tableHead = [
   },
 ];
 
-const SelectUser = ({ handleClose }) => {
+const SelectUser = (props) => {
   const [userList, setUserList] = useState([]);
   const [numPage, setNumPage] = useState(0);
   const [page, setPage] = useState(1);
   const rowPerPage = 10;
 
-  const [currentCol, setCurrentCol] = useState("")
+  const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
   const location = localStorage.getItem("location");
 
@@ -71,6 +71,7 @@ const SelectUser = ({ handleClose }) => {
     if (!content) {
       loadData();
     } else {
+      Loading.standard("Searching...");
       userService
         .searchUser(location, content)
         .then((res) => {
@@ -85,18 +86,16 @@ const SelectUser = ({ handleClose }) => {
 
           setNumPage(Math.ceil(sorted.length / rowPerPage));
           setUserList(sorted);
+
+          Loading.remove();
         })
         .catch((err) => {
-          console.log(err);
+          Loading.remove();
           toast.info(
             `No user match with "${content}". Try again with correct format.`
           );
         });
     }
-  };
-
-  const handleSave = () => {
-    alert("Save");
   };
 
   const handleNext = () => {
@@ -112,46 +111,57 @@ const SelectUser = ({ handleClose }) => {
   };
 
   const sortByCol = (sortBy) => {
-      if (sortBy === currentCol) {
-        setCurrentCol("");
-      } else {
-        setCurrentCol(sortBy);
-      }
-     const _data = [...userList];
-     switch (sortBy) {
-       case "staffcode":
-         sortBy === currentCol
-           ? setUserList(
-               _data.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
-             )
-           : setUserList(
-               _data.sort((a, b) => b.staffCode.localeCompare(a.staffCode))
-             );
+    if (sortBy === currentCol) {
+      setCurrentCol("");
+    } else {
+      setCurrentCol(sortBy);
+    }
+    const _data = [...userList];
+    switch (sortBy) {
+      case "staffcode":
+        sortBy === currentCol
+          ? setUserList(
+              _data.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
+            )
+          : setUserList(
+              _data.sort((a, b) => b.staffCode.localeCompare(a.staffCode))
+            );
 
-         break;
+        break;
 
-       case "fullname":
-         sortBy === currentCol
-           ? setUserList(
-               _data.sort((a, b) => a.fullName.localeCompare(b.fullName))
-             )
-           : setUserList(
-               _data.sort((a, b) => b.fullName.localeCompare(a.fullName))
-             );
-         break;
+      case "fullname":
+        sortBy === currentCol
+          ? setUserList(
+              _data.sort((a, b) => a.fullName.localeCompare(b.fullName))
+            )
+          : setUserList(
+              _data.sort((a, b) => b.fullName.localeCompare(a.fullName))
+            );
+        break;
 
-       case "type":
-         sortBy === currentCol
-           ? setUserList(_data.sort((a, b) => a.role.localeCompare(b.role)))
-           : setUserList(_data.sort((a, b) => b.role.localeCompare(a.role)));
-         break;
+      case "type":
+        sortBy === currentCol
+          ? setUserList(_data.sort((a, b) => a.role.localeCompare(b.role)))
+          : setUserList(_data.sort((a, b) => b.role.localeCompare(a.role)));
+        break;
 
-       default:
-         break;
-     }
-    
-   };
+      default:
+        break;
+    }
+  };
 
+  const handleSelect = (username) => {
+    props.setUserName(username);
+    props.setUserId(userList.find((item) => item.username === username).staffCode);
+  };
+
+  const handleSave = () => {
+    alert("Save");
+  };
+
+  const handleCancel = () => {
+    alert("Cancel");
+  };
 
   return (
     <>
@@ -199,7 +209,7 @@ const SelectUser = ({ handleClose }) => {
               ).map((ele, index) => {
                 return (
                   <>
-                    <tr key={index}>
+                    <tr key={index} onClick={() => handleSelect(ele.username)}>
                       <td>
                         <input
                           className="form-check-input"
@@ -271,7 +281,7 @@ const SelectUser = ({ handleClose }) => {
             </button>
             <button
               className="form-create-asset__button-item btn btn-light border-secondary"
-              onClick={handleClose}
+              onClick={handleCancel}
             >
               Cancel
             </button>
