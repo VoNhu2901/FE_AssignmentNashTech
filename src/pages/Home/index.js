@@ -73,11 +73,12 @@ const HomePage = () => {
 
   const loadData = () => {
     const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("role");
     Loading.standard("Loading...");
     staffService.getListAssignments(userId)
       .then((res) => {
         const resData = res.data;
-        if (resData.length === 0) {
+        if (resData.length === 0 && role === "STAFF") {
           toast.info("No assignment found!");
         }
         setData(resData);
@@ -86,7 +87,9 @@ const HomePage = () => {
       }).catch((err) => {
         Loading.remove();
         console.log(err);
-        toast.error("No assignment found");
+        if (role === "STAFF") {
+          toast.info("No assignment found!");
+        }
       });
   }
 
@@ -157,7 +160,7 @@ const HomePage = () => {
         })
         .catch((err) => {
           console.log(err);
-          toast.error("Can change password");
+          toast.error("Can't change password");
         });
     } else {
       toast.error("New Password not Empty.");
