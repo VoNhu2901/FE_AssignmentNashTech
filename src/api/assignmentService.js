@@ -4,6 +4,9 @@ const assignmentService = {
   getAllAssignments: (location) => {
     return axiosClient.get(`/api/assignment/getAll/${location}`);
   },
+  getAllAssetsByAvailable: (location) => {
+    return axiosClient.get(`/api/assignment/getAsset/${location}`);
+  },
   searchAssignment: (location, content) => {
     return axiosClient.get(`/api/assignment/search/${location}/${content}`);
   },

@@ -246,6 +246,8 @@ const ManageAssignment = () => {
     if (!content) {
       loadData();
     } else {
+      Loading.standard("Searching...");
+
       assignmentService
         .searchAssignment(location, content)
         .then((res) => {
@@ -260,9 +262,11 @@ const ManageAssignment = () => {
           setData(finalList); // get data to handle
           setAssignmentList(finalList); // get data to display (have change)
           setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+
+          Loading.remove();
         })
         .catch((err) => {
-          console.log(err);
+          Loading.remove();
           toast.info("No Assignment Found");
         });
     }

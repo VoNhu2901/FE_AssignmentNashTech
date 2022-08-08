@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { SearchIcon, ArrowDropDownIcon } from "../../components/icon";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import assetService from "../../api/assetService";
+import assignmentService from './../../api/assignmentService';
 
 const tableHead = [
   {
@@ -42,19 +43,21 @@ const SelectAsset = (props) => {
   const loadData = () => {
     Loading.standard("Loading...");
 
-    assetService
-      .getAllAssets(location)
+    assignmentService
+      .getAllAssetsByAvailable(location)
       .then((res) => {
         const resData = res.data;
         if (resData.length === 0) {
-          toast.error("No asset founded");
+          toast.error("Asset is not available");
         }
+        console.log(resData);
 
         let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
 
         const finalList = [...sorted];
         setAssetList(finalList); // get data to display (have change)
         setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+
         Loading.remove();
       })
       .catch((err) => {
