@@ -45,28 +45,32 @@ const RequestPage = () => {
   }, []);
 
   const handleSearch = () => {
-    const location = localStorage.getItem("location");
-    returningService
-      .searchReturning(location, searchContent)
-      .then((res) => {
-        const result = [...res.data];
-        if (result.length !== 0) {
-          const filter = result.sort((a, b) => a.id - b.id);
+    if (searchContent) {
+      const location = localStorage.getItem("location");
+      returningService
+        .searchReturning(location, searchContent)
+        .then((res) => {
+          const result = [...res.data];
+          if (result.length !== 0) {
+            const filter = result.sort((a, b) => a.id - b.id);
 
-          setRawData(filter);
-          setRequestList(filter);
-          setPage(1);
-          setNumPage(Math.ceil(filter.length / 20));
-        } else {
-          toast.info(
-            "Not found. Try again with other text(Asset code, Name, Request User)"
-          );
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.info("No Request for returning found");
-      });
+            setRawData(filter);
+            setRequestList(filter);
+            setPage(1);
+            setNumPage(Math.ceil(filter.length / 20));
+          } else {
+            toast.info(
+              "Not found. Try again with other text(Asset code, Name, Request User)"
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.info("No Request for returning found");
+        });
+    } else {
+      initData();
+    }
   };
 
   useEffect(() => {
@@ -80,6 +84,9 @@ const RequestPage = () => {
 
     if (filterByDate) {
       list = list.filter((item) => isEqual(filterByDate, item.returnDate));
+      if (list.length === 0) {
+        toast.info(`No request for returning found on ${filterByDate}`);
+      }
     }
 
     setRequestList(list);
