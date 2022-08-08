@@ -7,7 +7,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import DatePicker from "react-datepicker";
-
+import Paging from "../../components/paging";
 import "./index.scss";
 import "react-datepicker/dist/react-datepicker.css";
 import returningService from "../../api/returningService";
@@ -192,20 +192,6 @@ const RequestPage = () => {
       setCurrentCol("");
     } else {
       setCurrentCol(col);
-    }
-  };
-
-  const handleNext = () => {
-    let temp = page + 1;
-    if (temp <= numPage) {
-      setPage(temp);
-    }
-  };
-
-  const handlePre = () => {
-    let temp = page - 1;
-    if (temp >= 1) {
-      setPage(temp);
     }
   };
 
@@ -438,39 +424,7 @@ const RequestPage = () => {
         </table>
       </div>
 
-      <div className="paging">
-        {numPage > 1 ? (
-          <div className="paging text-end">
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={handlePre}
-            >
-              Previous
-            </button>
-            {Array.from({ length: numPage }, (_, i) => (
-              <button
-                type="button"
-                onClick={() => setPage(i + 1)}
-                className={
-                  page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                }
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              type="button"
-              className="btn btn-outline-danger"
-              onClick={handleNext}
-            >
-              Next
-            </button>
-          </div>
-        ) : (
-          <></>
-        )}
-      </div>
+      <Paging numPage={numPage} setPage={setPage} page={page} />
     </div>
   );
 };

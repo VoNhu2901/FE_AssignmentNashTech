@@ -3,6 +3,7 @@ import { SearchIcon, ArrowDropDownIcon } from "../../components/icon";
 import userService from "./../../api/userService";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import { toast } from "react-toastify";
+import Paging from "../../components/paging";
 
 const tableHead = [
   {
@@ -98,18 +99,6 @@ const SelectUser = (props) => {
     }
   };
 
-  const handleNext = () => {
-    if (page < numPage) {
-      setPage(page + 1);
-    }
-  };
-
-  const handlePre = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  };
-
   const sortByCol = (sortBy) => {
     if (sortBy === currentCol) {
       setCurrentCol("");
@@ -152,7 +141,9 @@ const SelectUser = (props) => {
 
   const handleSelect = (username) => {
     props.setUserName(username);
-    props.setUserId(userList.find((item) => item.username === username).staffCode);
+    props.setUserId(
+      userList.find((item) => item.username === username).staffCode
+    );
   };
 
   const handleSave = () => {
@@ -234,43 +225,7 @@ const SelectUser = (props) => {
             </tbody>
           </table>
 
-          {/* start Pagination */}
-          <div className="paging">
-            {numPage > 1 ? (
-              <div className="paging text-end">
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={handlePre}
-                >
-                  Previous
-                </button>
-                {Array.from({ length: numPage }, (_, i) => (
-                  <button
-                    type="button"
-                    onClick={() => setPage(i + 1)}
-                    className={
-                      page === i + 1
-                        ? "btn btn-danger"
-                        : "btn btn-outline-danger"
-                    }
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  className="btn btn-outline-danger"
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
-          {/* end Pagination */}
+          <Paging numPage={numPage} setPage={setPage} page={page} />
 
           <div className="d-flex justify-content-end gap-4">
             <button

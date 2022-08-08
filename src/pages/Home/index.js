@@ -14,7 +14,7 @@ import {
   ClearIcon
 } from "../../components/icon";
 import { Loading } from "notiflix";
-
+import Paging from "../../components/paging";
 
 const HomePage = () => {
   const rowPerPage = 15;
@@ -61,7 +61,6 @@ const HomePage = () => {
       name: "State",
       isDropdown: true,
     },
-
   ];
 
   useEffect(() => {
@@ -75,7 +74,8 @@ const HomePage = () => {
     const userId = localStorage.getItem("userId");
     const role = localStorage.getItem("role");
     Loading.standard("Loading...");
-    staffService.getListAssignments(userId)
+    staffService
+      .getListAssignments(userId)
       .then((res) => {
         const resData = res.data;
         if (resData.length === 0 && role === "STAFF") {
@@ -84,14 +84,15 @@ const HomePage = () => {
         setData(resData);
         setNumPage(Math.ceil(resData.length / rowPerPage));
         Loading.remove();
-      }).catch((err) => {
+      })
+      .catch((err) => {
         Loading.remove();
         console.log(err);
         if (role === "STAFF") {
           toast.info("No assignment found!");
         }
       });
-  }
+  };
 
   useEffect(() => {
     loadData();
@@ -100,45 +101,35 @@ const HomePage = () => {
   const handleAccept = (id) => {
     const state = "Accepted";
     Loading.standard("Loading...");
-    staffService.updateStateAssignment(id, state)
+    staffService
+      .updateStateAssignment(id, state)
       .then(() => {
         loadData();
         toast.success("Accept success!");
         Loading.remove();
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
         Loading.remove();
         toast.error("Accept failed");
       });
-  }
+  };
 
   const handleDecline = (id) => {
     const state = "Declined";
     Loading.standard("Loading...");
-    staffService.updateStateAssignment(id, state)
+    staffService
+      .updateStateAssignment(id, state)
       .then(() => {
         loadData();
         toast.success("Decline success!");
         Loading.remove();
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
         Loading.remove();
         toast.error("Decline failed");
       });
-  }
-
-  const handleNext = () => {
-    let temp = page + 1;
-    if (temp <= numPage) {
-      setPage(temp);
-    }
-  };
-
-  const handlePre = () => {
-    let temp = page - 1;
-    if (temp >= 1) {
-      setPage(temp);
-    }
   };
 
   const handleSavePassword = () => {
@@ -234,9 +225,7 @@ const HomePage = () => {
               {tableHeader.map((item) => (
                 <th className="border-bottom border-3" key={item.id}>
                   {item.name}
-                  <button
-                    className="btn border-0"
-                  >
+                  <button className="btn border-0">
                     {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                   </button>
                 </th>
@@ -244,278 +233,258 @@ const HomePage = () => {
             </tr>
           </thead>
           <tbody>
-            {(
-              data.slice((page - 1) * rowPerPage, page * rowPerPage) || []
-            ).map((ele) => {
-              return (
-                <>
-                  <tr key={ele.id}>
-                    <td
-                      className="border-bottom"
-                      data-bs-toggle="modal"
-                      data-bs-target={"#detailAssignmentModal" + ele.id}
-                    >
-                      {ele.assetCode}
-                    </td>
-                    <td
-                      className="border-bottom"
-                      data-bs-toggle="modal"
-                      data-bs-target={"#detailAssignmentModal" + ele.id}
-                    >
-                      {ele.assetName}
-                    </td>
-                    <td
-                      className="border-bottom"
-                      data-bs-toggle="modal"
-                      data-bs-target={"#detailAssignmentModal" + ele.id}
-                    >
-                      {ele.specification}
-                    </td>
-                    <td
-                      className="border-bottom"
-                      data-bs-toggle="modal"
-                      data-bs-target={"#detailAssignmentModal" + ele.id}
-                    >
-                      {ele.assignTo}
-                    </td>
-                    <td
-                      className="border-bottom"
-                      data-bs-toggle="modal"
-                      data-bs-target={"#detailAssignmentModal" + ele.id}
-                    >
-                      {ele.assignBy}
-                    </td>
-                    <td
-                      className="border-bottom"
-                      data-bs-toggle="modal"
-                      data-bs-target={"#detailAssignmentModal" + ele.id}
-                    >
-                      {moment(ele.assignedDate).format("L")}
-                    </td>
-                    <td
-                      className="border-bottom"
-                      data-bs-toggle="modal"
-                      data-bs-target={"#detailAssignmentModal" + ele.id}
-                    >
-                      {ele.state}
-                    </td>
-                    <td >
-                      {ele.state === "Waiting for acceptance" ? (
-                        <button className="btn btn-outline-danger border-0"
-                          data-bs-toggle="modal"
-                          data-bs-target={"#modalAccept" + ele.id}>
-                          <CheckIcon />
-                        </button>
-                      ) : (
-                        <button className="btn btn-outline-danger border-0" disabled>
-                          <CheckIcon />
-                        </button>
-                      )}
-                    </td>
-                    <td>
-                      {ele.state === "Waiting for acceptance" ? (
-                        <button className="btn btn-outline-danger border-0"
-                          data-bs-toggle="modal"
-                          data-bs-target={"#modalDecline" + ele.id}>
-                          <ClearIcon className="btnClear" />
-                        </button>
-                      ) : (
-                        <button className="btn btn-outline-danger border-0" disabled>
-                          <ClearIcon className="btnClear" />
-                        </button>
-                      )}
-                    </td>
-                    <td>
-                      <button className="btn btn-outline-info border-0" onClick={loadData}>
-                        <ReplayIcon className="btnReload" />
-                      </button>
-
-                    </td>
-                  </tr>
-
-                  <div
-                    className="modal fade"
-                    id={"detailAssignmentModal" + ele.id}
-                    tabIndex="-1"
-                    aria-labelledby="exampleModalLabel"
-                    aria-hidden="true"
-                  >
-                    <div className="modal-dialog modal-dialog-centered modal-md">
-                      <div className="modal-content ">
-                        <div className="modal-header">
-                          <h5
-                            className="modal-title text-danger"
-                            id="exampleModalLabel"
-                          >
-                            Detailed Assignment Information
-                          </h5>
+            {(data.slice((page - 1) * rowPerPage, page * rowPerPage) || []).map(
+              (ele) => {
+                return (
+                  <>
+                    <tr key={ele.id}>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailAssignmentModal" + ele.id}
+                      >
+                        {ele.assetCode}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailAssignmentModal" + ele.id}
+                      >
+                        {ele.assetName}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailAssignmentModal" + ele.id}
+                      >
+                        {ele.specification}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailAssignmentModal" + ele.id}
+                      >
+                        {ele.assignTo}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailAssignmentModal" + ele.id}
+                      >
+                        {ele.assignBy}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailAssignmentModal" + ele.id}
+                      >
+                        {moment(ele.assignedDate).format("L")}
+                      </td>
+                      <td
+                        className="border-bottom"
+                        data-bs-toggle="modal"
+                        data-bs-target={"#detailAssignmentModal" + ele.id}
+                      >
+                        {ele.state}
+                      </td>
+                      <td>
+                        {ele.state === "Waiting for acceptance" ? (
                           <button
-                            type="button"
-                            className="btn btn-outline-danger border-4"
-                            data-bs-dismiss="modal"
+                            className="btn btn-outline-danger border-0"
+                            data-bs-toggle="modal"
+                            data-bs-target={"#modalAccept" + ele.id}
                           >
-                            <CloseIcon />
+                            <CheckIcon />
                           </button>
-                        </div>
-                        <div className="modal-body">
-                          <div className="detail">
-                            <div className="detail-item">
-                              <div className="label">Asset Code</div>
-                              <div className="value">{ele.assetCode}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Asset Name</div>
-                              <div className="value">{ele.assetName}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Specification</div>
-                              <div className="value">{ele.specification}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Assigned To</div>
-                              <div className="value">{ele.assignTo}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Assigned By</div>
-                              <div className="value">{ele.assignBy}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Assigned Date</div>
-                              <div className="value">{moment(ele.assignedDate).format("L")}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">State</div>
-                              <div className="value">{ele.state}</div>
-                            </div>
-                            <div className="detail-item">
-                              <div className="label">Note</div>
-                              <div className="value">{ele.note}</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                        ) : (
+                          <button
+                            className="btn btn-outline-danger border-0"
+                            disabled
+                          >
+                            <CheckIcon />
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        {ele.state === "Waiting for acceptance" ? (
+                          <button
+                            className="btn btn-outline-danger border-0"
+                            data-bs-toggle="modal"
+                            data-bs-target={"#modalDecline" + ele.id}
+                          >
+                            <ClearIcon className="btnClear" />
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-outline-danger border-0"
+                            disabled
+                          >
+                            <ClearIcon className="btnClear" />
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-outline-info border-0"
+                          onClick={loadData}
+                        >
+                          <ReplayIcon className="btnReload" />
+                        </button>
+                      </td>
+                    </tr>
 
-                  {/* modal confirm acceptance */}
-                  <div
-                    className="modal fade"
-                    tabIndex="-1"
-                    role="dialog"
-                    id={"modalAccept" + ele.id}
-                  >
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title text-danger">Are you sure?</h5>
-                        </div>
-                        <div class="modal-body">
-                          <div className="text">
-                            <h6>
-                              Do you want to accept this assignment?
-                            </h6>
+                    <div
+                      className="modal fade"
+                      id={"detailAssignmentModal" + ele.id}
+                      tabIndex="-1"
+                      aria-labelledby="exampleModalLabel"
+                      aria-hidden="true"
+                    >
+                      <div className="modal-dialog modal-dialog-centered modal-md">
+                        <div className="modal-content ">
+                          <div className="modal-header">
+                            <h5
+                              className="modal-title text-danger"
+                              id="exampleModalLabel"
+                            >
+                              Detailed Assignment Information
+                            </h5>
+                            <button
+                              type="button"
+                              className="btn btn-outline-danger border-4"
+                              data-bs-dismiss="modal"
+                            >
+                              <CloseIcon />
+                            </button>
                           </div>
-                          <div className="button-group">
-                            <button
-                              type="button"
-                              className="btn btn-danger me-4 "
-                              onClick={() => handleAccept(ele.id)}
-                              data-bs-dismiss="modal"
-                            >
-                              Save
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-outline-dark"
-                              data-bs-dismiss="modal"
-                            >
-                              Cancel
-                            </button>
+                          <div className="modal-body">
+                            <div className="detail">
+                              <div className="detail-item">
+                                <div className="label">Asset Code</div>
+                                <div className="value">{ele.assetCode}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Asset Name</div>
+                                <div className="value">{ele.assetName}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Specification</div>
+                                <div className="value">{ele.specification}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Assigned To</div>
+                                <div className="value">{ele.assignTo}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Assigned By</div>
+                                <div className="value">{ele.assignBy}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Assigned Date</div>
+                                <div className="value">
+                                  {moment(ele.assignedDate).format("L")}
+                                </div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">State</div>
+                                <div className="value">{ele.state}</div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="label">Note</div>
+                                <div className="value">{ele.note}</div>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* modal confirm declined */}
-                  <div
-                    className="modal fade"
-                    tabIndex="-1"
-                    role="dialog"
-                    id={"modalDecline" + ele.id}
-                  >
-                    <div class="modal-dialog modal-dialog-centered">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title text-danger">Are you sure?</h5>
-                        </div>
-                        <div class="modal-body">
-                          <div className="text">
-                            <h6>
-                              Do you want to decline this assignment?
-                            </h6>
+                    {/* modal confirm acceptance */}
+                    <div
+                      className="modal fade"
+                      tabIndex="-1"
+                      role="dialog"
+                      id={"modalAccept" + ele.id}
+                    >
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title text-danger">
+                              Are you sure?
+                            </h5>
                           </div>
-                          <div className="button-group">
-                            <button
-                              type="button"
-                              className="btn btn-danger me-4"
-                              onClick={() => handleDecline(ele.id)}
-                              data-bs-dismiss="modal"
-                            >
-                              Save
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-outline-dark"
-                              data-bs-dismiss="modal"
-                            >
-                              Cancel
-                            </button>
+                          <div class="modal-body">
+                            <div className="text">
+                              <h6>Do you want to accept this assignment?</h6>
+                            </div>
+                            <div className="button-group">
+                              <button
+                                type="button"
+                                className="btn btn-danger me-4 "
+                                onClick={() => handleAccept(ele.id)}
+                                data-bs-dismiss="modal"
+                              >
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-outline-dark"
+                                data-bs-dismiss="modal"
+                              >
+                                Cancel
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </>
-              );
-            })}
+
+                    {/* modal confirm declined */}
+                    <div
+                      className="modal fade"
+                      tabIndex="-1"
+                      role="dialog"
+                      id={"modalDecline" + ele.id}
+                    >
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title text-danger">
+                              Are you sure?
+                            </h5>
+                          </div>
+                          <div class="modal-body">
+                            <div className="text">
+                              <h6>Do you want to decline this assignment?</h6>
+                            </div>
+                            <div className="button-group">
+                              <button
+                                type="button"
+                                className="btn btn-danger me-4"
+                                onClick={() => handleDecline(ele.id)}
+                                data-bs-dismiss="modal"
+                              >
+                                Save
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-outline-dark"
+                                data-bs-dismiss="modal"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                );
+              }
+            )}
           </tbody>
         </table>
-        {/* start Pagination */}
-        <div className="paging">
-          {numPage > 1 ? (
-            <div className="paging text-end">
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={handlePre}
-              >
-                Previous
-              </button>
-              {Array.from({ length: numPage }, (_, i) => (
-                <button
-                  type="button"
-                  onClick={() => setPage(i + 1)}
-                  className={
-                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                  }
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={handleNext}
-              >
-                Next
-              </button>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
-        {/* end Pagination */}
+        <Paging numPage={numPage} setPage={setPage} page={page} />
       </div>
       {/* end Table list */}
     </>

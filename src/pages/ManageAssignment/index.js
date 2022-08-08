@@ -18,6 +18,7 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import returningService from "../../api/returningService";
+import Paging from "../../components/paging";
 
 const state = ["All", "Accepted", "Waiting for acceptance"];
 
@@ -265,18 +266,6 @@ const ManageAssignment = () => {
           console.log(err);
           toast.info("No Assignment Found");
         });
-    }
-  };
-
-  const handleNext = () => {
-    if (page < numPage) {
-      setPage(page + 1);
-    }
-  };
-
-  const handlePre = () => {
-    if (page > 1) {
-      setPage(page - 1);
     }
   };
 
@@ -720,41 +709,7 @@ const ManageAssignment = () => {
         </div>
         {/* end Table list */}
 
-        {/* start Pagination */}
-        <div className="paging">
-          {numPage > 1 ? (
-            <div className="paging text-end">
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={handlePre}
-              >
-                Previous
-              </button>
-              {Array.from({ length: numPage }, (_, i) => (
-                <button
-                  type="button"
-                  onClick={() => setPage(i + 1)}
-                  className={
-                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                  }
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={handleNext}
-              >
-                Next
-              </button>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
-        {/* end Pagination */}
+        <Paging numPage={numPage} setPage={setPage} page={page} />
       </div>
     </>
   );

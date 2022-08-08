@@ -5,6 +5,7 @@ import reportService from "../../api/reportService";
 import { toast } from "react-toastify";
 import FileSaver from "file-saver";
 import * as XLSX from "xlsx";
+import Paging from "../../components/paging";
 
 const tableHead = [
   {
@@ -49,9 +50,9 @@ const Report = () => {
   const [currentCol, setCurrentCol] = useState("");
   const [reportList, setReportList] = useState([]);
 
-    const [page, setPage] = useState(1);
-    const [numPage, setNumPage] = useState(0);
-    const rowPerPage = 20;
+  const [page, setPage] = useState(1);
+  const [numPage, setNumPage] = useState(0);
+  const rowPerPage = 20;
 
   const loadReportList = () => {
     Loading.standard("Loading...");
@@ -82,6 +83,7 @@ const Report = () => {
     const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, fileName + fileExtension);
   };
+
   useEffect(() => {
     loadReportList();
   }, []);
@@ -139,18 +141,6 @@ const Report = () => {
     }
   };
 
-  const handleNext = () => {
-    if (page < numPage) {
-      setPage(page + 1);
-    }
-  };
-
-  const handlePre = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  };
-
   return (
     <div className="user-list">
       <div className="title">
@@ -182,7 +172,9 @@ const Report = () => {
             </tr>
           </thead>
           <tbody>
-            {(reportList.slice((page-1)*rowPerPage, page*rowPerPage) || []).map((ele, index) => {
+            {(
+              reportList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
+            ).map((ele, index) => {
               return (
                 <>
                   <tr key={ele.index}>
@@ -202,41 +194,7 @@ const Report = () => {
       </div>
       {/* end Table list */}
 
-      {/* start Pagination */}
-      <div className="paging">
-        {numPage > 1 ? (
-          <div className="paging text-end">
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={handlePre}
-            >
-              Previous
-            </button>
-            {Array.from({ length: numPage }, (_, i) => (
-              <button
-                type="button"
-                onClick={() => setPage(i + 1)}
-                className={
-                  page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                }
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              type="button"
-              className="btn btn-outline-danger"
-              onClick={handleNext}
-            >
-              Next
-            </button>
-          </div>
-        ) : (
-          <></>
-        )}
-      </div>
-      {/* end Pagination */}
+      <Paging numPage={numPage} setPage={setPage} page={page} />
     </div>
   );
 };
