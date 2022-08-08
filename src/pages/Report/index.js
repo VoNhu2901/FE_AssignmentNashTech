@@ -34,7 +34,7 @@ const tableHead = [
     isDropdown: true,
   },
   {
-    id: "waiting",
+    id: "waitingForRecycling",
     name: "Waiting for recycling",
     isDropdown: true,
   },
@@ -124,10 +124,10 @@ const Report = () => {
               _data.sort((a, b) => b.notAvailable - a.notAvailable)
             );
         break;
-      case "waiting":
+      case "waitingForRecycling":
         col === currentCol
-          ? setReportList(_data.sort((a, b) => a.waiting - b.waiting))
-          : setReportList(_data.sort((a, b) => b.waiting - a.waiting));
+          ? setReportList(_data.sort((a, b) => a.waitingForRecycling - b.waitingForRecycling))
+          : setReportList(_data.sort((a, b) => b.waitingForRecycling - a.waitingForRecycling));
         break;
       case "recycled":
         col === currentCol
