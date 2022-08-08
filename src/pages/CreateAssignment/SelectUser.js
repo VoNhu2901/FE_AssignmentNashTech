@@ -36,6 +36,7 @@ const SelectUser = (props) => {
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
   const location = localStorage.getItem("location");
+  const [saveId, setSaveId] = useState("");
 
   const loadData = () => {
     Loading.standard("Loading...");
@@ -151,144 +152,147 @@ const SelectUser = (props) => {
   };
 
   const handleSelect = (username) => {
-    props.setUserName(username);
-    props.setUserId(userList.find((item) => item.username === username).staffCode);
+    setSaveId(username);
   };
 
-  const handleSave = () => {
-    alert("Save");
+  const handleSave = (username) => {
+    props.setUserName(username);
+    props.setUserId(
+      userList.find((item) => item.username === username).staffCode
+    );
+    props.setFullName(userList.find((item) => item.username === username).fullName);
+    props.setIsModalVisibleUser(false);
   };
 
   const handleCancel = () => {
-    alert("Cancel");
+    props.setIsModalVisibleUser(false);
   };
 
   return (
     <>
-      <div className="container dropdown-menu p-3 border border-dark">
-        <div class="d-flex justify-content-between">
-          <h4 className="form-create-asset__title">Select User</h4>
-          <div className="search">
-            <div className="input">
-              <input
-                type="text"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-              />
-            </div>
-            <button
-              className="btn border-dark border-start border-bottom-0 border-end-0 border-top-0 rounded-0 me-1"
-              onClick={handleSearch}
-            >
-              <SearchIcon />
-            </button>
+      {/* <div className="container dropdown-menu p-3 border border-dark"> */}
+      <div class="d-flex justify-content-between">
+        <h4 className="form-create-asset__title">Select User</h4>
+        <div className="search">
+          <div className="input">
+            <input
+              type="text"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
           </div>
+          <button
+            className="btn border-dark border-start border-bottom-0 border-end-0 border-top-0 rounded-0 me-1"
+            onClick={handleSearch}
+          >
+            <SearchIcon />
+          </button>
         </div>
-
-        {/* start Table list */}
-        <div>
-          <table className="w-100 table table-hover">
-            <thead>
-              <tr>
-                {tableHead.map((item) => (
-                  <th className="border-bottom border-3" key={item.id}>
-                    {item.name}
-                    <button
-                      className="btn border-0"
-                      onClick={() => sortByCol(item.id)}
-                    >
-                      {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
-                    </button>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {(
-                userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
-              ).map((ele, index) => {
-                return (
-                  <>
-                    <tr key={index} onClick={() => handleSelect(ele.username)}>
-                      <td>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          id={ele.staffCode}
-                          name="state"
-                        ></input>
-                      </td>
-                      <td className="border-bottom">
-                        <label htmlFor={ele.staffCode}>{ele.staffCode}</label>
-                      </td>
-                      <td className="border-bottom">
-                        <label htmlFor={ele.staffCode}>{ele.fullName}</label>
-                      </td>
-                      <td className="border-bottom">
-                        <label htmlFor={ele.staffCode}>{ele.role}</label>
-                      </td>
-                    </tr>
-                  </>
-                );
-              })}
-            </tbody>
-          </table>
-
-          {/* start Pagination */}
-          <div className="paging">
-            {numPage > 1 ? (
-              <div className="paging text-end">
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={handlePre}
-                >
-                  Previous
-                </button>
-                {Array.from({ length: numPage }, (_, i) => (
-                  <button
-                    type="button"
-                    onClick={() => setPage(i + 1)}
-                    className={
-                      page === i + 1
-                        ? "btn btn-danger"
-                        : "btn btn-outline-danger"
-                    }
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  className="btn btn-outline-danger"
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
-          {/* end Pagination */}
-
-          <div className="d-flex justify-content-end gap-4">
-            <button
-              className="form-create-asset__button-item btn btn-danger"
-              onClick={handleSave}
-            >
-              Save
-            </button>
-            <button
-              className="form-create-asset__button-item btn btn-light border-secondary"
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-        {/* end Table list */}
       </div>
+
+      {/* start Table list */}
+      <div>
+        <table className="w-100 table table-hover">
+          <thead>
+            <tr>
+              {tableHead.map((item) => (
+                <th className="border-bottom border-3" key={item.id}>
+                  {item.name}
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol(item.id)}
+                  >
+                    {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
+                  </button>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {(
+              userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
+            ).map((ele, index) => {
+              return (
+                <>
+                  <tr key={index}>
+                    <td>
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        id={ele.staffCode}
+                        name="state"
+                        onClick={() => handleSelect(ele.username)}
+                      ></input>
+                    </td>
+                    <td className="border-bottom">
+                      <label htmlFor={ele.staffCode}>{ele.staffCode}</label>
+                    </td>
+                    <td className="border-bottom">
+                      <label htmlFor={ele.staffCode}>{ele.fullName}</label>
+                    </td>
+                    <td className="border-bottom">
+                      <label htmlFor={ele.staffCode}>{ele.role}</label>
+                    </td>
+                  </tr>
+                </>
+              );
+            })}
+          </tbody>
+        </table>
+
+        {/* start Pagination */}
+        <div className="paging">
+          {numPage > 1 ? (
+            <div className="paging text-end">
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={handlePre}
+              >
+                Previous
+              </button>
+              {Array.from({ length: numPage }, (_, i) => (
+                <button
+                  type="button"
+                  onClick={() => setPage(i + 1)}
+                  className={
+                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
+                  }
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={handleNext}
+              >
+                Next
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+        {/* end Pagination */}
+
+        <div className="d-flex justify-content-end gap-4">
+          <button
+            className="form-create-asset__button-item btn btn-danger"
+            onClick={() => handleSave(saveId)}
+          >
+            Save
+          </button>
+          <button
+            className="form-create-asset__button-item btn btn-light border-secondary"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+      {/* end Table list */}
+      {/* </div> */}
     </>
   );
 };

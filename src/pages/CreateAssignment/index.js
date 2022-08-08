@@ -7,13 +7,14 @@ import "./style.scss";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import assignmentService from "../../api/assignmentService";
 import { toast } from "react-toastify";
+import { Button, Modal } from "antd";
 
 const CreateAssignment = () => {
   const navigate = useNavigate();
   const assignedBy = localStorage.getItem("username");
   const [assetName, setAssetName] = useState("");
   const [userId, setUserId] = useState("");
-  // const [isOpenSelectUser, setIsOpenSelectUser] = useState(true);
+  const [fullName, setFullName] = useState("");
 
   //data
   const [userName, setUserName] = useState("");
@@ -22,6 +23,9 @@ const CreateAssignment = () => {
     new Date().toISOString().split("T")[0]
   );
   const [note, setNote] = useState("");
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisibleUser, setIsModalVisibleUser] = useState(false);
 
   const handleCreateNewAssignment = () => {
     if (userName && assetCode && assignedDate && note) {
@@ -60,6 +64,12 @@ const CreateAssignment = () => {
     navigate("/manage-assignment");
   };
 
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+  const showModalUser = () => {
+    setIsModalVisibleUser(true);
+  };
   return (
     <>
       <div className="form-create-asset">
@@ -68,7 +78,7 @@ const CreateAssignment = () => {
 
           <div className="form-create-asset__input-wrapper">
             <label for="user">User</label>
-            <div>
+            {/* <div>
               <button
                 id="user"
                 className="btn border w-100 d-flex justify-content-between"
@@ -81,10 +91,37 @@ const CreateAssignment = () => {
                 <SearchIcon />
               </button>
               <SelectUser setUserName={setUserName} setUserId={setUserId} />
-            </div>
+            </div> */}
+
+            <>
+              <Button
+                type="text"
+                className="btn border w-100 d-flex justify-content-between flex-row-reverse"
+                icon={<SearchIcon />}
+                onClick={showModalUser}
+              >
+                {fullName ? fullName : "Select User"}
+              </Button>
+              <Modal
+                visible={isModalVisibleUser}
+                closable={false}
+                mask={false}
+                width={700}
+                closeIcon={false}
+                centered
+                footer={null}
+              >
+                <SelectUser
+                  setUserName={setUserName}
+                  setUserId={setUserId}
+                  setFullName={setFullName}
+                  setIsModalVisibleUser={setIsModalVisibleUser}
+                />
+              </Modal>
+            </>
 
             <label for="user">Asset</label>
-            <div>
+            {/* <div>
               <button
                 id="user"
                 className="btn border w-100 d-flex justify-content-between"
@@ -100,7 +137,33 @@ const CreateAssignment = () => {
                 setAssetCode={setAssetCode}
                 setAssetName={setAssetName}
               />
-            </div>
+            </div> */}
+
+            <>
+              <Button
+                type="text"
+                className="btn border w-100 d-flex justify-content-between flex-row-reverse"
+                icon={<SearchIcon />}
+                onClick={showModal}
+              >
+                {assetName ? assetName : "Select Asset"}
+              </Button>
+              <Modal
+                visible={isModalVisible}
+                closable={false}
+                mask={false}
+                width={700}
+                closeIcon={false}
+                centered
+                footer={null}
+              >
+                <SelectAsset
+                  setAssetCode={setAssetCode}
+                  setAssetName={setAssetName}
+                  setIsModalVisible={setIsModalVisible}
+                />
+              </Modal>
+            </>
 
             <label for="assignedDate">Assignment Date</label>
             <div>
