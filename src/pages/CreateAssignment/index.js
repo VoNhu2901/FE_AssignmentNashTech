@@ -13,7 +13,6 @@ const CreateAssignment = () => {
   const assignedBy = localStorage.getItem("username");
   const [assetName, setAssetName] = useState("");
   const [userId, setUserId] = useState("");
-  // const [isOpenSelectUser, setIsOpenSelectUser] = useState(true);
 
   //data
   const [userName, setUserName] = useState("");
@@ -38,7 +37,8 @@ const CreateAssignment = () => {
         .then((res) => {
           if (res.status === 201) {
             toast.success("SUCCESSFULLY ADDED!!");
-            localStorage.setItem("newAssignmentId", res.data.id);
+            localStorage.setItem("newAssignmentId", res.data.id)
+            
             navigate("/manage-assignment");
           }
           Loading.remove();

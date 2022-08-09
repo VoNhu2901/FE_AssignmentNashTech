@@ -75,11 +75,7 @@ const ManageAssignment = () => {
 
   const [disable, setDisable] = useState(null);
   const [createReturn, setCreateReturn] = useState();
-
-  const newAssignmentId = localStorage.getItem("newAssignmentId");
   const location = localStorage.getItem("location");
-
-  // TODO: check when action is disable
 
   const loadData = () => {
     Loading.standard("Loading...");
@@ -87,19 +83,20 @@ const ManageAssignment = () => {
     assignmentService
       .getAllAssignments(location)
       .then((res) => {
-        console.log(res.data);
+        const newAssignmentId = localStorage.getItem("newAssignmentId");
         const resData = res.data;
         if (resData.length === 0) {
           toast.error("No assignment founded");
         }
 
         let newAssignment = resData.filter(
-          (assignment) => assignment.id === newAssignmentId
+          (assignment) => assignment.id == newAssignmentId
         );
+
         let _data = [];
         if (newAssignmentId) {
           _data = resData.filter(
-            (assignment) => assignment.id !== newAssignmentId
+            (assignment) => assignment.id != newAssignmentId
           );
         } else {
           _data = [...resData];
@@ -113,6 +110,7 @@ const ManageAssignment = () => {
         setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
 
         Loading.remove();
+        localStorage.removeItem("newAssignmentId");
       })
       .catch((err) => {
         Loading.remove();
@@ -123,7 +121,6 @@ const ManageAssignment = () => {
 
   useEffect(() => {
     loadData();
-    localStorage.removeItem("newAssignmentId");
   }, []);
 
   const isEqual = (date1, date2) => {
@@ -132,21 +129,32 @@ const ManageAssignment = () => {
     return d1.localeCompare(d2) === 0;
   };
 
-  useEffect(() => {
-    let list = [...data];
-    if (filterByState !== "All" && filterByState !== null) {
-      list = list.filter(
-        (item) => item.state.localeCompare(filterByState) === 0
-      );
+  const handleFilterByDate = (date) => {
+    setFilterByDate(date);
+    handleFilter(filterByState, date);
+  };
+
+  const handleFilterByState = (filter) => {
+    setFilterByState(filter);
+    handleFilter(filter, filterByDate);
+  };
+
+  const handleFilter = (_state, _date) => {
+    let _data = [...data];
+
+    if (_state !== "All") {
+      _data = data.filter((item) => _state.localeCompare(item.state) === 0);
     }
 
-    if (filterByDate) {
-      list = list.filter((item) => isEqual(filterByDate, item.assignedDate));
+    if (_date) {
+      _data = _data.filter((item) => isEqual(_date, item.assignedDate));
     }
 
-    setNumPage(Math.ceil(list.length / rowPerPage));
-    setAssignmentList(list);
-  }, [filterByDate, filterByState, data]);
+    if (_data.length === 0) {
+      toast.info("Not Found ");
+    }
+    setAssignmentList(_data);
+  };
 
   const sortByCol = (col) => {
     if (col === currentCol) {
@@ -419,7 +427,7 @@ const ManageAssignment = () => {
                   className="dropdown-menu form-check"
                   aria-labelledby="dropMenuFilterType"
                 >
-                  {state.map((type, index) => (
+                  {state.map((type) => (
                     <li key={type}>
                       <div>
                         <input
@@ -428,7 +436,7 @@ const ManageAssignment = () => {
                           value={type}
                           id={type}
                           checked={filterByState === type}
-                          onChange={() => setFilterByState(type)}
+                          onChange={() => handleFilterByState(type)}
                         />
                         <label className="form-check-label" htmlFor={type}>
                           {type}
@@ -447,7 +455,7 @@ const ManageAssignment = () => {
                   <DatePicker
                     placeholderText="Assigned Date"
                     selected={filterByDate}
-                    onChange={(date) => setFilterByDate(date)}
+                    onChange={(date) => handleFilterByDate(date)}
                   />
                 </div>
                 <div className="iconDate border-start border-secondary text-secondary">
@@ -574,58 +582,37 @@ const ManageAssignment = () => {
                           </td>
 
                           <td style={{ width: "10rem" }}>
-                            {ele.state !== "Waiting for acceptance" &&
-                            ele.state !== "Declined" ? (
-                              <>
-                                <button
-                                  className="btn btn-outline-secondary border-0"
-                                  disabled
-                                >
-                                  <EditIcon />
-                                </button>
-                                <button
-                                  className="btn btn-outline-danger border-0"
-                                  disabled
-                                >
-                                  <HighlightOffIcon />
-                                </button>
-                                <button
-                                  className="btn btn-outline-primary border-0"
-                                  disabled={
-                                    ele.state === "Accepted" || ele.hasReturning
-                                  }
-                                >
-                                  <RestartAltSharpIcon
-                                    onClick={() => setCreateReturn(ele.id)}
-                                  />
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button className="btn btn-outline-secondary border-0">
-                                  <EditIcon
-                                    onClick={() => editAssignment(ele.id)}
-                                  />
-                                </button>
-                                <button className="btn btn-outline-danger border-0">
-                                  <HighlightOffIcon
-                                  // onClick={() =>
-                                  //   checkAssetAvailableToDisable(ele.id)
-                                  // }
-                                  />
-                                </button>
-                                <button
-                                  className="btn btn-outline-secondary border-0"
-                                  disabled={
-                                    ele.state === "Accepted" || ele.hasReturning
-                                  }
-                                >
-                                  <RestartAltSharpIcon
-                                    onClick={() => setCreateReturn(ele.id)}
-                                  />
-                                </button>
-                              </>
-                            )}
+                            <>
+                              <button
+                                className="btn btn-outline-secondary border-0"
+                                disabled={
+                                  ele.state !== "Waiting for acceptance"
+                                }
+                              >
+                                <EditIcon />
+                              </button>
+                              <button
+                                className="btn btn-outline-danger border-0"
+                                disabled={
+                                  !(
+                                    ele.state === "Waiting for acceptance" ||
+                                    ele.state === "Declined"
+                                  )
+                                }
+                              >
+                                <HighlightOffIcon />
+                              </button>
+                              <button
+                                className="btn btn-outline-primary border-0"
+                                disabled={
+                                  ele.state !== "Accepted" || ele.hasReturning
+                                }
+                              >
+                                <RestartAltSharpIcon
+                                  onClick={() => setCreateReturn(ele.id)}
+                                />
+                              </button>
+                            </>
                           </td>
                         </tr>
                         <div
