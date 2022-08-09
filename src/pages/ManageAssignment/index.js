@@ -624,9 +624,9 @@ const ManageAssignment = () => {
                                 </button>
                                 <button className="btn btn-outline-danger border-0">
                                   <HighlightOffIcon
-                                  // onClick={() =>
-                                  //   checkAssetAvailableToDisable(ele.id)
-                                  // }
+                                  onClick={() =>
+                                    handleDelete(ele.id)
+                                  }
                                   />
                                 </button>
                                 <button

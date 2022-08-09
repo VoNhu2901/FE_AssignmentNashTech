@@ -15,6 +15,7 @@ const CreateAssignment = () => {
   const [assetName, setAssetName] = useState("");
   const [userId, setUserId] = useState("");
   const [fullName, setFullName] = useState("");
+  const [validateAssignedDate, setValidateAssignedDate] = useState("");
 
   //data
   const [userName, setUserName] = useState("");
@@ -27,8 +28,17 @@ const CreateAssignment = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleUser, setIsModalVisibleUser] = useState(false);
 
+  const handleAssignedDate = () => {
+    let minDate = new Date().toISOString().split("T")[0];
+    if(assignedDate < minDate){
+      setValidateAssignedDate("Assigned date must be greater or equal current date");
+    } else {
+      setValidateAssignedDate("");
+    }
+  }
+
   const handleCreateNewAssignment = () => {
-    if (userName && assetCode && assignedDate && note) {
+    if (userName && assetCode && assignedDate) {
       const payload = {
         asset: assetCode,
         user: userName,
@@ -178,7 +188,10 @@ const CreateAssignment = () => {
                     : new Date().toISOString().split("T")[0]
                 }
                 onChange={(e) => setAssignedDate(e.target.value)}
+                onBlur={handleAssignedDate}
+                onFocus={() => setValidateAssignedDate(null)}
               ></input>
+              {validateAssignedDate && <p className="text-danger">{validateAssignedDate }</p>}
             </div>
 
             <label for="note">Note</label>
@@ -198,7 +211,7 @@ const CreateAssignment = () => {
               id="save"
               className="form-create-asset__button-item"
               onClick={handleCreateNewAssignment}
-              disabled={!(userName && assetCode && assignedDate && note)}
+              disabled={!(userName && assetCode && assignedDate)}
             >
               Save
             </button>
