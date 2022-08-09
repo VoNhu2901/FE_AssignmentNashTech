@@ -3,7 +3,6 @@ import { SearchIcon, ArrowDropDownIcon } from "../../components/icon";
 import userService from "./../../api/userService";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import { toast } from "react-toastify";
-import Paging from "../../components/paging";
 
 const tableHead = [
   {
@@ -77,6 +76,7 @@ const SelectUser = (props) => {
       userService
         .searchUser(location, content)
         .then((res) => {
+          console.log(res);
           if (res.data.length === 0) {
             toast.error("No user founded");
           }
@@ -92,11 +92,22 @@ const SelectUser = (props) => {
         })
         .catch((err) => {
           Loading.remove();
-          console.log(err);
           toast.info(
             `No user match with "${content}". Try again with correct format.`
           );
         });
+    }
+  };
+
+  const handleNext = () => {
+    if (page < numPage) {
+      setPage(page + 1);
+    }
+  };
+
+  const handlePre = () => {
+    if (page > 1) {
+      setPage(page - 1);
     }
   };
 
@@ -141,10 +152,6 @@ const SelectUser = (props) => {
   };
 
   const handleSelect = (username) => {
-    props.setUserName(username);
-    props.setUserId(
-      userList.find((item) => item.username === username).staffCode
-    );
     setSaveId(username);
   };
 
@@ -183,77 +190,6 @@ const SelectUser = (props) => {
             <SearchIcon />
           </button>
         </div>
-
-        {/* start Table list */}
-        <div>
-          <table className="w-100 table table-hover">
-            <thead>
-              <tr>
-                {tableHead.map((item) => (
-                  <th className="border-bottom border-3" key={item.id}>
-                    {item.name}
-                    <button
-                      className="btn border-0"
-                      onClick={() => sortByCol(item.id)}
-                      id={`sortBy${item.name}`}
-                    >
-                      {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
-                    </button>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {(
-                userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
-              ).map((ele, index) => {
-                return (
-                  <>
-                    <tr key={index} onClick={() => handleSelect(ele.username)}>
-                      <td>
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          id={ele.staffCode}
-                          name="state"
-                        ></input>
-                      </td>
-                      <td className="border-bottom">
-                        <label htmlFor={ele.staffCode}>{ele.staffCode}</label>
-                      </td>
-                      <td className="border-bottom">
-                        <label htmlFor={ele.staffCode}>{ele.fullName}</label>
-                      </td>
-                      <td className="border-bottom">
-                        <label htmlFor={ele.staffCode}>{ele.role}</label>
-                      </td>
-                    </tr>
-                  </>
-                );
-              })}
-            </tbody>
-          </table>
-
-          <Paging numPage={numPage} setPage={setPage} page={page} />
-
-          <div className="d-flex justify-content-end gap-4">
-            <button
-              className="form-create-asset__button-item btn btn-danger"
-              onClick={handleSave}
-              id="btnSave"
-            >
-              Save
-            </button>
-            <button
-              className="form-create-asset__button-item btn btn-light border-secondary"
-              onClick={handleCancel}
-              id="btnCancel"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-        {/* end Table list */}
       </div>
 
       {/* start Table list */}
@@ -306,7 +242,41 @@ const SelectUser = (props) => {
           </tbody>
         </table>
 
-        <Paging numPage={numPage} setPage={setPage} page={page} />
+        {/* start Pagination */}
+        <div className="paging">
+          {numPage > 1 ? (
+            <div className="paging text-end">
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={handlePre}
+              >
+                Previous
+              </button>
+              {Array.from({ length: numPage }, (_, i) => (
+                <button
+                  type="button"
+                  onClick={() => setPage(i + 1)}
+                  className={
+                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
+                  }
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={handleNext}
+              >
+                Next
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+        {/* end Pagination */}
 
         <div className="d-flex justify-content-end gap-4">
           <button
