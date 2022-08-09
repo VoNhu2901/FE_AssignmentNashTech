@@ -153,6 +153,7 @@ const ManageAssignment = () => {
     if (_data.length === 0) {
       toast.info("Not Found ");
     }
+    setNumPage(Math.ceil(_data.length / 20));
     setAssignmentList(_data);
   };
 
@@ -276,6 +277,7 @@ const ManageAssignment = () => {
         })
         .catch((err) => {
           Loading.remove();
+          console.log(err);
           toast.info("No Assignment Found");
         });
     }
@@ -626,56 +628,6 @@ const ManageAssignment = () => {
                                 />
                               </button>
                             </>
-                            {ele.state !== "Waiting for acceptance" &&
-                            ele.state !== "Declined" ? (
-                              <>
-                                <button
-                                  className="btn btn-outline-secondary border-0"
-                                  disabled
-                                >
-                                  <EditIcon />
-                                </button>
-                                <button
-                                  className="btn btn-outline-danger border-0"
-                                  disabled
-                                >
-                                  <HighlightOffIcon />
-                                </button>
-                                <button
-                                  className="btn btn-outline-primary border-0"
-                                  disabled={
-                                    ele.state === "Accepted" || ele.hasReturning
-                                  }
-                                >
-                                  <RestartAltSharpIcon
-                                    onClick={() => setCreateReturn(ele.id)}
-                                  />
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button className="btn btn-outline-secondary border-0">
-                                  <EditIcon
-                                    onClick={() => editAssignment(ele.id)}
-                                  />
-                                </button>
-                                <button className="btn btn-outline-danger border-0">
-                                  <HighlightOffIcon
-                                    onClick={() => handleDelete(ele.id)}
-                                  />
-                                </button>
-                                <button
-                                  className="btn btn-outline-secondary border-0"
-                                  disabled={
-                                    ele.state === "Accepted" || ele.hasReturning
-                                  }
-                                >
-                                  <RestartAltSharpIcon
-                                    onClick={() => setCreateReturn(ele.id)}
-                                  />
-                                </button>
-                              </>
-                            )}
                           </td>
                         </tr>
                         <div

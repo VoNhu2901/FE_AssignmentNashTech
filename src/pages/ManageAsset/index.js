@@ -191,7 +191,6 @@ const ManageAsset = () => {
     } else {
       let filtered = _data.filter(isFilter);
       setNumPage(Math.ceil(filtered.length / rowPerPage));
-      console.log(filtered.length);
       if (filtered.length === 0) {
         toast.info(
           `No asset in ${location} have state you choose. Choose another state.`
@@ -217,6 +216,7 @@ const ManageAsset = () => {
         );
       }
       setAssetList(filterState);
+      setNumPage(Math.ceil(filterState.length / rowPerPage));
     }
   };
 
