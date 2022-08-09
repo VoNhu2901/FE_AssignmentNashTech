@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { SearchIcon, ArrowDropDownIcon } from "../../components/icon";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import assetService from "../../api/assetService";
+import Paging from "../../components/paging";
 
 const tableHead = [
   {
@@ -175,6 +176,7 @@ const SelectAsset = (props) => {
             <button
               className="btn border-dark border-start border-bottom-0 border-end-0 border-top-0 rounded-0 me-1"
               onClick={handleSearch}
+              id="btnSearch"
             >
               <SearchIcon />
             </button>
@@ -192,6 +194,7 @@ const SelectAsset = (props) => {
                     <button
                       className="btn border-0"
                       onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -230,54 +233,20 @@ const SelectAsset = (props) => {
               })}
             </tbody>
           </table>
-          {/* start Pagination */}
-          <div className="paging">
-            {numPage > 1 ? (
-              <div className="paging text-end">
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={handlePre}
-                >
-                  Previous
-                </button>
-                {Array.from({ length: numPage }, (_, i) => (
-                  <button
-                    type="button"
-                    onClick={() => setPage(i + 1)}
-                    className={
-                      page === i + 1
-                        ? "btn btn-danger"
-                        : "btn btn-outline-danger"
-                    }
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  className="btn btn-outline-danger"
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
-          {/* end Pagination */}
+          <Paging numPage={numPage} setPage={setPage} page={page} />
 
           <div className="d-flex justify-content-end gap-4">
             <button
               className="form-create-asset__button-item btn btn-danger"
               onClick={handleSave}
+              id="btnSave"
             >
               Save
             </button>
             <button
               className="form-create-asset__button-item btn btn-light border-secondary"
               // onClick={handleClose}
+              id="btnCancel"
             >
               Cancel
             </button>

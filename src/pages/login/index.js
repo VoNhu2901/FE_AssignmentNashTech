@@ -96,6 +96,7 @@ const Login = () => {
           className="form__button"
           onClick={loginHandler}
           disabled={!(username && password)}
+          id="btnLogin"
         >
           Login
         </button>

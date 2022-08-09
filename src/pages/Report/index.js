@@ -148,7 +148,7 @@ const Report = () => {
       </div>
 
       <div className="button d-flex justify-content-end mb-4">
-        <button type="button" className="btn btn-danger" onClick={exportToXLSX}>
+        <button type="button" className="btn btn-danger" id="btnExport" onClick={exportToXLSX}>
           Export
         </button>
       </div>
@@ -164,6 +164,7 @@ const Report = () => {
                   <button
                     className="btn border-0"
                     onClick={() => sortByCol(item.id)}
+                    id={`sortBy${item.name}`}
                   >
                     {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                   </button>
@@ -174,7 +175,7 @@ const Report = () => {
           <tbody>
             {(
               reportList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
-            ).map((ele, index) => {
+            ).map((ele) => {
               return (
                 <>
                   <tr key={ele.index}>

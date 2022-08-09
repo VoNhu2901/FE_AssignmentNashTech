@@ -205,6 +205,7 @@ const HomePage = () => {
                   type="button"
                   className="btn btn-danger"
                   onClick={handleSavePassword}
+                  id="btnSave"
                 >
                   Save
                 </button>
@@ -225,7 +226,7 @@ const HomePage = () => {
               {tableHeader.map((item) => (
                 <th className="border-bottom border-3" key={item.id}>
                   {item.name}
-                  <button className="btn border-0">
+                  <button className="btn border-0" id={`sortBy${item.name}`}>
                     {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                   </button>
                 </th>
@@ -292,6 +293,7 @@ const HomePage = () => {
                           <button
                             className="btn btn-outline-danger border-0"
                             data-bs-toggle="modal"
+                            id={"#modalAccept" + ele.id}
                             data-bs-target={"#modalAccept" + ele.id}
                           >
                             <CheckIcon />
@@ -300,6 +302,7 @@ const HomePage = () => {
                           <button
                             className="btn btn-outline-danger border-0"
                             disabled
+                            id="disable"
                           >
                             <CheckIcon />
                           </button>
@@ -311,6 +314,7 @@ const HomePage = () => {
                             className="btn btn-outline-danger border-0"
                             data-bs-toggle="modal"
                             data-bs-target={"#modalDecline" + ele.id}
+                            id={"#modalDecline" + ele.id}
                           >
                             <ClearIcon className="btnClear" />
                           </button>
@@ -318,6 +322,7 @@ const HomePage = () => {
                           <button
                             className="btn btn-outline-danger border-0"
                             disabled
+                            id="disable"
                           >
                             <ClearIcon className="btnClear" />
                           </button>
@@ -327,6 +332,7 @@ const HomePage = () => {
                         <button
                           className="btn btn-outline-info border-0"
                           onClick={loadData}
+                          id="replayIcon"
                         >
                           <ReplayIcon className="btnReload" />
                         </button>
@@ -353,6 +359,7 @@ const HomePage = () => {
                               type="button"
                               className="btn btn-outline-danger border-4"
                               data-bs-dismiss="modal"
+                              id="btnClose"
                             >
                               <CloseIcon />
                             </button>
@@ -423,6 +430,7 @@ const HomePage = () => {
                                 className="btn btn-danger me-4 "
                                 onClick={() => handleAccept(ele.id)}
                                 data-bs-dismiss="modal"
+                                id="btnSave"
                               >
                                 Save
                               </button>
@@ -430,6 +438,7 @@ const HomePage = () => {
                                 type="button"
                                 className="btn btn-outline-dark"
                                 data-bs-dismiss="modal"
+                                id="btnCancel"
                               >
                                 Cancel
                               </button>
@@ -463,6 +472,7 @@ const HomePage = () => {
                                 className="btn btn-danger me-4"
                                 onClick={() => handleDecline(ele.id)}
                                 data-bs-dismiss="modal"
+                                id="btnSave"
                               >
                                 Save
                               </button>
@@ -470,6 +480,7 @@ const HomePage = () => {
                                 type="button"
                                 className="btn btn-outline-dark"
                                 data-bs-dismiss="modal"
+                                id="btnCancel"
                               >
                                 Cancel
                               </button>

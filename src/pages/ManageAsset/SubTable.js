@@ -31,6 +31,7 @@ const SubTable = ({ history }) => {
                 {item.name}
                 <button
                   className="btn border-0"
+                  id={`sortBy${item.name}`}
                 // onClick={() => sortByCol(item.id)}
                 >
                   {/* {item.isDropdown ? <ArrowDropDownIcon /> : <></>} */}

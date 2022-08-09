@@ -85,6 +85,7 @@ const Header = ({ header }) => {
               <div className="w-100 text-end">
                 <button
                   type="button"
+                  id="close-modal"
                   className="btn btn-outline-secondary ms-5 "
                   data-bs-dismiss="modal"
                   onClick={handleClose}
@@ -246,6 +247,7 @@ const Header = ({ header }) => {
                     <br />
                     <div className="btn-group-footer d-flex justify-content-end">
                       <button
+                      id="btnSave"
                         type="button "
                         className="btn btn-danger"
                         onClick={handleChangePassword}

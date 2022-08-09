@@ -272,6 +272,7 @@ const ManageUser = () => {
                 type="button"
                 className="btn btn-outline-danger border-4"
                 onClick={() => setDisable(null)}
+                id="btnClose"
               >
                 <CloseIcon />
               </button>
@@ -369,7 +370,7 @@ const ManageUser = () => {
                 />
               </div>
               <div>
-                <button className="btn border-0" onClick={handleSearch}>
+                <button className="btn border-0" id="btnSearch" onClick={handleSearch}>
                   <SearchIcon />
                 </button>
               </div>
@@ -378,6 +379,7 @@ const ManageUser = () => {
               <button
                 type="button"
                 className="btn btn-danger"
+                id="btnCreateUser"
                 onClick={() => {
                   navigate("/create-user");
                 }}
@@ -396,6 +398,7 @@ const ManageUser = () => {
                   Staff Code{" "}
                   <button
                     className="btn border-0"
+                    id="sortByCode"
                     onClick={() => sortByCol("code")}
                   >
                     <ArrowDropDownIcon />
@@ -404,6 +407,7 @@ const ManageUser = () => {
                 <th className="border-bottom border-3">
                   Full Name{" "}
                   <button
+                    id="sortByName"
                     className="btn border-0"
                     onClick={() => sortByCol("name")}
                   >
@@ -414,6 +418,7 @@ const ManageUser = () => {
                 <th className="border-bottom border-3">
                   Joined Date{" "}
                   <button
+                    id="sortByDate"
                     className="btn border-0"
                     onClick={() => sortByCol("date")}
                   >
@@ -423,6 +428,7 @@ const ManageUser = () => {
                 <th className="border-bottom border-3">
                   Type{" "}
                   <button
+                    id="sortByType"
                     className="btn border-0"
                     onClick={() => sortByCol("type")}
                   >
@@ -473,11 +479,12 @@ const ManageUser = () => {
                       {ele.role}
                     </td>
                     <td>
-                      <button className="btn btn-outline-secondary border-0">
+                      <button className="btn btn-outline-secondary border-0" id="btnEdit">
                         <EditIcon onClick={() => editUser(ele.staffCode)} />
                       </button>
                       <button
                         className="btn btn-outline-danger border-0"
+                        id="btnHighlight"
                         onClick={() =>
                           checkUserAvailableToDisable(ele.staffCode)
                         }
@@ -507,6 +514,7 @@ const ManageUser = () => {
                             type="button"
                             className="btn btn-outline-danger border-4"
                             data-bs-dismiss="modal"
+                            id="btnClose"
                           >
                             <CloseIcon />
                           </button>

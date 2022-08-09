@@ -20,6 +20,7 @@ const Paging = (props) => {
             type="button"
             className="btn btn-outline-secondary"
             onClick={handlePre}
+            id="btnPre"
           >
             Previous
           </button>
@@ -27,6 +28,7 @@ const Paging = (props) => {
             <button
               type="button"
               onClick={() => props.setPage(i + 1)}
+              id={`btn-paging_${i}`}
               className={
                 props.page === i + 1
                   ? "btn btn-danger"
@@ -37,6 +39,7 @@ const Paging = (props) => {
             </button>
           ))}
           <button
+          id="btnNext"
             type="button"
             className="btn btn-outline-danger"
             onClick={handleNext}

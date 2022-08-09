@@ -477,7 +477,7 @@ const ManageAssignment = () => {
                 />
               </div>
               <div>
-                <button className="btn border-0" onClick={handleSearch}>
+                <button className="btn border-0" id="btnSearch" onClick={handleSearch}>
                   <SearchIcon />
                 </button>
               </div>
@@ -492,6 +492,7 @@ const ManageAssignment = () => {
                 onClick={() => {
                   navigate("/create-assignment");
                 }}
+                id="btnCreate"
               >
                 Create new assignment
               </button>
@@ -512,6 +513,7 @@ const ManageAssignment = () => {
                     <button
                       className="btn border-0"
                       onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -588,11 +590,13 @@ const ManageAssignment = () => {
                                 disabled={
                                   ele.state !== "Waiting for acceptance"
                                 }
+                                id="btnEdit"
                               >
                                 <EditIcon />
                               </button>
                               <button
                                 className="btn btn-outline-danger border-0"
+                                id="btnHighlight"
                                 disabled={
                                   !(
                                     ele.state === "Waiting for acceptance" ||
@@ -607,6 +611,7 @@ const ManageAssignment = () => {
                                 disabled={
                                   ele.state !== "Accepted" || ele.hasReturning
                                 }
+                                id="btnRestart"
                               >
                                 <RestartAltSharpIcon
                                   onClick={() => setCreateReturn(ele.id)}
@@ -635,6 +640,7 @@ const ManageAssignment = () => {
                                   type="button"
                                   className="btn btn-outline-danger border-4"
                                   data-bs-dismiss="modal"
+                                  id="btnClose"
                                 >
                                   <CloseIcon />
                                 </button>

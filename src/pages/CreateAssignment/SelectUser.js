@@ -170,6 +170,7 @@ const SelectUser = (props) => {
             <button
               className="btn border-dark border-start border-bottom-0 border-end-0 border-top-0 rounded-0 me-1"
               onClick={handleSearch}
+              id="btnSearch"
             >
               <SearchIcon />
             </button>
@@ -187,6 +188,7 @@ const SelectUser = (props) => {
                     <button
                       className="btn border-0"
                       onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -231,12 +233,14 @@ const SelectUser = (props) => {
             <button
               className="form-create-asset__button-item btn btn-danger"
               onClick={handleSave}
+              id="btnSave"
             >
               Save
             </button>
             <button
               className="form-create-asset__button-item btn btn-light border-secondary"
               onClick={handleCancel}
+              id="btnCancel"
             >
               Cancel
             </button>

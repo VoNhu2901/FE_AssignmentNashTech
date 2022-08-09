@@ -392,6 +392,7 @@ const ManageAsset = () => {
                 type="button"
                 className="btn btn-outline-danger border-4"
                 onClick={() => setDisable(null)}
+                id="btnClose"
               >
                 <CloseIcon />
               </button>
@@ -527,7 +528,7 @@ const ManageAsset = () => {
                 />
               </div>
               <div>
-                <button className="btn border-0" onClick={handleSearch}>
+                <button className="btn border-0" id="btnSearch" onClick={handleSearch}>
                   <SearchIcon />
                 </button>
               </div>
@@ -539,6 +540,7 @@ const ManageAsset = () => {
               <button
                 type="button"
                 className="btn btn-danger"
+                id="btnCreateAsset"
                 onClick={() => {
                   navigate("/create-asset");
                 }}
@@ -562,6 +564,7 @@ const ManageAsset = () => {
                     <button
                       className="btn border-0"
                       onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -611,22 +614,24 @@ const ManageAsset = () => {
                             <button
                               className="btn btn-outline-secondary border-0"
                               disabled
+                              id="btnDisable"
                             >
                               <EditIcon />
                             </button>
                             <button
                               className="btn btn-outline-danger border-0"
                               disabled
+                              id="btnHighlight"
                             >
                               <HighlightOffIcon />
                             </button>
                           </>
                         ) : (
                           <>
-                            <button className="btn btn-outline-secondary border-0">
+                            <button className="btn btn-outline-secondary border-0" id="btnEdit">
                               <EditIcon onClick={() => editAsset(ele.id)} />
                             </button>
-                            <button className="btn btn-outline-danger border-0">
+                            <button className="btn btn-outline-danger border-0" id="btnHighLight">
                               <HighlightOffIcon
                                 onClick={() =>
                                   checkAssetAvailableToDisable(ele.id)
@@ -658,6 +663,7 @@ const ManageAsset = () => {
                               type="button"
                               className="btn btn-outline-danger border-4"
                               data-bs-dismiss="modal"
+                              id="btnClose"
                             >
                               <CloseIcon />
                             </button>

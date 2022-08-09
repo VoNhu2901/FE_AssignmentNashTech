@@ -292,7 +292,11 @@ const RequestPage = () => {
               />
             </div>
             <div>
-              <button className="btn border-0" onClick={handleSearch}>
+              <button
+                className="btn border-0"
+                id="btnSearch"
+                onClick={handleSearch}
+              >
                 <SearchIcon />
               </button>
             </div>
@@ -309,6 +313,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("No")}
+                  id="sortByNo"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -319,6 +324,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("assetCode")}
+                  id="sortByCode"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -329,6 +335,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("assetName")}
+                  id="sortByAssetName"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -338,6 +345,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("requestedBy")}
+                  id="sortByRequestBy"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -348,6 +356,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("AssignedDate")}
+                  id="sortByAssignedDate"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -358,6 +367,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("acceptedBy")}
+                  id="sortByAcceptedBy"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -368,6 +378,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("returnDate")}
+                  id="sortByReturnDate"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -378,6 +389,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("state")}
+                  id="sortByState"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -408,11 +420,15 @@ const RequestPage = () => {
                     <td>
                       <button
                         className="btn btn-outline-secondary border-0"
+                        id="btnCheck"
                         disabled={requestItem.state === "Completed"}
                       >
                         <CheckIcon />
                       </button>
-                      <button className="btn btn-outline-danger border-0">
+                      <button
+                        className="btn btn-outline-danger border-0"
+                        id="btnClose"
+                      >
                         <CloseSharpIcon />
                       </button>{" "}
                     </td>
