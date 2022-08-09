@@ -15,6 +15,7 @@ import assetService from "./../../api/assetService";
 import { toast } from "react-toastify";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import categoryService from "../../api/categoryService";
+import Paging from "../../components/paging";
 
 const filterState = [
   {
@@ -190,7 +191,6 @@ const ManageAsset = () => {
     } else {
       let filtered = _data.filter(isFilter);
       setNumPage(Math.ceil(filtered.length / rowPerPage));
-      console.log(filtered.length);
       if (filtered.length === 0) {
         toast.info(
           `No asset in ${location} have state you choose. Choose another state.`
@@ -216,6 +216,7 @@ const ManageAsset = () => {
         );
       }
       setAssetList(filterState);
+      setNumPage(Math.ceil(filterState.length / rowPerPage));
     }
   };
 
@@ -297,21 +298,6 @@ const ManageAsset = () => {
   const editAsset = (code) => {
     navigate(`/edit-asset/${code}`);
   };
-
-  const handleNext = () => {
-    let temp = page + 1;
-    if (temp <= numPage) {
-      setPage(temp);
-    }
-  };
-
-  const handlePre = () => {
-    let temp = page - 1;
-    if (temp >= 1) {
-      setPage(temp);
-    }
-  };
-
   // handle delete user here
   const checkAssetAvailableToDisable = (code) => {
     assetService
@@ -406,6 +392,7 @@ const ManageAsset = () => {
                 type="button"
                 className="btn btn-outline-danger border-4"
                 onClick={() => setDisable(null)}
+                id="btnClose"
               >
                 <CloseIcon />
               </button>
@@ -541,7 +528,7 @@ const ManageAsset = () => {
                 />
               </div>
               <div>
-                <button className="btn border-0" onClick={handleSearch}>
+                <button className="btn border-0" id="btnSearch" onClick={handleSearch}>
                   <SearchIcon />
                 </button>
               </div>
@@ -553,6 +540,7 @@ const ManageAsset = () => {
               <button
                 type="button"
                 className="btn btn-danger"
+                id="btnCreateAsset"
                 onClick={() => {
                   navigate("/create-asset");
                 }}
@@ -576,6 +564,7 @@ const ManageAsset = () => {
                     <button
                       className="btn border-0"
                       onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -585,7 +574,8 @@ const ManageAsset = () => {
             </thead>
             <tbody>
               {(
-                assetList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
+                assetList.slice((page - 1) * rowPerPage, page * rowPerPage) ||
+                []
               ).map((ele, index) => {
                 return (
                   <>
@@ -617,29 +607,31 @@ const ManageAsset = () => {
                         data-bs-target={"#detailUserViewModal" + ele.id}
                       >
                         {ele.state}
-                      </td>                     
+                      </td>
                       <td>
                         {ele.state === "Assigned" ? (
                           <>
                             <button
                               className="btn btn-outline-secondary border-0"
                               disabled
+                              id="btnDisable"
                             >
                               <EditIcon />
                             </button>
                             <button
                               className="btn btn-outline-danger border-0"
                               disabled
+                              id="btnHighlight"
                             >
                               <HighlightOffIcon />
                             </button>
                           </>
                         ) : (
                           <>
-                            <button className="btn btn-outline-secondary border-0">
+                            <button className="btn btn-outline-secondary border-0" id="btnEdit">
                               <EditIcon onClick={() => editAsset(ele.id)} />
                             </button>
-                            <button className="btn btn-outline-danger border-0">
+                            <button className="btn btn-outline-danger border-0" id="btnHighLight">
                               <HighlightOffIcon
                                 onClick={() =>
                                   checkAssetAvailableToDisable(ele.id)
@@ -671,6 +663,7 @@ const ManageAsset = () => {
                               type="button"
                               className="btn btn-outline-danger border-4"
                               data-bs-dismiss="modal"
+                              id="btnClose"
                             >
                               <CloseIcon />
                             </button>
@@ -726,41 +719,7 @@ const ManageAsset = () => {
         </div>
         {/* end Table list */}
 
-        {/* start Pagination */}
-        <div className="paging">
-          {numPage > 1 ? (
-            <div className="paging text-end">
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={handlePre}
-              >
-                Previous
-              </button>
-              {Array.from({ length: numPage }, (_, i) => (
-                <button
-                  type="button"
-                  onClick={() => setPage(i + 1)}
-                  className={
-                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                  }
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={handleNext}
-              >
-                Next
-              </button>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
-        {/* end Pagination */}
+        <Paging numPage={numPage} setPage={setPage} page={page} />
       </div>
     </>
   );

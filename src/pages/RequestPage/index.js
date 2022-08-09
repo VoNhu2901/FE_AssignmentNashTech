@@ -7,7 +7,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import DatePicker from "react-datepicker";
-
+import Paging from "../../components/paging";
 import "./index.scss";
 import "react-datepicker/dist/react-datepicker.css";
 import returningService from "../../api/returningService";
@@ -45,28 +45,32 @@ const RequestPage = () => {
   }, []);
 
   const handleSearch = () => {
-    const location = localStorage.getItem("location");
-    returningService
-      .searchReturning(location, searchContent)
-      .then((res) => {
-        const result = [...res.data];
-        if (result.length !== 0) {
-          const filter = result.sort((a, b) => a.id - b.id);
+    if (searchContent) {
+      const location = localStorage.getItem("location");
+      returningService
+        .searchReturning(location, searchContent)
+        .then((res) => {
+          const result = [...res.data];
+          if (result.length !== 0) {
+            const filter = result.sort((a, b) => a.id - b.id);
 
-          setRawData(filter);
-          setRequestList(filter);
-          setPage(1);
-          setNumPage(Math.ceil(filter.length / 20));
-        } else {
-          toast.info(
-            "Not found. Try again with other text(Asset code, Name, Request User)"
-          );
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.info("No Request for returning found");
-      });
+            setRawData(filter);
+            setRequestList(filter);
+            setPage(1);
+            setNumPage(Math.ceil(filter.length / 20));
+          } else {
+            toast.info(
+              "Not found. Try again with other text(Asset code, Name, Request User)"
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.info("No Request for returning found");
+        });
+    } else {
+      initData();
+    }
   };
 
   useEffect(() => {
@@ -80,6 +84,9 @@ const RequestPage = () => {
 
     if (filterByDate) {
       list = list.filter((item) => isEqual(filterByDate, item.returnDate));
+      if (list.length === 0) {
+        toast.info(`No request for returning found on ${filterByDate}`);
+      }
     }
 
     setRequestList(list);
@@ -188,20 +195,6 @@ const RequestPage = () => {
     }
   };
 
-  const handleNext = () => {
-    let temp = page + 1;
-    if (temp <= numPage) {
-      setPage(temp);
-    }
-  };
-
-  const handlePre = () => {
-    let temp = page - 1;
-    if (temp >= 1) {
-      setPage(temp);
-    }
-  };
-
   return (
     <div className="request-page">
       <div className="title">
@@ -299,7 +292,11 @@ const RequestPage = () => {
               />
             </div>
             <div>
-              <button className="btn border-0" onClick={handleSearch}>
+              <button
+                className="btn border-0"
+                id="btnSearch"
+                onClick={handleSearch}
+              >
                 <SearchIcon />
               </button>
             </div>
@@ -316,6 +313,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("No")}
+                  id="sortByNo"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -326,6 +324,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("assetCode")}
+                  id="sortByCode"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -336,6 +335,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("assetName")}
+                  id="sortByAssetName"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -345,6 +345,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("requestedBy")}
+                  id="sortByRequestBy"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -355,6 +356,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("AssignedDate")}
+                  id="sortByAssignedDate"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -365,6 +367,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("acceptedBy")}
+                  id="sortByAcceptedBy"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -375,6 +378,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("returnDate")}
+                  id="sortByReturnDate"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -385,6 +389,7 @@ const RequestPage = () => {
                 <button
                   className="btn border-0"
                   onClick={() => sortByCol("state")}
+                  id="sortByState"
                 >
                   <ArrowDropDownIcon />
                 </button>
@@ -415,11 +420,15 @@ const RequestPage = () => {
                     <td>
                       <button
                         className="btn btn-outline-secondary border-0"
+                        id="btnCheck"
                         disabled={requestItem.state === "Completed"}
                       >
                         <CheckIcon />
                       </button>
-                      <button className="btn btn-outline-danger border-0">
+                      <button
+                        className="btn btn-outline-danger border-0"
+                        id="btnClose"
+                      >
                         <CloseSharpIcon />
                       </button>{" "}
                     </td>
@@ -431,39 +440,7 @@ const RequestPage = () => {
         </table>
       </div>
 
-      <div className="paging">
-        {numPage > 1 ? (
-          <div className="paging text-end">
-            <button
-              type="button"
-              className="btn btn-outline-secondary"
-              onClick={handlePre}
-            >
-              Previous
-            </button>
-            {Array.from({ length: numPage }, (_, i) => (
-              <button
-                type="button"
-                onClick={() => setPage(i + 1)}
-                className={
-                  page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                }
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              type="button"
-              className="btn btn-outline-danger"
-              onClick={handleNext}
-            >
-              Next
-            </button>
-          </div>
-        ) : (
-          <></>
-        )}
-      </div>
+      <Paging numPage={numPage} setPage={setPage} page={page} />
     </div>
   );
 };

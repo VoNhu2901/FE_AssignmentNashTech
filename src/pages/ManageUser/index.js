@@ -11,6 +11,7 @@ import userService from "../../api/userService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
+import Paging from "../../components/paging";
 
 const ManageUser = () => {
   const navigate = useNavigate();
@@ -134,20 +135,6 @@ const ManageUser = () => {
       setCurrentCol("");
     } else {
       setCurrentCol(sortBy);
-    }
-  };
-
-  const handleNext = () => {
-    let temp = page + 1;
-    if (temp <= numPage) {
-      setPage(temp);
-    }
-  };
-
-  const handlePre = () => {
-    let temp = page - 1;
-    if (temp >= 1) {
-      setPage(temp);
     }
   };
 
@@ -285,6 +272,7 @@ const ManageUser = () => {
                 type="button"
                 className="btn btn-outline-danger border-4"
                 onClick={() => setDisable(null)}
+                id="btnClose"
               >
                 <CloseIcon />
               </button>
@@ -382,7 +370,7 @@ const ManageUser = () => {
                 />
               </div>
               <div>
-                <button className="btn border-0" onClick={handleSearch}>
+                <button className="btn border-0" id="btnSearch" onClick={handleSearch}>
                   <SearchIcon />
                 </button>
               </div>
@@ -391,6 +379,7 @@ const ManageUser = () => {
               <button
                 type="button"
                 className="btn btn-danger"
+                id="btnCreateUser"
                 onClick={() => {
                   navigate("/create-user");
                 }}
@@ -409,6 +398,7 @@ const ManageUser = () => {
                   Staff Code{" "}
                   <button
                     className="btn border-0"
+                    id="sortByCode"
                     onClick={() => sortByCol("code")}
                   >
                     <ArrowDropDownIcon />
@@ -417,6 +407,7 @@ const ManageUser = () => {
                 <th className="border-bottom border-3">
                   Full Name{" "}
                   <button
+                    id="sortByName"
                     className="btn border-0"
                     onClick={() => sortByCol("name")}
                   >
@@ -427,6 +418,7 @@ const ManageUser = () => {
                 <th className="border-bottom border-3">
                   Joined Date{" "}
                   <button
+                    id="sortByDate"
                     className="btn border-0"
                     onClick={() => sortByCol("date")}
                   >
@@ -436,6 +428,7 @@ const ManageUser = () => {
                 <th className="border-bottom border-3">
                   Type{" "}
                   <button
+                    id="sortByType"
                     className="btn border-0"
                     onClick={() => sortByCol("type")}
                   >
@@ -462,14 +455,18 @@ const ManageUser = () => {
                       data-bs-toggle="modal"
                       data-bs-target={"#detailUserViewModal" + ele.staffCode}
                     >
-                      {ele.fullName}
+                      {ele.fullName.length > 20
+                        ? ele.fullName.substring(0, 20) + "..."
+                        : ele.fullName}
                     </td>
                     <td
                       className="border-bottom"
                       data-bs-toggle="modal"
                       data-bs-target={"#detailUserViewModal" + ele.staffCode}
                     >
-                      {ele.username}
+                      {ele.username.length > 20
+                        ? ele.username.substring(0, 20) + "..."
+                        : ele.username}
                     </td>
                     <td
                       className="border-bottom"
@@ -486,11 +483,12 @@ const ManageUser = () => {
                       {ele.role}
                     </td>
                     <td>
-                      <button className="btn btn-outline-secondary border-0">
+                      <button className="btn btn-outline-secondary border-0" id="btnEdit">
                         <EditIcon onClick={() => editUser(ele.staffCode)} />
                       </button>
                       <button
                         className="btn btn-outline-danger border-0"
+                        id="btnHighlight"
                         onClick={() =>
                           checkUserAvailableToDisable(ele.staffCode)
                         }
@@ -520,6 +518,7 @@ const ManageUser = () => {
                             type="button"
                             className="btn btn-outline-danger border-4"
                             data-bs-dismiss="modal"
+                            id="btnClose"
                           >
                             <CloseIcon />
                           </button>
@@ -573,39 +572,7 @@ const ManageUser = () => {
           </table>
         </div>
 
-        <div className="paging">
-          {numPage > 1 ? (
-            <div className="paging text-end">
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={handlePre}
-              >
-                Previous
-              </button>
-              {Array.from({ length: numPage }, (_, i) => (
-                <button
-                  type="button"
-                  onClick={() => setPage(i + 1)}
-                  className={
-                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                  }
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={handleNext}
-              >
-                Next
-              </button>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
+        <Paging numPage={numPage} setPage={setPage} page={page} />
       </div>
     </>
   );

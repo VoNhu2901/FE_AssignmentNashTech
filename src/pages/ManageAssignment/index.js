@@ -18,6 +18,7 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import returningService from "../../api/returningService";
+import Paging from "../../components/paging";
 
 const state = ["All", "Accepted", "Waiting for acceptance"];
 
@@ -74,11 +75,7 @@ const ManageAssignment = () => {
 
   const [disable, setDisable] = useState(null);
   const [createReturn, setCreateReturn] = useState();
-
-  const newAssignmentId = localStorage.getItem("newAssignmentId");
   const location = localStorage.getItem("location");
-
-  // TODO: check when action is disable
 
   const loadData = () => {
     Loading.standard("Loading...");
@@ -86,19 +83,20 @@ const ManageAssignment = () => {
     assignmentService
       .getAllAssignments(location)
       .then((res) => {
-        console.log(res.data);
+        const newAssignmentId = localStorage.getItem("newAssignmentId");
         const resData = res.data;
         if (resData.length === 0) {
           toast.error("No assignment founded");
         }
 
         let newAssignment = resData.filter(
-          (assignment) => assignment.id === newAssignmentId
+          (assignment) => assignment.id == newAssignmentId
         );
+
         let _data = [];
         if (newAssignmentId) {
           _data = resData.filter(
-            (assignment) => assignment.id !== newAssignmentId
+            (assignment) => assignment.id != newAssignmentId
           );
         } else {
           _data = [...resData];
@@ -112,6 +110,7 @@ const ManageAssignment = () => {
         setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
 
         Loading.remove();
+        localStorage.removeItem("newAssignmentId");
       })
       .catch((err) => {
         Loading.remove();
@@ -122,7 +121,6 @@ const ManageAssignment = () => {
 
   useEffect(() => {
     loadData();
-    localStorage.removeItem("newAssignmentId");
   }, []);
 
   const isEqual = (date1, date2) => {
@@ -131,21 +129,33 @@ const ManageAssignment = () => {
     return d1.localeCompare(d2) === 0;
   };
 
-  useEffect(() => {
-    let list = [...data];
-    if (filterByState !== "All" && filterByState !== null) {
-      list = list.filter(
-        (item) => item.state.localeCompare(filterByState) === 0
-      );
+  const handleFilterByDate = (date) => {
+    setFilterByDate(date);
+    handleFilter(filterByState, date);
+  };
+
+  const handleFilterByState = (filter) => {
+    setFilterByState(filter);
+    handleFilter(filter, filterByDate);
+  };
+
+  const handleFilter = (_state, _date) => {
+    let _data = [...data];
+
+    if (_state !== "All") {
+      _data = data.filter((item) => _state.localeCompare(item.state) === 0);
     }
 
-    if (filterByDate) {
-      list = list.filter((item) => isEqual(filterByDate, item.assignedDate));
+    if (_date) {
+      _data = _data.filter((item) => isEqual(_date, item.assignedDate));
     }
 
-    setNumPage(Math.ceil(list.length / rowPerPage));
-    setAssignmentList(list);
-  }, [filterByDate, filterByState, data]);
+    if (_data.length === 0) {
+      toast.info("Not Found ");
+    }
+    setNumPage(Math.ceil(_data.length / 20));
+    setAssignmentList(_data);
+  };
 
   const sortByCol = (col) => {
     if (col === currentCol) {
@@ -246,6 +256,8 @@ const ManageAssignment = () => {
     if (!content) {
       loadData();
     } else {
+      Loading.standard("Searching...");
+
       assignmentService
         .searchAssignment(location, content)
         .then((res) => {
@@ -260,23 +272,14 @@ const ManageAssignment = () => {
           setData(finalList); // get data to handle
           setAssignmentList(finalList); // get data to display (have change)
           setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+
+          Loading.remove();
         })
         .catch((err) => {
+          Loading.remove();
           console.log(err);
           toast.info("No Assignment Found");
         });
-    }
-  };
-
-  const handleNext = () => {
-    if (page < numPage) {
-      setPage(page + 1);
-    }
-  };
-
-  const handlePre = () => {
-    if (page > 1) {
-      setPage(page - 1);
     }
   };
 
@@ -430,7 +433,7 @@ const ManageAssignment = () => {
                   className="dropdown-menu form-check"
                   aria-labelledby="dropMenuFilterType"
                 >
-                  {state.map((type, index) => (
+                  {state.map((type) => (
                     <li key={type}>
                       <div>
                         <input
@@ -439,7 +442,7 @@ const ManageAssignment = () => {
                           value={type}
                           id={type}
                           checked={filterByState === type}
-                          onChange={() => setFilterByState(type)}
+                          onChange={() => handleFilterByState(type)}
                         />
                         <label className="form-check-label" htmlFor={type}>
                           {type}
@@ -458,7 +461,7 @@ const ManageAssignment = () => {
                   <DatePicker
                     placeholderText="Assigned Date"
                     selected={filterByDate}
-                    onChange={(date) => setFilterByDate(date)}
+                    onChange={(date) => handleFilterByDate(date)}
                   />
                 </div>
                 <div className="iconDate border-start border-secondary text-secondary">
@@ -480,7 +483,11 @@ const ManageAssignment = () => {
                 />
               </div>
               <div>
-                <button className="btn border-0" onClick={handleSearch}>
+                <button
+                  className="btn border-0"
+                  id="btnSearch"
+                  onClick={handleSearch}
+                >
                   <SearchIcon />
                 </button>
               </div>
@@ -495,6 +502,7 @@ const ManageAssignment = () => {
                 onClick={() => {
                   navigate("/create-assignment");
                 }}
+                id="btnCreate"
               >
                 Create new assignment
               </button>
@@ -515,6 +523,7 @@ const ManageAssignment = () => {
                     <button
                       className="btn border-0"
                       onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
                     >
                       {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                     </button>
@@ -585,58 +594,40 @@ const ManageAssignment = () => {
                           </td>
 
                           <td style={{ width: "10rem" }}>
-                            {ele.state !== "Waiting for acceptance" &&
-                            ele.state !== "Declined" ? (
-                              <>
-                                <button
-                                  className="btn btn-outline-secondary border-0"
-                                  disabled
-                                >
-                                  <EditIcon />
-                                </button>
-                                <button
-                                  className="btn btn-outline-danger border-0"
-                                  disabled
-                                >
-                                  <HighlightOffIcon />
-                                </button>
-                                <button
-                                  className="btn btn-outline-primary border-0"
-                                  disabled={
-                                    ele.state === "Accepted" || ele.hasReturning
-                                  }
-                                >
-                                  <RestartAltSharpIcon
-                                    onClick={() => setCreateReturn(ele.id)}
-                                  />
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button className="btn btn-outline-secondary border-0">
-                                  <EditIcon
-                                    onClick={() => editAssignment(ele.id)}
-                                  />
-                                </button>
-                                <button className="btn btn-outline-danger border-0">
-                                  <HighlightOffIcon
-                                  // onClick={() =>
-                                  //   checkAssetAvailableToDisable(ele.id)
-                                  // }
-                                  />
-                                </button>
-                                <button
-                                  className="btn btn-outline-secondary border-0"
-                                  disabled={
-                                    ele.state === "Accepted" || ele.hasReturning
-                                  }
-                                >
-                                  <RestartAltSharpIcon
-                                    onClick={() => setCreateReturn(ele.id)}
-                                  />
-                                </button>
-                              </>
-                            )}
+                            <>
+                              <button
+                                className="btn btn-outline-secondary border-0"
+                                disabled={
+                                  ele.state !== "Waiting for acceptance"
+                                }
+                                id="btnEdit"
+                              >
+                                <EditIcon />
+                              </button>
+                              <button
+                                className="btn btn-outline-danger border-0"
+                                id="btnHighlight"
+                                disabled={
+                                  !(
+                                    ele.state === "Waiting for acceptance" ||
+                                    ele.state === "Declined"
+                                  )
+                                }
+                              >
+                                <HighlightOffIcon />
+                              </button>
+                              <button
+                                className="btn btn-outline-primary border-0"
+                                disabled={
+                                  ele.state !== "Accepted" || ele.hasReturning
+                                }
+                                id="btnRestart"
+                              >
+                                <RestartAltSharpIcon
+                                  onClick={() => setCreateReturn(ele.id)}
+                                />
+                              </button>
+                            </>
                           </td>
                         </tr>
                         <div
@@ -659,6 +650,7 @@ const ManageAssignment = () => {
                                   type="button"
                                   className="btn btn-outline-danger border-4"
                                   data-bs-dismiss="modal"
+                                  id="btnClose"
                                 >
                                   <CloseIcon />
                                 </button>
@@ -720,41 +712,7 @@ const ManageAssignment = () => {
         </div>
         {/* end Table list */}
 
-        {/* start Pagination */}
-        <div className="paging">
-          {numPage > 1 ? (
-            <div className="paging text-end">
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={handlePre}
-              >
-                Previous
-              </button>
-              {Array.from({ length: numPage }, (_, i) => (
-                <button
-                  type="button"
-                  onClick={() => setPage(i + 1)}
-                  className={
-                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                  }
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={handleNext}
-              >
-                Next
-              </button>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
-        {/* end Pagination */}
+        <Paging numPage={numPage} setPage={setPage} page={page} />
       </div>
     </>
   );
