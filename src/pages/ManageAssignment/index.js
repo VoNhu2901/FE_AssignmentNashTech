@@ -601,12 +601,14 @@ const ManageAssignment = () => {
                                   ele.state !== "Waiting for acceptance"
                                 }
                                 id="btnEdit"
+                                onClick={() => editAssignment(ele.id)}
                               >
                                 <EditIcon />
                               </button>
                               <button
                                 className="btn btn-outline-danger border-0"
                                 id="btnHighlight"
+                                onClick={() => handleDelete(ele.id)}
                                 disabled={
                                   !(
                                     ele.state === "Waiting for acceptance" ||
