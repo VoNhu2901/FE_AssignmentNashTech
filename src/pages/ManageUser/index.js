@@ -455,14 +455,18 @@ const ManageUser = () => {
                       data-bs-toggle="modal"
                       data-bs-target={"#detailUserViewModal" + ele.staffCode}
                     >
-                      {ele.fullName}
+                      {ele.fullName.length > 20
+                        ? ele.fullName.substring(0, 20) + "..."
+                        : ele.fullName}
                     </td>
                     <td
                       className="border-bottom"
                       data-bs-toggle="modal"
                       data-bs-target={"#detailUserViewModal" + ele.staffCode}
                     >
-                      {ele.username}
+                      {ele.username.length > 20
+                        ? ele.username.substring(0, 20) + "..."
+                        : ele.username}
                     </td>
                     <td
                       className="border-bottom"

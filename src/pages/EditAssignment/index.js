@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowDropDownIcon } from "../../components/icon";
-import { useParams } from "react-router-dom";
-import assignmentService from "./../../api/assignmentService";
+import { Button, Modal } from "antd";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import SelectUser from "../CreateAssignment/SelectUser";
+import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
 import SelectAsset from "../CreateAssignment/SelectAsset";
+import SelectUser from "../CreateAssignment/SelectUser";
+import assignmentService from "./../../api/assignmentService";
 
 const EditAssignment = () => {
   const navigate = useNavigate();
@@ -17,7 +17,14 @@ const EditAssignment = () => {
   const [assignedDate, setAssignedDate] = useState("");
   const [note, setNote] = useState("");
   const [userId, setUserId] = useState("");
-  const [assetId, setAssetId] = useState("");
+  const [assetCode, setAssetCode] = useState("");
+  const [fullName, setFullName] = useState("");
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisibleUser, setIsModalVisibleUser] = useState(false);
+  // const [assetCode, setAssetCode] = useState("");
+
+
 
   useEffect(() => {
     Loading.standard("Loading...");
@@ -25,12 +32,12 @@ const EditAssignment = () => {
     assignmentService
       .getAssignmentById(assignmentCode)
       .then((res) => {
-        setUserName(res.data.assignedTo);
+        setFullName(res.data.assignedTo);
         setAssetName(res.data.assetName);
         setAssignedDate(res.data.assignedDate);
         setNote(res.data.note);
         setUserId(res.data.assignedToId);
-        setAssetId(res.data.assetCode);
+        setAssetCode(res.data.assetCode);
 
         Loading.remove();
       })
@@ -41,9 +48,9 @@ const EditAssignment = () => {
   }, []);
 
   const handleEditAssignment = () => {
-    if (userId && assetId && assignedDate && note) {
+    if (userId && assetCode && assignedDate && note) {
       const payload = {
-        asset: assetId,
+        asset: assetCode,
         user: userId,
         assignedDate,
         note,
@@ -74,6 +81,12 @@ const EditAssignment = () => {
   const handleCancelAssignment = () => {
     navigate("/manage-assignment");
   };
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+   const showModalUser = () => {
+     setIsModalVisibleUser(true);
+   };
 
   return (
     <>
@@ -83,39 +96,59 @@ const EditAssignment = () => {
 
           <div className="form-create-asset__input-wrapper">
             <label for="user">User</label>
-            <div>
-              <button
-                id="user"
-                className="btn border w-100 d-flex justify-content-between align-items-center"
-                type="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                data-bs-target="#selectUserModal"
+            <>
+              <Button
+                type="text"
+                className="btn border w-100 d-flex justify-content-between flex-row-reverse"
+                icon={<SearchIcon />}
+                onClick={showModalUser}
               >
-                {userName ? userName : "Select User"}
-                <ArrowDropDownIcon />
-              </button>
-              <SelectUser setUserName={setUserName} setUserId={setUserId} />
-            </div>
+                {fullName ? fullName : "Select User"}
+              </Button>
+              <Modal
+                visible={isModalVisibleUser}
+                closable={false}
+                mask={false}
+                width={700}
+                closeIcon={false}
+                centered
+                footer={null}
+              >
+                <SelectUser
+                  setUserName={setUserName}
+                  setUserId={setUserId}
+                  setFullName={setFullName}
+                  setIsModalVisibleUser={setIsModalVisibleUser}
+                />
+              </Modal>
+            </>
 
             <label for="asset">Asset</label>
-            <div>
-              <button
-                id="asset"
-                className="btn border w-100 d-flex justify-content-between align-items-center"
-                type="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                data-bs-target="#selectUserModal"
+            <>
+              <Button
+                type="text"
+                className="btn border w-100 d-flex justify-content-between flex-row-reverse"
+                icon={<SearchIcon />}
+                onClick={showModal}
               >
                 {assetName ? assetName : "Select Asset"}
-                <ArrowDropDownIcon />
-              </button>
-              <SelectAsset
-                setAssetCode={setAssetId}
-                setAssetName={setAssetName}
-              />
-            </div>
+              </Button>
+              <Modal
+                visible={isModalVisible}
+                closable={false}
+                mask={false}
+                width={700}
+                closeIcon={false}
+                centered
+                footer={null}
+              >
+                <SelectAsset
+                  setAssetCode={setAssetCode}
+                  setAssetName={setAssetName}
+                  setIsModalVisible={setIsModalVisible}
+                />
+              </Modal>
+            </>
 
             <label for="assignedDate">Assignment Date</label>
             <div>
@@ -145,7 +178,7 @@ const EditAssignment = () => {
               id="save"
               className="form-create-asset__button-item"
               onClick={handleEditAssignment}
-              disabled={!(userId && assetId && assignedDate && note)}
+              disabled={!(userId && assetCode && assignedDate && note)}
             >
               Save
             </button>

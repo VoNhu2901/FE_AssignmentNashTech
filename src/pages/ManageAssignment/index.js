@@ -255,6 +255,8 @@ const ManageAssignment = () => {
     if (!content) {
       loadData();
     } else {
+      Loading.standard("Searching...");
+
       assignmentService
         .searchAssignment(location, content)
         .then((res) => {
@@ -269,9 +271,11 @@ const ManageAssignment = () => {
           setData(finalList); // get data to handle
           setAssignmentList(finalList); // get data to display (have change)
           setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+
+          Loading.remove();
         })
         .catch((err) => {
-          console.log(err);
+          Loading.remove();
           toast.info("No Assignment Found");
         });
     }
@@ -477,7 +481,11 @@ const ManageAssignment = () => {
                 />
               </div>
               <div>
-                <button className="btn border-0" id="btnSearch" onClick={handleSearch}>
+                <button
+                  className="btn border-0"
+                  id="btnSearch"
+                  onClick={handleSearch}
+                >
                   <SearchIcon />
                 </button>
               </div>
@@ -618,6 +626,56 @@ const ManageAssignment = () => {
                                 />
                               </button>
                             </>
+                            {ele.state !== "Waiting for acceptance" &&
+                            ele.state !== "Declined" ? (
+                              <>
+                                <button
+                                  className="btn btn-outline-secondary border-0"
+                                  disabled
+                                >
+                                  <EditIcon />
+                                </button>
+                                <button
+                                  className="btn btn-outline-danger border-0"
+                                  disabled
+                                >
+                                  <HighlightOffIcon />
+                                </button>
+                                <button
+                                  className="btn btn-outline-primary border-0"
+                                  disabled={
+                                    ele.state === "Accepted" || ele.hasReturning
+                                  }
+                                >
+                                  <RestartAltSharpIcon
+                                    onClick={() => setCreateReturn(ele.id)}
+                                  />
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button className="btn btn-outline-secondary border-0">
+                                  <EditIcon
+                                    onClick={() => editAssignment(ele.id)}
+                                  />
+                                </button>
+                                <button className="btn btn-outline-danger border-0">
+                                  <HighlightOffIcon
+                                    onClick={() => handleDelete(ele.id)}
+                                  />
+                                </button>
+                                <button
+                                  className="btn btn-outline-secondary border-0"
+                                  disabled={
+                                    ele.state === "Accepted" || ele.hasReturning
+                                  }
+                                >
+                                  <RestartAltSharpIcon
+                                    onClick={() => setCreateReturn(ele.id)}
+                                  />
+                                </button>
+                              </>
+                            )}
                           </td>
                         </tr>
                         <div

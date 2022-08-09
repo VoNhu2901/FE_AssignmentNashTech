@@ -4,6 +4,8 @@ import { SearchIcon, ArrowDropDownIcon } from "../../components/icon";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import assetService from "../../api/assetService";
 import Paging from "../../components/paging";
+import assignmentService from "./../../api/assignmentService";
+
 
 const tableHead = [
   {
@@ -37,25 +39,27 @@ const SelectAsset = (props) => {
 
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
+  const [saveId, setSaveId] = useState("");
 
-  // const [selectAsset, setSelectAsset] = useState("");
 
   const loadData = () => {
     Loading.standard("Loading...");
 
-    assetService
-      .getAllAssets(location)
+    assignmentService
+      .getAllAssetsByAvailable(location)
       .then((res) => {
         const resData = res.data;
         if (resData.length === 0) {
-          toast.error("No asset founded");
+          toast.error("Asset is not available");
         }
+        console.log(resData);
 
         let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
 
         const finalList = [...sorted];
         setAssetList(finalList); // get data to display (have change)
         setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
+
         Loading.remove();
       })
       .catch((err) => {
@@ -139,30 +143,23 @@ const SelectAsset = (props) => {
     }
   };
 
-  const handleSave = () => {
-    // alert("Save");
-  };
-
-  const handlePre = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (page < numPage) {
-      setPage(page + 1);
-    }
-  };
-
   const handleSelect = (id) => {
-    props.setAssetCode(id);
+    setSaveId(id);
+  };
+
+  const handleSave = (id) => {
+      props.setAssetCode(id);
     props.setAssetName(assetList.find((item) => item.id === id).name);
+    props.setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    props.setIsModalVisible(false);
   };
 
   return (
     <>
-      <div className="container dropdown-menu p-3 border border-dark">
+      {/* <div className="container dropdown-menu p-3 border border-dark"> */}
         <div class="d-flex justify-content-between">
           <h4 className="form-create-asset__title">Select Asset</h4>
           <div className="search">
@@ -209,16 +206,19 @@ const SelectAsset = (props) => {
               ).map((ele, index) => {
                 return (
                   <>
-                    <tr key={index} onClick={() => handleSelect(ele.id)}>
-                      <td>
+                    <tr key={index}>
+                      <td >
                         <input
                           className="form-check-input"
                           type="radio"
                           id={ele.id}
                           name="state"
+                          onClick={() => handleSelect(ele.id)}
                         ></input>
                       </td>
-                      <td className="border-bottom">
+                      <td
+                        className="border-bottom"
+                      >
                         <label htmlFor={ele.id}>{ele.id}</label>
                       </td>
                       <td className="border-bottom">
@@ -233,27 +233,28 @@ const SelectAsset = (props) => {
               })}
             </tbody>
           </table>
+
           <Paging numPage={numPage} setPage={setPage} page={page} />
 
           <div className="d-flex justify-content-end gap-4">
             <button
               className="form-create-asset__button-item btn btn-danger"
-              onClick={handleSave}
               id="btnSave"
+              onClick={()=>handleSave(saveId)}
             >
               Save
             </button>
             <button
               className="form-create-asset__button-item btn btn-light border-secondary"
-              // onClick={handleClose}
               id="btnCancel"
+              onClick={handleCancel}
             >
               Cancel
             </button>
           </div>
         </div>
         {/* end Table list */}
-      </div>
+      {/* </div> */}
     </>
   );
 };
