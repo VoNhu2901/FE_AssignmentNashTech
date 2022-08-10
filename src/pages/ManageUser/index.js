@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import SearchIcon from "@mui/icons-material/Search";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import EditIcon from "@mui/icons-material/Edit";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import SearchIcon from "@mui/icons-material/Search";
 import moment from "moment";
-import "./style.scss";
-import userService from "../../api/userService";
+import {Tooltip } from "antd";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Loading } from "notiflix/build/notiflix-loading-aio";
+import userService from "../../api/userService";
 import Paging from "../../components/paging";
+import "./style.scss";
 
 const ManageUser = () => {
   const navigate = useNavigate();
@@ -370,7 +371,11 @@ const ManageUser = () => {
                 />
               </div>
               <div>
-                <button className="btn border-0" id="btnSearch" onClick={handleSearch}>
+                <button
+                  className="btn border-0"
+                  id="btnSearch"
+                  onClick={handleSearch}
+                >
                   <SearchIcon />
                 </button>
               </div>
@@ -455,18 +460,26 @@ const ManageUser = () => {
                       data-bs-toggle="modal"
                       data-bs-target={"#detailUserViewModal" + ele.staffCode}
                     >
-                      {ele.fullName.length > 20
-                        ? ele.fullName.substring(0, 20) + "..."
-                        : ele.fullName}
+                      {ele.fullName.length > 20 ? (
+                        <Tooltip placement="top" title={ele.fullName}>
+                          {ele.fullName.substring(0, 20) + "..."}
+                        </Tooltip>
+                      ) : (
+                        ele.fullName
+                      )}
                     </td>
                     <td
                       className="border-bottom"
                       data-bs-toggle="modal"
                       data-bs-target={"#detailUserViewModal" + ele.staffCode}
                     >
-                      {ele.username.length > 20
-                        ? ele.username.substring(0, 20) + "..."
-                        : ele.username}
+                      {ele.username.length > 20 ? (
+                        <Tooltip placement="top" title={ele.username}>
+                          {ele.username.substring(0, 20) + "..."}
+                        </Tooltip>
+                      ) : (
+                        ele.username
+                      )}
                     </td>
                     <td
                       className="border-bottom"
@@ -483,7 +496,10 @@ const ManageUser = () => {
                       {ele.role}
                     </td>
                     <td>
-                      <button className="btn btn-outline-secondary border-0" id="btnEdit">
+                      <button
+                        className="btn btn-outline-secondary border-0"
+                        id="btnEdit"
+                      >
                         <EditIcon onClick={() => editUser(ele.staffCode)} />
                       </button>
                       <button

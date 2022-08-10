@@ -476,8 +476,9 @@ const ManageAsset = () => {
                   <FilterAltIcon />
                 </button>
                 <ul
-                  className="dropdown-menu form-check"
+                  className="dropdown-menu form-check w-100 text-break"
                   aria-labelledby="dropMenuFilterType"
+                  style={{height: "200px", overflowY: "scroll"}}
                 >
                   <li>
                     <div>
@@ -528,7 +529,11 @@ const ManageAsset = () => {
                 />
               </div>
               <div>
-                <button className="btn border-0" id="btnSearch" onClick={handleSearch}>
+                <button
+                  className="btn border-0"
+                  id="btnSearch"
+                  onClick={handleSearch}
+                >
                   <SearchIcon />
                 </button>
               </div>
@@ -628,10 +633,16 @@ const ManageAsset = () => {
                           </>
                         ) : (
                           <>
-                            <button className="btn btn-outline-secondary border-0" id="btnEdit">
+                            <button
+                              className="btn btn-outline-secondary border-0"
+                              id="btnEdit"
+                            >
                               <EditIcon onClick={() => editAsset(ele.id)} />
                             </button>
-                            <button className="btn btn-outline-danger border-0" id="btnHighLight">
+                            <button
+                              className="btn btn-outline-danger border-0"
+                              id="btnHighLight"
+                            >
                               <HighlightOffIcon
                                 onClick={() =>
                                   checkAssetAvailableToDisable(ele.id)

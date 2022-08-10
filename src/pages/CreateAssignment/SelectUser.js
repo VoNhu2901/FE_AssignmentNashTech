@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { SearchIcon, ArrowDropDownIcon } from "../../components/icon";
-import userService from "./../../api/userService";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
+import userService from "./../../api/userService";
+import { Tooltip } from 'antd';
 
 const tableHead = [
   {
@@ -230,7 +231,15 @@ const SelectUser = (props) => {
                       <label htmlFor={ele.staffCode}>{ele.staffCode}</label>
                     </td>
                     <td className="border-bottom">
-                      <label htmlFor={ele.staffCode}>{ele.fullName}</label>
+                      <label htmlFor={ele.staffCode}>
+                        {ele.fullName.length > 20 ? (
+                          <Tooltip placement="top" title={ele.fullName}>
+                            {ele.fullName.substring(0, 20) + "..."}
+                          </Tooltip>
+                        ) : (
+                          ele.fullName
+                        )}
+                      </label>
                     </td>
                     <td className="border-bottom">
                       <label htmlFor={ele.staffCode}>{ele.role}</label>

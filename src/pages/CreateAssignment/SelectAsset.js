@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
 import Paging from "../../components/paging";
 import assignmentService from "./../../api/assignmentService";
+import { Tooltip } from 'antd';
 
 
 const tableHead = [
@@ -206,7 +207,7 @@ const SelectAsset = (props) => {
                 return (
                   <>
                     <tr key={index}>
-                      <td >
+                      <td>
                         <input
                           className="form-check-input"
                           type="radio"
@@ -215,16 +216,30 @@ const SelectAsset = (props) => {
                           onClick={() => handleSelect(ele.id)}
                         ></input>
                       </td>
-                      <td
-                        className="border-bottom"
-                      >
+                      <td className="border-bottom">
                         <label htmlFor={ele.id}>{ele.id}</label>
                       </td>
                       <td className="border-bottom">
-                        <label htmlFor={ele.id}>{ele.name}</label>
+                        <label htmlFor={ele.id}>
+                          {ele.name.length > 20 ? (
+                            <Tooltip placement="top" title={ele.name}>
+                              {ele.name.substring(0, 20) + "..."}
+                            </Tooltip>
+                          ) : (
+                            ele.name
+                          )}
+                        </label>
                       </td>
                       <td className="border-bottom">
-                        <label htmlFor={ele.id}>{ele.category.name}</label>
+                        <label htmlFor={ele.id}>
+                          {ele.category.name.length > 20 ? (
+                            <Tooltip placement="top" title={ele.category.name}>
+                              {ele.category.name.substring(0, 20) + "..."}
+                            </Tooltip>
+                          ) : (
+                            ele.category.name
+                          )}
+                        </label>
                       </td>
                     </tr>
                   </>
