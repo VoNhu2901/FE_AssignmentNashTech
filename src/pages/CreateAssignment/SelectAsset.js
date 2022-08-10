@@ -1,8 +1,7 @@
+import { Loading } from "notiflix/build/notiflix-loading-aio";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { SearchIcon, ArrowDropDownIcon } from "../../components/icon";
-import { Loading } from "notiflix/build/notiflix-loading-aio";
-import assetService from "../../api/assetService";
+import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
 import Paging from "../../components/paging";
 import assignmentService from "./../../api/assignmentService";
 
@@ -78,8 +77,8 @@ const SelectAsset = (props) => {
       loadData();
     } else {
       Loading.standard("Searching...");
-      assetService
-        .searchAsset(location, content)
+      assignmentService
+        .searchAssetByAvailable(location, content)
         .then((res) => {
           const resData = res.data;
           if (resData.length === 0) {

@@ -48,7 +48,7 @@ const EditAssignment = () => {
   }, []);
 
   const handleEditAssignment = () => {
-    if (userId && assetCode && assignedDate && note) {
+    if (userId && assetCode && assignedDate) {
       const payload = {
         asset: assetCode,
         user: userId,
@@ -178,7 +178,7 @@ const EditAssignment = () => {
               id="save"
               className="form-create-asset__button-item"
               onClick={handleEditAssignment}
-              disabled={!(userId && assetCode && assignedDate && note)}
+              disabled={!(userId && assetCode && assignedDate)}
             >
               Save
             </button>

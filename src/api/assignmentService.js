@@ -28,6 +28,11 @@ const assignmentService = {
   getAssignmentById: (id) => {
     return axiosClient.get(`/api/assignment/getAssignment/${id}`);
   },
+  searchAssetByAvailable: (location, content) => {
+    return axiosClient.get(
+      `/api/assignment/searchAsset/${location}/${content}`
+    );
+  },
 };
 
 export default assignmentService;
