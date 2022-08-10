@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import Paging from "../../components/paging";
+import { Tooltip } from 'antd';
 
 const tableHead = [
   {
@@ -179,7 +180,15 @@ const Report = () => {
               return (
                 <>
                   <tr key={ele.index}>
-                    <td className="border-bottom">{ele.name}</td>
+                    <td className="border-bottom">
+                      {ele.name.length > 20 ? (
+                        <Tooltip placement="top" title={ele.name}>
+                          {ele.name.substring(0, 20) + "..."}
+                        </Tooltip>
+                      ) : (
+                        ele.name
+                      )}
+                    </td>
                     <td className="border-bottom">{ele.total}</td>
                     <td className="border-bottom">{ele.assigned}</td>
                     <td className="border-bottom">{ele.available}</td>

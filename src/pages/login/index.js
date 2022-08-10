@@ -39,7 +39,13 @@ const Login = () => {
           localStorage.setItem("role", res.data.role.name);
           Loading.remove();
           toast.success("Login success!!!");
-          navigate("/");
+
+          const checkRole = localStorage.getItem("role");
+          if (checkRole === "ADMIN") {
+            navigate("/manage-user");
+          } else {
+            navigate("/");
+          }
         })
         .catch((err) => {
           Loading.remove();

@@ -7,57 +7,63 @@ const list = [
     id: 1,
     name: "Home",
     link: "/",
+    role: "STAFF",
   },
   {
     id: 2,
     name: "Manage User",
     link: "/manage-user",
+    role: "ADMIN",
   },
   {
     id: 3,
     name: "Manage Asset",
     link: "/manage-asset",
+    role: "ADMIN",
   },
   {
     id: 4,
     name: "Manage Assignment",
     link: "/manage-assignment",
+    role: "ADMIN",
   },
   {
     id: 5,
     name: "Request for Returning",
     link: "/manage-request",
+    role: "ADMIN",
   },
   {
     id: 6,
     name: "Report",
     link: "/report",
+    role: "ADMIN",
   },
 ];
 
 //Page dùng chung cho các Route
 const Main = () => {
   const [menu, setMenu] = useState([]);
-  const [header, setHeader] = useState("Home");
+  const [header, setHeader] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkUser = localStorage.getItem("userId");
+    const checkRole = localStorage.getItem("role");
     if (!checkUser) {
       navigate("/login");
     }
-    setMenu(list);
+    if (checkUser && checkRole === "ADMIN") {
+      setHeader(list[1].name)
+      setMenu(list.filter((item) => item.role === "ADMIN"));
+    } else {
+      setHeader(list[0].name)
+      setMenu(list.filter((item) => item.role === "STAFF"));
+    }
   }, []);
 
   const handleClick = (e, id) => {
-    setMenu(
-      list.map((item) => {
-        if (item.id === id) {
-          setHeader(item.name);
-        }
-        return item;
-      })
-    );
+    setHeader(list.find((item) => item.id === id).name);
   };
 
   return (

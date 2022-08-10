@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import categoryService from "../../api/categoryService";
 import Paging from "../../components/paging";
+import { Tooltip } from 'antd';
 
 const filterState = [
   {
@@ -597,14 +598,26 @@ const ManageAsset = () => {
                         data-bs-toggle="modal"
                         data-bs-target={"#detailUserViewModal" + ele.id}
                       >
-                        {ele.name}
+                        {ele.name.length > 20 ? (
+                          <Tooltip placement="top" title={ele.name}>
+                            {ele.name.substring(0, 20) + "..."}
+                          </Tooltip>
+                        ) : (
+                          ele.name
+                        )}
                       </td>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
                         data-bs-target={"#detailUserViewModal" + ele.id}
                       >
-                        {ele.category.name}
+                        {ele.category.name.length > 20 ? (
+                          <Tooltip placement="top" title={ele.category.name}>
+                            {ele.category.name.substring(0, 20) + "..."}
+                          </Tooltip>
+                        ) : (
+                          ele.category.name
+                        )}
                       </td>
                       <td
                         className="border-bottom"
