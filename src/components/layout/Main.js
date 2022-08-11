@@ -10,6 +10,12 @@ const list = [
     role: "STAFF",
   },
   {
+    id: 1,
+    name: "Home",
+    link: "/",
+    role: "ADMIN",
+  },
+  {
     id: 2,
     name: "Manage User",
     link: "/manage-user",
@@ -41,12 +47,33 @@ const list = [
   },
 ];
 
+const createList = [
+  {
+    id: 2,
+    name: "Create New User",
+    link: "/create-user",
+    role: "ADMIN",
+  },
+  {
+    id: 3,
+    name: "Create New Asset",
+    link: "/create-asset",
+  },
+  {
+    id: 4,
+    name: "Create New Assignment",
+    link: "/create-assignment",
+  },
+];
+
 //Page dùng chung cho các Route
 const Main = () => {
   const [menu, setMenu] = useState([]);
-  const [header, setHeader] = useState("");
+  const [header, setHeader] = useState(list[0].name);
   const navigate = useNavigate();
+  const currentPath = window.location.pathname;
 
+  // sidebar menu
   useEffect(() => {
     const checkUser = localStorage.getItem("userId");
     const checkRole = localStorage.getItem("role");
@@ -54,10 +81,13 @@ const Main = () => {
       navigate("/login");
     }
     if (checkUser && checkRole === "ADMIN") {
-      setHeader(list[1].name)
       setMenu(list.filter((item) => item.role === "ADMIN"));
+      const header = createList.find((item) => item.link === currentPath);
+      // const headerId = header.id;
+      // const headerName = header.name;
+      // setHeader(list.find((item) => item.id === headerId).name + " - " + headerName);
+      
     } else {
-      setHeader(list[0].name)
       setMenu(list.filter((item) => item.role === "STAFF"));
     }
   }, []);
@@ -65,6 +95,14 @@ const Main = () => {
   const handleClick = (e, id) => {
     setHeader(list.find((item) => item.id === id).name);
   };
+
+  // useEffect(() => {
+  //   subList.map((item) => {
+  //     if (item.link === currentPath) {
+  //       setHeader(list[1].name + " > " + item.name);
+  //     }
+  //   });
+  // }, [currentPath]);
 
   return (
     <>
