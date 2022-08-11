@@ -40,6 +40,7 @@ const RequestPage = () => {
       .catch((error) => {
         console.log(error);
         toast.info("No request found. Try later");
+        setRawData([]);
       });
   };
 

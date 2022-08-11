@@ -11,7 +11,7 @@ const returningService = {
     return axiosClient.get(`/api/return/search/${location}/${content}`);
   },
   completeRequest : (returnId, acceptedBy) => {
-    return axiosClient.put(`/api/return/${returnId}/${acceptedBy}`)
+    return axiosClient.patch(`/api/return/${returnId}/${acceptedBy}`)
   },
   deleteReturning: (returnId) => {
     return axiosClient.delete(`/api/return/${returnId}`);
