@@ -40,12 +40,13 @@ const Login = () => {
           Loading.remove();
           toast.success("Login success!!!");
 
-          const checkRole = localStorage.getItem("role");
-          if (checkRole === "ADMIN") {
-            navigate("/manage-user");
-          } else {
+          // const checkRole = localStorage.getItem("role");
+          // if (checkRole === "ADMIN") {
+          //   navigate("/manage-user");
+          // } else {
+          //   navigate("/");
+          // }
             navigate("/");
-          }
         })
         .catch((err) => {
           Loading.remove();
