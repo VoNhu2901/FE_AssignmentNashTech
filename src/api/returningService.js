@@ -1,14 +1,14 @@
 import axiosClient from "./axiosClient";
 
 const returningService = {
-  getAllReturning: (location) => {
-    return axiosClient.get(`/api/return/${location}`);
+  getAllReturning: () => {
+    return axiosClient.get(`/api/return`);
   },
   createNewReturning: (assId) => {
     return axiosClient.post(`/api/return/${assId}`);
   },
-  searchReturning: (location, content) => {
-    return axiosClient.get(`/api/return/search/${location}/${content}`);
+  searchReturning: ( content) => {
+    return axiosClient.get(`/api/return/search/${content}`);
   },
   completeRequest: (returnId) => {
     return axiosClient.patch(`/api/return/${returnId}`);

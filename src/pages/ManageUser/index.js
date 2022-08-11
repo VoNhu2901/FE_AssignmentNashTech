@@ -33,13 +33,12 @@ const ManageUser = () => {
 
   // get data from backend
   const initData = () => {
-    const location = localStorage.getItem("location");
     const userId = localStorage.getItem("userId");
     const newUserId = localStorage.getItem("newUser");
 
     Loading.standard("Loading...");
     userService
-      .getAllUsers(location)
+      .getAllUsers()
       .then((res) => {
         const resData = res.data;
         let newUser = resData.filter((user) => user.staffCode === newUserId);
@@ -194,9 +193,8 @@ const ManageUser = () => {
     if (!content) {
       initData();
     } else {
-      const location = localStorage.getItem("location");
       userService
-        .searchUser(location, content)
+        .searchUser(content)
         .then((res) => {
           if (res.data.length === 0) {
             toast.error("No user founded");
@@ -213,7 +211,7 @@ const ManageUser = () => {
         .catch((err) => {
           console.log(err);
           toast.info(
-            `No user match with "${content}". Try again with correct format.`
+            `No user match with "${content}". Try again.`
           );
         });
     }

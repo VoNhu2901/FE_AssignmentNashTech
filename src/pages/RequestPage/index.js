@@ -27,9 +27,8 @@ const RequestPage = () => {
   const [action, setAction] = useState(null);
 
   const initData = () => {
-    const location = localStorage.getItem("location");
     returningService
-      .getAllReturning(location)
+      .getAllReturning()
       .then((res) => {
         const result = [...res.data];
 
@@ -50,9 +49,8 @@ const RequestPage = () => {
 
   const handleSearch = () => {
     if (searchContent) {
-      const location = localStorage.getItem("location");
       returningService
-        .searchReturning(location, searchContent)
+        .searchReturning(searchContent)
         .then((res) => {
           const result = [...res.data];
           if (result.length !== 0) {

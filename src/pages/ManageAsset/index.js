@@ -98,7 +98,6 @@ const ManageAsset = () => {
   const [action, setAction] = useState(null);
   const [code, setCode] = useState(null);
 
-  const location = localStorage.getItem("location");
   const newAssetId = localStorage.getItem("newAsset");
   const rowPerPage = 20;
 
@@ -106,7 +105,7 @@ const ManageAsset = () => {
     Loading.standard("Loading...");
 
     assetService
-      .getAllAssets(location)
+      .getAllAssets()
       .then((res) => {
         const resData = res.data;
         if (resData.length === 0) {
@@ -192,7 +191,7 @@ const ManageAsset = () => {
       setNumPage(Math.ceil(filtered.length / rowPerPage));
       if (filtered.length === 0) {
         toast.info(
-          `No asset in ${location} have state you choose. Choose another state.`
+          `No asset in your location have state you choose. Choose another state.`
         );
       }
       setAssetList(filtered);
@@ -211,7 +210,7 @@ const ManageAsset = () => {
       const filterState = filtered.filter(isFilter);
       if (filterState.length === 0) {
         toast.info(
-          `No asset in ${location} have category you choose. Choose another category.`
+          `No asset in your location have category you choose. Choose another category.`
         );
       }
       setAssetList(filterState);
@@ -269,7 +268,7 @@ const ManageAsset = () => {
       loadData();
     } else {
       assetService
-        .searchAsset(location, content)
+        .searchAsset(content)
         .then((res) => {
           const resData = res.data;
           if (resData.length === 0) {
@@ -695,7 +694,8 @@ const ManageAsset = () => {
                               </div>
                               <div className="detail-item">
                                 <div className="label">Location</div>
-                                <div className="value">{location}</div>
+                                {/* // TODO: check this */}
+                                <div className="value">{"O day thieu location"}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Specification</div>

@@ -1,11 +1,11 @@
 import axiosClient from "./axiosClient";
 
 const assetService = {
-  getAllAssets: (location) => {
-    return axiosClient.get(`/api/asset/getAll/${location}`);
+  getAllAssets: () => {
+    return axiosClient.get(`/api/asset/getAll`);
   },
-  searchAsset: (location, content) => {
-    return axiosClient.get(`/api/asset/search/${location}/${content}`);
+  searchAsset: ( content) => {
+    return axiosClient.get(`/api/asset/search/${content}`);
   },
   disableAsset: (id) => {
     return axiosClient.delete(`/api/asset/delete/${id}`);
