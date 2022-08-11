@@ -98,6 +98,7 @@ const ManageAsset = () => {
   const [action, setAction] = useState(null);
   const [code, setCode] = useState(null);
 
+  const location = localStorage.getItem("location");
   const newAssetId = localStorage.getItem("newAsset");
   const rowPerPage = 20;
 
@@ -108,6 +109,7 @@ const ManageAsset = () => {
       .getAllAssets()
       .then((res) => {
         const resData = res.data;
+        console.log(resData);
         if (resData.length === 0) {
           toast.error("No asset founded");
         }
@@ -694,8 +696,7 @@ const ManageAsset = () => {
                               </div>
                               <div className="detail-item">
                                 <div className="label">Location</div>
-                                {/* // TODO: check this */}
-                                <div className="value">{"O day thieu location"}</div>
+                                <div className="value">{location}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Specification</div>
