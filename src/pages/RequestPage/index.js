@@ -12,6 +12,7 @@ import "./index.scss";
 import "react-datepicker/dist/react-datepicker.css";
 import returningService from "../../api/returningService";
 import { toast } from "react-toastify";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
 
 const RequestPage = () => {
   const [filterByState, setFilterByState] = useState("ALL");
@@ -27,6 +28,8 @@ const RequestPage = () => {
   const [action, setAction] = useState(null);
 
   const initData = () => {
+    Loading.standard("Loading...");
+
     const location = localStorage.getItem("location");
     returningService
       .getAllReturning(location)
@@ -36,8 +39,10 @@ const RequestPage = () => {
         const filter = result.sort((a, b) => a.id - b.id);
 
         setRawData(filter);
+        Loading.remove();
       })
       .catch((error) => {
+        Loading.remove();
         console.log(error);
         toast.info("No request found. Try later");
         setRawData([]);

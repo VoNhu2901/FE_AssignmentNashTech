@@ -63,6 +63,7 @@ const HomePage = () => {
   const [data, setData] = useState([]);
   const [numPage, setNumPage] = useState(0);
   const [page, setPage] = useState(1);
+  const [currentCol, setCurrentCol] = useState("");
 
   const [createReturn, setCreateReturn] = useState();
 
@@ -162,11 +163,10 @@ const HomePage = () => {
   };
 
   const handleCreateReturning = () => {
-    const assId = createReturn;
-    const requestBy = localStorage.getItem("username");
+    const assignmentId = createReturn;
 
     returningService
-      .createNewReturning(assId, requestBy)
+      .createNewReturning(assignmentId)
       .then((res) => {
         if (res.status === 201) {
           toast.success(
@@ -181,6 +181,16 @@ const HomePage = () => {
         toast.error("cannot create request for returning. Try later");
       });
   };
+
+  const sortByCol = (col) => {
+    if (currentCol === col) {
+      setData(data.reverse());
+      setCurrentCol("");
+    } else {
+      setData(data.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+      setCurrentCol(col);
+    }
+  }
 
   return (
     <>
@@ -287,7 +297,7 @@ const HomePage = () => {
               {tableHeader.map((item) => (
                 <th className="border-bottom border-3" key={item.id}>
                   {item.name}
-                  <button className="btn border-0" id={`sortBy${item.name}`}>
+                  <button className="btn border-0" id={`sortBy${item.name}`} onClick={()=>sortByCol(item.id)}>
                     {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                   </button>
                 </th>
