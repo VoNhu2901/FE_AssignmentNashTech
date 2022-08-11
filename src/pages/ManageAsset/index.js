@@ -94,6 +94,7 @@ const ManageAsset = () => {
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
+  const [history, setHistory] = useState([]);
   const rowPerPage = 20;
 
   const [filterByState, setFilterByState] = useState([0, 1, 1, 1, 0, 0]);
@@ -335,6 +336,8 @@ const ManageAsset = () => {
         toast.error("Cannot delete asset");
       });
   };
+
+    
 
   return (
     <>
