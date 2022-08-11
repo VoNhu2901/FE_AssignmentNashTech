@@ -1,20 +1,59 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
-import IconEyeClose from "../../components/icon/IconEyeClose";
-import IconEyeOpen from './../../components/icon/IconEyeOpen';
-import staffService from "./../../api/staffService";
 import moment from "moment";
-import "./home.scss";
+import { Loading } from "notiflix";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   ArrowDropDownIcon,
-  CloseIcon,
   CheckIcon,
-  ReplayIcon,
-  ClearIcon
+  ClearIcon,
+  CloseIcon,
+  RestartAltSharpIcon
 } from "../../components/icon";
-import { Loading } from "notiflix";
+import IconEyeClose from "../../components/icon/IconEyeClose";
 import Paging from "../../components/paging";
+import returningService from "./../../api/returningService";
+import staffService from "./../../api/staffService";
+import IconEyeOpen from "./../../components/icon/IconEyeOpen";
+import "./home.scss";
+
+const tableHeader = [
+  {
+    id: "assetCode",
+    name: "Asset Code",
+    isDropdown: true,
+  },
+  {
+    id: "assetName",
+    name: "Asset Name",
+    isDropdown: true,
+  },
+  {
+    id: "specification",
+    name: "Specification",
+    isDropdown: true,
+  },
+  {
+    id: "assignTo",
+    name: "Assigned To",
+    isDropdown: true,
+  },
+  {
+    id: "assignBy",
+    name: "Assigned By",
+    isDropdown: true,
+  },
+  {
+    id: "assignedDate",
+    name: "Assigned Date",
+    isDropdown: true,
+  },
+  {
+    id: "state",
+    name: "State",
+    isDropdown: true,
+  },
+];
 
 const HomePage = () => {
   const rowPerPage = 15;
@@ -25,43 +64,7 @@ const HomePage = () => {
   const [numPage, setNumPage] = useState(0);
   const [page, setPage] = useState(1);
 
-  const tableHeader = [
-    {
-      id: "assetCode",
-      name: "Asset Code",
-      isDropdown: true,
-    },
-    {
-      id: "assetName",
-      name: "Asset Name",
-      isDropdown: true,
-    },
-    {
-      id: "specification",
-      name: "Specification",
-      isDropdown: true,
-    },
-    {
-      id: "assignTo",
-      name: "Assigned To",
-      isDropdown: true,
-    },
-    {
-      id: "assignBy",
-      name: "Assigned By",
-      isDropdown: true,
-    },
-    {
-      id: "assignedDate",
-      name: "Assigned Date",
-      isDropdown: true,
-    },
-    {
-      id: "state",
-      name: "State",
-      isDropdown: true,
-    },
-  ];
+  const [createReturn, setCreateReturn] = useState();
 
   useEffect(() => {
     let status = localStorage.getItem("status");
@@ -158,8 +161,66 @@ const HomePage = () => {
     }
   };
 
+  const handleCreateReturning = () => {
+    const assId = createReturn;
+    const requestBy = localStorage.getItem("username");
+
+    returningService
+      .createNewReturning(assId, requestBy)
+      .then((res) => {
+        if (res.status === 201) {
+          toast.success(
+            "Request for return successfully!. Forward to request for returning tab to view."
+          );
+          setCreateReturn(null);
+          loadData();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("cannot create request for returning. Try later");
+      });
+  };
+
   return (
     <>
+      {/* Modal to show confirm  create new request for returning */}
+      <div
+        className={"modal fade " + (createReturn ? " show d-block" : " d-none")}
+        tabIndex="-1"
+        role="dialog"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Are you sure?</h5>
+            </div>
+            <div className="modal-body confirm-disable">
+              <div className="modal-subtitle">
+                Do you want to create a returning request for this asset?
+              </div>
+              <div className="button">
+                <button
+                  className="btn btn-danger"
+                  id="disable-button"
+                  onClick={handleCreateReturning}
+                >
+                  Yes
+                </button>
+                <button
+                  className="btn btn-outline-secondary"
+                  id="cancel-button"
+                  onClick={() => setCreateReturn(null)}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* end of modal */}
+
       {/* change password for first login */}
       <div
         className={"modal fade " + (isNew ? " show d-block" : " d-none")}
@@ -216,11 +277,11 @@ const HomePage = () => {
       </div>
 
       {/* Table list */}
-      <div className="table-assignments">
+      <div className="table-assignments w-100">
         <div className="title">
           <h3>My Assignment</h3>
         </div>
-        <table>
+        <table className="w-100">
           <thead>
             <tr>
               {tableHeader.map((item) => (
@@ -289,52 +350,34 @@ const HomePage = () => {
                         {ele.state}
                       </td>
                       <td>
-                        {ele.state === "Waiting for acceptance" ? (
-                          <button
-                            className="btn btn-outline-danger border-0"
-                            data-bs-toggle="modal"
-                            id={"#modalAccept" + ele.id}
-                            data-bs-target={"#modalAccept" + ele.id}
-                          >
-                            <CheckIcon />
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn-outline-danger border-0"
-                            disabled
-                            id="disable"
-                          >
-                            <CheckIcon />
-                          </button>
-                        )}
-                      </td>
-                      <td>
-                        {ele.state === "Waiting for acceptance" ? (
-                          <button
-                            className="btn btn-outline-danger border-0"
-                            data-bs-toggle="modal"
-                            data-bs-target={"#modalDecline" + ele.id}
-                            id={"#modalDecline" + ele.id}
-                          >
-                            <ClearIcon className="btnClear" />
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn-outline-danger border-0"
-                            disabled
-                            id="disable"
-                          >
-                            <ClearIcon className="btnClear" />
-                          </button>
-                        )}
+                        <button
+                          className="btn btn-outline-danger border-0"
+                          data-bs-toggle="modal"
+                          id={"#modalAccept" + ele.id}
+                          data-bs-target={"#modalAccept" + ele.id}
+                          disabled={ele.state !== "Waiting for acceptance"}
+                        >
+                          <CheckIcon />
+                        </button>
                       </td>
                       <td>
                         <button
-                          className="btn btn-outline-info border-0"
-                          onClick={loadData}
-                          id="replayIcon"
+                          className="btn btn-outline-secondary border-0"
+                          data-bs-toggle="modal"
+                          data-bs-target={"#modalDecline" + ele.id}
+                          id={"#modalDecline" + ele.id}
+                          disabled={ele.state !== "Waiting for acceptance"}
                         >
-                          <ReplayIcon className="btnReload" />
+                          <ClearIcon style={{ color: "#000" }} />
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-outline-primary border-0"
+                          onClick={() => setCreateReturn(ele.id)}
+                          disabled={ele.state === "Waiting for acceptance"}
+                        >
+                          <RestartAltSharpIcon />
                         </button>
                       </td>
                     </tr>
