@@ -52,7 +52,6 @@ const SelectAsset = (props) => {
         if (resData.length === 0) {
           toast.error("Asset is not available");
         }
-        console.log(resData);
 
         let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
 

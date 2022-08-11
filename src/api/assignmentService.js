@@ -13,11 +13,8 @@ const assignmentService = {
   // disableAssignment: (id) => {
   //   return axiosClient.delete(`/api/assignment/delete/${id}`);
   // },
-  createAssignment: (assignedby, params) => {
-    return axiosClient.post(
-      `/api/assignment/createAssign/${assignedby}`,
-      params
-    );
+  createAssignment: (params) => {
+    return axiosClient.post(`/api/assignment`, params);
   },
   editAssignment: (id, params) => {
     return axiosClient.put(`/api/assignment/edit/${id}`, params);

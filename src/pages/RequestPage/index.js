@@ -200,9 +200,8 @@ const RequestPage = () => {
   };
 
   const handleCompleteRequest = () => {
-    const acceptUserId = localStorage.getItem("userId");
     returningService
-      .completeRequest(id, acceptUserId)
+      .completeRequest(id)
       .then((res) => {
         if (res.status === 200) {
           toast.success("Returning request marked 'Completed'");
@@ -211,9 +210,8 @@ const RequestPage = () => {
       })
       .catch((error) => {
         console.log(error);
-        toast.warning(
-          "Can not marked this returning request to 'Completed'. Try later. "
-        );
+        toast.error("Cannot complete this request. Try later");
+        initData();
       });
     setAction(null);
   };
@@ -228,7 +226,7 @@ const RequestPage = () => {
       .catch((error) => {
         console.log(error);
         if (error.response.status === 403) {
-          toast.error("This request has been canceled");
+          toast.error(error.response.data.message);
         } else {
           toast.error("Cannot cancel this request. Try later");
         }

@@ -311,10 +311,9 @@ const ManageAssignment = () => {
 
   const handleCreateReturning = () => {
     const assId = createReturn;
-    const requestBy = localStorage.getItem("username");
 
     returningService
-      .createNewReturning(assId, requestBy)
+      .createNewReturning(assId)
       .then((res) => {
         if (res.status === 201) {
           toast.success(

@@ -194,11 +194,10 @@ const ManageUser = () => {
     if (!content) {
       initData();
     } else {
-      const loca = localStorage.getItem("location");
+      const location = localStorage.getItem("location");
       userService
-        .searchUser(loca, content)
+        .searchUser(location, content)
         .then((res) => {
-          console.log(res);
           if (res.data.length === 0) {
             toast.error("No user founded");
           }

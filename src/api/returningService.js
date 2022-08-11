@@ -4,18 +4,18 @@ const returningService = {
   getAllReturning: (location) => {
     return axiosClient.get(`/api/return/${location}`);
   },
-  createNewReturning: (assId, requestBy) => {
-    return axiosClient.post(`/api/return/${assId}/${requestBy}`);
+  createNewReturning: (assId) => {
+    return axiosClient.post(`/api/return/${assId}`);
   },
   searchReturning: (location, content) => {
     return axiosClient.get(`/api/return/search/${location}/${content}`);
   },
-  completeRequest : (returnId, acceptedBy) => {
-    return axiosClient.patch(`/api/return/${returnId}/${acceptedBy}`)
+  completeRequest: (returnId) => {
+    return axiosClient.patch(`/api/return/${returnId}`);
   },
   deleteReturning: (returnId) => {
     return axiosClient.delete(`/api/return/${returnId}`);
-  }
+  },
 };
 
 export default returningService;
