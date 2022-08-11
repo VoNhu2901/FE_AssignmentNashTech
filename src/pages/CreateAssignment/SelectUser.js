@@ -36,13 +36,12 @@ const SelectUser = (props) => {
 
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
-  const location = localStorage.getItem("location");
   const [saveId, setSaveId] = useState("");
 
   const loadData = () => {
     Loading.standard("Loading...");
     userService
-      .getAllUsers(location)
+      .getAllUsers()
       .then((res) => {
         const resData = res.data;
         if (resData.length === 0) {
@@ -75,7 +74,7 @@ const SelectUser = (props) => {
     } else {
       Loading.standard("Searching...");
       userService
-        .searchUser(location, content)
+        .searchUser(content)
         .then((res) => {
           console.log(res);
           if (res.data.length === 0) {

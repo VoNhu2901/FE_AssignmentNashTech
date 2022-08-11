@@ -36,7 +36,6 @@ const EditUser = () => {
       .getUserByStaffCode(staffCode)
       .then((res) => {
         const [data] = [...res.data];
-        console.log(data);
         setFirstName(data.firstName);
         setLastName(data.lastName);
         setDateOfBirth(data.dateOfBirth);

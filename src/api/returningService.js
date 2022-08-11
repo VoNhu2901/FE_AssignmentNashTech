@@ -1,21 +1,21 @@
 import axiosClient from "./axiosClient";
 
 const returningService = {
-  getAllReturning: (location) => {
-    return axiosClient.get(`/api/return/${location}`);
+  getAllReturning: () => {
+    return axiosClient.get(`/api/return`);
   },
-  createNewReturning: (assId, requestBy) => {
-    return axiosClient.post(`/api/return/${assId}/${requestBy}`);
+  createNewReturning: (assId) => {
+    return axiosClient.post(`/api/return/${assId}`);
   },
-  searchReturning: (location, content) => {
-    return axiosClient.get(`/api/return/search/${location}/${content}`);
+  searchReturning: ( content) => {
+    return axiosClient.get(`/api/return/search/${content}`);
   },
-  completeRequest : (returnId, acceptedBy) => {
-    return axiosClient.patch(`/api/return/${returnId}/${acceptedBy}`)
+  completeRequest: (returnId) => {
+    return axiosClient.patch(`/api/return/${returnId}`);
   },
   deleteReturning: (returnId) => {
     return axiosClient.delete(`/api/return/${returnId}`);
-  }
+  },
 };
 
 export default returningService;

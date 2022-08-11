@@ -31,7 +31,6 @@ const tableHead = [
 ];
 
 const SelectAsset = (props) => {
-  const location = localStorage.getItem("location");
   const [assetList, setAssetList] = useState([]);
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(0);
@@ -46,13 +45,12 @@ const SelectAsset = (props) => {
     Loading.standard("Loading...");
 
     assignmentService
-      .getAllAssetsByAvailable(location)
+      .getAllAssetsByAvailable()
       .then((res) => {
         const resData = res.data;
         if (resData.length === 0) {
           toast.error("Asset is not available");
         }
-        console.log(resData);
 
         let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -79,7 +77,7 @@ const SelectAsset = (props) => {
     } else {
       Loading.standard("Searching...");
       assignmentService
-        .searchAssetByAvailable(location, content)
+        .searchAssetByAvailable(content)
         .then((res) => {
           const resData = res.data;
           if (resData.length === 0) {

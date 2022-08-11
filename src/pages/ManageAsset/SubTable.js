@@ -1,4 +1,5 @@
 import React from "react";
+import moment from "moment";
 
 const tableHead = [
   {
@@ -32,7 +33,7 @@ const SubTable = ({ history }) => {
                 <button
                   className="btn border-0"
                   id={`sortBy${item.name}`}
-                // onClick={() => sortByCol(item.id)}
+                  // onClick={() => sortByCol(item.id)}
                 >
                   {/* {item.isDropdown ? <ArrowDropDownIcon /> : <></>} */}
                 </button>
@@ -41,13 +42,17 @@ const SubTable = ({ history }) => {
           </tr>
         </thead>
         <tbody>
-          {(history || []).map((ele) => (
+          {(history || []).map((ele, index) => (
             <>
-              <tr>
-                <td className="border-bottom">{ele.date}</td>
-                <td className="border-bottom">{ele.assignedTo}</td>
-                <td className="border-bottom">{ele.assignedBy}</td>
-                <td className="border-bottom">{ele.returnedDate}</td>
+              <tr key={index}>
+                <td className="border-bottom">
+                  {moment(ele.assignedDate).format("L")}
+                </td>
+                <td className="border-bottom">{ele.requestBy}</td>
+                <td className="border-bottom">{ele.acceptedBy}</td>
+                <td className="border-bottom">
+                  {moment(ele.returnedDate).format("L")}
+                </td>
               </tr>
             </>
           ))}

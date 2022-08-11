@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import categoryService from "../../api/categoryService";
 import Paging from "../../components/paging";
-import { Tooltip } from 'antd';
+import { Tooltip } from "antd";
 
 const filterState = [
   {
@@ -87,29 +87,27 @@ const ManageAsset = () => {
   const navigate = useNavigate();
 
   const [listCategory, setListCategory] = useState([]);
-
   const [page, setPage] = useState(1);
   const [assetList, setAssetList] = useState([]);
   const [data, setData] = useState([]);
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
-  const [history, setHistory] = useState([]);
-  const rowPerPage = 20;
-
   const [filterByState, setFilterByState] = useState([0, 1, 1, 1, 0, 0]);
   const [filterByCategory, setFilterByCategory] = useState("ALL");
+  const [action, setAction] = useState(null);
+  const [code, setCode] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [historyId, setHistoryId] = useState(null);
 
-  const location = localStorage.getItem("location");
-
-  const [disable, setDisable] = useState(null);
   const newAssetId = localStorage.getItem("newAsset");
+  const rowPerPage = 20;
 
   const loadData = () => {
     Loading.standard("Loading...");
 
     assetService
-      .getAllAssets(location)
+      .getAllAssets()
       .then((res) => {
         const resData = res.data;
         if (resData.length === 0) {
@@ -195,7 +193,7 @@ const ManageAsset = () => {
       setNumPage(Math.ceil(filtered.length / rowPerPage));
       if (filtered.length === 0) {
         toast.info(
-          `No asset in ${location} have state you choose. Choose another state.`
+          `No asset in your location have state you choose. Choose another state.`
         );
       }
       setAssetList(filtered);
@@ -214,7 +212,7 @@ const ManageAsset = () => {
       const filterState = filtered.filter(isFilter);
       if (filterState.length === 0) {
         toast.info(
-          `No asset in ${location} have category you choose. Choose another category.`
+          `No asset in your location have category you choose. Choose another category.`
         );
       }
       setAssetList(filterState);
@@ -267,11 +265,12 @@ const ManageAsset = () => {
   };
 
   const handleSearch = () => {
+    setPage(1);
     if (!content) {
       loadData();
     } else {
       assetService
-        .searchAsset(location, content)
+        .searchAsset(content)
         .then((res) => {
           const resData = res.data;
           if (resData.length === 0) {
@@ -297,34 +296,34 @@ const ManageAsset = () => {
   };
 
   // handle edit asset here
-  const editAsset = (code) => {
-    navigate(`/edit-asset/${code}`);
+  const editAsset = (_code) => {
+    navigate(`/edit-asset/${_code}`);
   };
   // handle delete user here
-  const checkAssetAvailableToDisable = (code) => {
+  const checkAssetAvailableToDisable = (_code) => {
+    setCode(_code);
     assetService
-      .checkAssetHistory(code)
+      .checkAssetHistory(_code)
       .then((res) => {
         if (res.data) {
-          setDisable(code);
+          setAction("DELETE");
         } else {
-          setDisable("Error");
+          setAction("ERROR");
         }
       })
       .catch((err) => {
         console.log(err);
-        setDisable("Error");
+        setAction("ERROR");
       });
   };
 
   const disableAsset = () => {
     Loading.standard("Deleting...");
-
     assetService
-      .deleteAsset(disable)
+      .deleteAsset(code)
       .then((res) => {
         if (res.status === 200) {
-          setDisable(null);
+          setAction(null);
           loadData();
           toast.success("Asset Deleted");
         }
@@ -337,15 +336,27 @@ const ManageAsset = () => {
       });
   };
 
-    
+  useEffect(() => {
+    Loading.standard("Loading...");
+    assetService
+      .getAssetHistory(historyId)
+      .then((res) => {
+        setHistory(res.data);
+        Loading.remove();
+      })
+      .catch((err) => {
+        console.log(err);
+        Loading.remove();
+      });
+  }, [historyId]);
+
 
   return (
     <>
       {/* start dialog */}
       <div
         className={
-          "modal fade" +
-          (disable && disable !== "Error" ? " show d-block" : " d-none")
+          "modal fade" + (action === "DELETE" ? " show d-block" : " d-none")
         }
         tabIndex="-1"
         role="dialog"
@@ -370,7 +381,7 @@ const ManageAsset = () => {
                 <button
                   className="btn btn-outline-secondary"
                   id="cancel-button"
-                  onClick={() => setDisable(false)}
+                  onClick={() => setAction(null)}
                 >
                   Cancel
                 </button>
@@ -382,7 +393,7 @@ const ManageAsset = () => {
 
       <div
         className={
-          "modal fade " + (disable === "Error" ? " show d-block" : " d-none")
+          "modal fade " + (action === "ERROR" ? " show d-block" : " d-none")
         }
         // className={"modal fade  show d-block"}
         tabIndex="-1"
@@ -395,7 +406,7 @@ const ManageAsset = () => {
               <button
                 type="button"
                 className="btn btn-outline-danger border-4"
-                onClick={() => setDisable(null)}
+                onClick={() => setAction(null)}
                 id="btnClose"
               >
                 <CloseIcon />
@@ -408,9 +419,9 @@ const ManageAsset = () => {
                 If the asset is not able to be used anymore, please update its
                 state in{" "}
                 <Link
-                  to={`/edit-asset/${disable}`}
+                  to={`/edit-asset/${code}`}
                   className="text-primary"
-                  onClick={() => setDisable(null)}
+                  onClick={() => setAction(null)}
                 >
                   Edit Asset page
                 </Link>
@@ -482,7 +493,7 @@ const ManageAsset = () => {
                 <ul
                   className="dropdown-menu form-check w-100 text-break"
                   aria-labelledby="dropMenuFilterType"
-                  style={{height: "200px", overflowY: "scroll"}}
+                  style={{ height: "200px", overflowY: "scroll" }}
                 >
                   <li>
                     <div>
@@ -585,10 +596,10 @@ const ManageAsset = () => {
               {(
                 assetList.slice((page - 1) * rowPerPage, page * rowPerPage) ||
                 []
-              ).map((ele, index) => {
+              ).map((ele) => {
                 return (
                   <>
-                    <tr key={ele.id}>
+                    <tr key={ele.id} onClick={()=>setHistoryId(ele.id)}>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"
@@ -630,43 +641,22 @@ const ManageAsset = () => {
                         {ele.state}
                       </td>
                       <td>
-                        {ele.state === "Assigned" ? (
-                          <>
-                            <button
-                              className="btn btn-outline-secondary border-0"
-                              disabled
-                              id="btnDisable"
-                            >
-                              <EditIcon />
-                            </button>
-                            <button
-                              className="btn btn-outline-danger border-0"
-                              disabled
-                              id="btnHighlight"
-                            >
-                              <HighlightOffIcon />
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              className="btn btn-outline-secondary border-0"
-                              id="btnEdit"
-                            >
-                              <EditIcon onClick={() => editAsset(ele.id)} />
-                            </button>
-                            <button
-                              className="btn btn-outline-danger border-0"
-                              id="btnHighLight"
-                            >
-                              <HighlightOffIcon
-                                onClick={() =>
-                                  checkAssetAvailableToDisable(ele.id)
-                                }
-                              />
-                            </button>
-                          </>
-                        )}
+                        <button
+                          className="btn btn-outline-secondary border-0"
+                          id="btnEdit"
+                          disabled={ele.state === "Assigned"}
+                        >
+                          <EditIcon onClick={() => editAsset(ele.id)} />
+                        </button>
+                        <button
+                          className="btn btn-outline-danger border-0"
+                          id="btnHighLight"
+                          disabled={ele.state === "Assigned"}
+                        >
+                          <HighlightOffIcon
+                            onClick={() => checkAssetAvailableToDisable(ele.id)}
+                          />
+                        </button>
                       </td>
                     </tr>
 
@@ -721,7 +711,8 @@ const ManageAsset = () => {
                               </div>
                               <div className="detail-item">
                                 <div className="label">Location</div>
-                                <div className="value">{location}</div>
+                                {/* // TODO: check this */}
+                                <div className="value">{"O day thieu location"}</div>
                               </div>
                               <div className="detail-item">
                                 <div className="label">Specification</div>
@@ -730,7 +721,7 @@ const ManageAsset = () => {
                               <div className="detail-item">
                                 <div className="label">History</div>
                                 <div className="value">
-                                  <SubTable history={ele.history}></SubTable>
+                                  <SubTable history={history}></SubTable>
                                 </div>
                               </div>
                             </div>

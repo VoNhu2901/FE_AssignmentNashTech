@@ -1,15 +1,15 @@
 import axiosClient from "./axiosClient";
 
 const userService = {
-  getAllUsers: (location) => {
-    return axiosClient.get(`/api/user/getAll/${location}`);
+  getAllUsers: () => {
+    return axiosClient.get(`/api/user/getAll`);
   },
 
   getUserByStaffCode: (staffCode) => {
     return axiosClient.get(`/api/user/getInformation/${staffCode}`);
   },
-  searchUser: (location, content) => {
-    return axiosClient.get(`/api/user/search/${location}/${content}`);
+  searchUser: ( content) => {
+    return axiosClient.get(`/api/user/search/${content}`);
   },
 
   createUser: (params) => {

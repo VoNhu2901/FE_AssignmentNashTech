@@ -54,7 +54,6 @@ const EditAsset = () => {
         installedDate,
         state,
       };
-      console.log(payload);
 
       Loading.hourglass('Editing asset...');
 

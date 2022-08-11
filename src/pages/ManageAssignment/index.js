@@ -75,13 +75,12 @@ const ManageAssignment = () => {
 
   const [disable, setDisable] = useState(null);
   const [createReturn, setCreateReturn] = useState();
-  const location = localStorage.getItem("location");
 
   const loadData = () => {
     Loading.standard("Loading...");
 
     assignmentService
-      .getAllAssignments(location)
+      .getAllAssignments()
       .then((res) => {
         const newAssignmentId = localStorage.getItem("newAssignmentId");
         const resData = res.data;
@@ -259,7 +258,7 @@ const ManageAssignment = () => {
       Loading.standard("Searching...");
 
       assignmentService
-        .searchAssignment(location, content)
+        .searchAssignment(content)
         .then((res) => {
           const resData = res.data;
           if (resData.length === 0) {
@@ -311,10 +310,9 @@ const ManageAssignment = () => {
 
   const handleCreateReturning = () => {
     const assId = createReturn;
-    const requestBy = localStorage.getItem("username");
 
     returningService
-      .createNewReturning(assId, requestBy)
+      .createNewReturning(assId)
       .then((res) => {
         if (res.status === 201) {
           toast.success(

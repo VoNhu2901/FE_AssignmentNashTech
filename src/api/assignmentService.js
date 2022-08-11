@@ -1,23 +1,17 @@
 import axiosClient from "./axiosClient";
 
 const assignmentService = {
-  getAllAssignments: (location) => {
-    return axiosClient.get(`/api/assignment/getAll/${location}`);
+  getAllAssignments: () => {
+    return axiosClient.get(`/api/assignment/getAll`);
   },
-  getAllAssetsByAvailable: (location) => {
-    return axiosClient.get(`/api/assignment/getAsset/${location}`);
+  getAllAssetsByAvailable: () => {
+    return axiosClient.get(`/api/assignment/getAsset`);
   },
-  searchAssignment: (location, content) => {
-    return axiosClient.get(`/api/assignment/search/${location}/${content}`);
+  searchAssignment: (content) => {
+    return axiosClient.get(`/api/assignment/search/${content}`);
   },
-  // disableAssignment: (id) => {
-  //   return axiosClient.delete(`/api/assignment/delete/${id}`);
-  // },
-  createAssignment: (assignedby, params) => {
-    return axiosClient.post(
-      `/api/assignment/createAssign/${assignedby}`,
-      params
-    );
+  createAssignment: (params) => {
+    return axiosClient.post(`/api/assignment`, params);
   },
   editAssignment: (id, params) => {
     return axiosClient.put(`/api/assignment/edit/${id}`, params);
@@ -28,9 +22,9 @@ const assignmentService = {
   getAssignmentById: (id) => {
     return axiosClient.get(`/api/assignment/getAssignment/${id}`);
   },
-  searchAssetByAvailable: (location, content) => {
+  searchAssetByAvailable: (content) => {
     return axiosClient.get(
-      `/api/assignment/searchAsset/${location}/${content}`
+      `/api/assignment/searchAsset/${content}`
     );
   },
 };

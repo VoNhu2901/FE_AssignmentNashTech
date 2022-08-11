@@ -11,7 +11,6 @@ import { Button, Modal } from "antd";
 
 const CreateAssignment = () => {
   const navigate = useNavigate();
-  const assignedBy = localStorage.getItem("username");
   const [assetName, setAssetName] = useState("");
   const [userId, setUserId] = useState("");
 
@@ -50,7 +49,7 @@ const CreateAssignment = () => {
 
       Loading.hourglass("Creating assignment...");
       assignmentService
-        .createAssignment(assignedBy, payload)
+        .createAssignment(payload)
         .then((res) => {
           if (res.status === 201) {
             toast.success("SUCCESSFULLY ADDED!!");
