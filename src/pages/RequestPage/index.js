@@ -22,7 +22,9 @@ const RequestPage = () => {
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(1);
   const [currentCol, setCurrentCol] = useState("");
-  const [completedCode, setCompleteCode] = useState(null);
+
+  const [id, setId] = useState(null);
+  const [action, setAction] = useState(null);
 
   const initData = () => {
     const location = localStorage.getItem("location");
@@ -199,11 +201,10 @@ const RequestPage = () => {
   const handleCompleteRequest = () => {
     const acceptUserId = localStorage.getItem("userId");
     returningService
-      .completeRequest(completedCode, acceptUserId)
+      .completeRequest(id, acceptUserId)
       .then((res) => {
         if (res.status === 200) {
-          toast.info("Returning request marked 'Completed'");
-          setCompleteCode(null);
+          toast.success("Returning request marked 'Completed'");
           initData();
         }
       })
@@ -213,12 +214,37 @@ const RequestPage = () => {
           "Can not marked this returning request to 'Completed'. Try later. "
         );
       });
+    setAction(null);
+  };
+
+  const handleCancelRequest = () => {
+    returningService
+      .deleteReturning(id)
+      .then((res) => {
+        toast.success("Cancel request successfully");
+        initData();
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status === 403) {
+          toast.error("This request has been canceled");
+        } else {
+          toast.error("Cannot cancel this request. Try later");
+        }
+        initData();
+      });
+    setAction(null);
+  };
+
+  const handleAction = (_id, _action) => {
+    setId(_id);
+    setAction(_action);
   };
 
   return (
     <>
       <div
-        className={completedCode ? "modal show d-block" : " d-none"}
+        className={action ? "modal show d-block" : " d-none"}
         tabIndex="-1"
         role="dialog"
         id={"modalConfirm"}
@@ -232,7 +258,9 @@ const RequestPage = () => {
             <div className="modal-body">
               <div className="text d-flex flex-column">
                 <p className="fs-6">
-                  Do you want to mark this returning request as 'Completed'?
+                  {action === "Complete"
+                    ? "Do you want to mark this returning request as 'Completed'?"
+                    : "Do you want to cancel this returning request?"}
                 </p>
               </div>
               <div className="w-100 text-start">
@@ -241,7 +269,11 @@ const RequestPage = () => {
                   id="close-modal"
                   className="btn btn-danger"
                   data-bs-dismiss="modal"
-                  onClick={handleCompleteRequest}
+                  onClick={
+                    action === "Complete"
+                      ? handleCompleteRequest
+                      : handleCancelRequest
+                  }
                 >
                   Yes
                 </button>
@@ -250,7 +282,7 @@ const RequestPage = () => {
                   id="close-modal"
                   className="btn btn-outline-secondary ms-3"
                   data-bs-dismiss="modal"
-                  onClick={() => setCompleteCode(null)}
+                  onClick={() => setAction(null)}
                 >
                   No
                 </button>
@@ -490,13 +522,17 @@ const RequestPage = () => {
                           className="btn btn-outline-secondary border-0"
                           id="btnCheck"
                           disabled={requestItem.state === "Completed"}
-                          onClick={() => setCompleteCode(requestItem.id)}
+                          onClick={() =>
+                            handleAction(requestItem.id, "Complete")
+                          }
                         >
                           <CheckIcon />
                         </button>
                         <button
                           className="btn btn-outline-danger border-0"
                           id="btnClose"
+                          disabled={requestItem.state === "Completed"}
+                          onClick={() => handleAction(requestItem.id, "Cancel")}
                         >
                           <CloseSharpIcon />
                         </button>{" "}
