@@ -22,6 +22,7 @@ const RequestPage = () => {
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(1);
   const [currentCol, setCurrentCol] = useState("");
+  const [completedCode, setCompleteCode] = useState(null);
 
   const initData = () => {
     const location = localStorage.getItem("location");
@@ -195,253 +196,322 @@ const RequestPage = () => {
     }
   };
 
+  const handleCompleteRequest = () => {
+    const acceptUserId = localStorage.getItem("userId");
+    returningService
+      .completeRequest(completedCode, acceptUserId)
+      .then((res) => {
+        if (res.status === 200) {
+          toast.info("Returning request marked 'Completed'");
+          setCompleteCode(null);
+          initData();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.warning(
+          "Can not marked this returning request to 'Completed'. Try later. "
+        );
+      });
+  };
+
   return (
-    <div className="request-page">
-      <div className="title">
-        <h3 className="text-danger">Request List</h3>
-      </div>
-
-      <div className="board">
-        <div className="board-left">
-          <div className="filterByState">
-            <div className="dropdown">
-              <button
-                className="btn btn-outline-secondary dropdown-toggle"
-                type="button"
-                id="dropMenuFilterType"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Type
-                <FilterAltIcon />
-              </button>
-              <ul
-                className="dropdown-menu form-check"
-                aria-labelledby="dropMenuFilterType"
-              >
-                <li>
-                  <div>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="All"
-                      id="typeAll"
-                      checked={filterByState === "ALL"}
-                      onClick={() => setFilterByState("ALL")}
-                    />
-                    <label className="form-check-label" htmlFor="typeAll">
-                      All
-                    </label>
-                  </div>
-                </li>
-                <li>
-                  <div>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="Completed"
-                      id="typeAdmin"
-                      checked={filterByState === "Completed"}
-                      onClick={() => setFilterByState("Completed")}
-                    />
-                    <label className="form-check-label" htmlFor="typeAdmin">
-                      Completed
-                    </label>
-                  </div>
-                </li>
-                <li>
-                  <div>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value="Waiting for returning"
-                      id="typeStaff"
-                      checked={filterByState === "Waiting for returning"}
-                      onClick={() => setFilterByState("Waiting for returning")}
-                    />
-                    <label className="form-check-label" htmlFor="typeStaff">
-                      Waiting for returning
-                    </label>
-                  </div>
-                </li>
-              </ul>
+    <>
+      <div
+        className={completedCode ? "modal show d-block" : " d-none"}
+        tabIndex="-1"
+        role="dialog"
+        id={"modalConfirm"}
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Are you sure?</h5>
             </div>
-          </div>
-
-          <div className="filterByDate rounded">
-            <div>
-              <DatePicker
-                selected={filterByDate}
-                placeholderText="Return Date"
-                onChange={(date) => setFilterByDate(date)}
-              />
-            </div>
-            <div className="iconDate border-start border-dark">
-              <DateRangeIcon />
-            </div>
-          </div>
-        </div>
-
-        <div className="board-right">
-          <div className="search">
-            <div className="input">
-              <input
-                type="text"
-                value={searchContent}
-                onChange={(e) => setSearchContent(e.target.value)}
-              />
-            </div>
-            <div>
-              <button
-                className="btn border-0"
-                id="btnSearch"
-                onClick={handleSearch}
-              >
-                <SearchIcon />
-              </button>
+            <div className="modal-body">
+              <div className="text d-flex flex-column">
+                <p className="fs-6">
+                  Do you want to mark this returning request as 'Completed'?
+                </p>
+              </div>
+              <div className="w-100 text-start">
+                <button
+                  type="button"
+                  id="close-modal"
+                  className="btn btn-danger"
+                  data-bs-dismiss="modal"
+                  onClick={handleCompleteRequest}
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  id="close-modal"
+                  className="btn btn-outline-secondary ms-3"
+                  data-bs-dismiss="modal"
+                  onClick={() => setCompleteCode(null)}
+                >
+                  No
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="show-return w-100">
-        <table className="w-100 returningList">
-          <thead>
-            <tr>
-              <th className="border-bottom border-3">
-                No.
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("No")}
-                  id="sortByNo"
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
+      <div className="request-page">
+        <div className="title">
+          <h3 className="text-danger">Request List</h3>
+        </div>
 
-              <th className="border-bottom border-3">
-                Asset Code
+        <div className="board">
+          <div className="board-left">
+            <div className="filterByState">
+              <div className="dropdown">
                 <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("assetCode")}
-                  id="sortByCode"
+                  className="btn btn-outline-secondary dropdown-toggle"
+                  type="button"
+                  id="dropMenuFilterType"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
                 >
-                  <ArrowDropDownIcon />
+                  Type
+                  <FilterAltIcon />
                 </button>
-              </th>
+                <ul
+                  className="dropdown-menu form-check"
+                  aria-labelledby="dropMenuFilterType"
+                >
+                  <li>
+                    <div>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value="All"
+                        id="typeAll"
+                        checked={filterByState === "ALL"}
+                        onClick={() => setFilterByState("ALL")}
+                      />
+                      <label className="form-check-label" htmlFor="typeAll">
+                        All
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value="Completed"
+                        id="typeAdmin"
+                        checked={filterByState === "Completed"}
+                        onClick={() => setFilterByState("Completed")}
+                      />
+                      <label className="form-check-label" htmlFor="typeAdmin">
+                        Completed
+                      </label>
+                    </div>
+                  </li>
+                  <li>
+                    <div>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value="Waiting for returning"
+                        id="typeStaff"
+                        checked={filterByState === "Waiting for returning"}
+                        onClick={() =>
+                          setFilterByState("Waiting for returning")
+                        }
+                      />
+                      <label className="form-check-label" htmlFor="typeStaff">
+                        Waiting for returning
+                      </label>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
 
-              <th className="border-bottom border-3">
-                Asset Name
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("assetName")}
-                  id="sortByAssetName"
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
-              <th className="border-bottom border-3">
-                Requested By
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("requestedBy")}
-                  id="sortByRequestBy"
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
+            <div className="filterByDate rounded">
+              <div>
+                <DatePicker
+                  selected={filterByDate}
+                  placeholderText="Return Date"
+                  onChange={(date) => setFilterByDate(date)}
+                />
+              </div>
+              <div className="iconDate border-start border-dark">
+                <DateRangeIcon />
+              </div>
+            </div>
+          </div>
 
-              <th className="border-bottom border-3">
-                Assigned Date
+          <div className="board-right">
+            <div className="search">
+              <div className="input">
+                <input
+                  type="text"
+                  value={searchContent}
+                  onChange={(e) => setSearchContent(e.target.value)}
+                />
+              </div>
+              <div>
                 <button
                   className="btn border-0"
-                  onClick={() => sortByCol("AssignedDate")}
-                  id="sortByAssignedDate"
+                  id="btnSearch"
+                  onClick={handleSearch}
                 >
-                  <ArrowDropDownIcon />
+                  <SearchIcon />
                 </button>
-              </th>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              <th className="border-bottom border-3">
-                Accepted By
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("acceptedBy")}
-                  id="sortByAcceptedBy"
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
+        <div className="show-return w-100">
+          <table className="w-100 returningList">
+            <thead>
+              <tr>
+                <th className="border-bottom border-3">
+                  No.
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("No")}
+                    id="sortByNo"
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
 
-              <th className="border-bottom border-3">
-                Returned Date
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("returnDate")}
-                  id="sortByReturnDate"
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
+                <th className="border-bottom border-3">
+                  Asset Code
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("assetCode")}
+                    id="sortByCode"
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
 
-              <th className="border-bottom border-3">
-                State
-                <button
-                  className="btn border-0"
-                  onClick={() => sortByCol("state")}
-                  id="sortByState"
-                >
-                  <ArrowDropDownIcon />
-                </button>
-              </th>
+                <th className="border-bottom border-3">
+                  Asset Name
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("assetName")}
+                    id="sortByAssetName"
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
+                <th className="border-bottom border-3">
+                  Requested By
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("requestedBy")}
+                    id="sortByRequestBy"
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
 
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {(requestList.slice((page - 1) * 20, page * 20) || []).map(
-              (requestItem) => (
-                <>
-                  <tr key={requestItem.id}>
-                    <td className="border-bottom">{requestItem.id}</td>
-                    <td className="border-bottom">{requestItem.assetCode}</td>
-                    <td className="border-bottom">{requestItem.assetName}</td>
-                    <td className="border-bottom">{requestItem.requestBy}</td>
-                    <td className="border-bottom">
-                      {moment(requestItem.assignedDate).format("L")}
-                    </td>
-                    <td className="border-bottom">{requestItem.acceptedBy}</td>
-                    <td className="border-bottom">
-                      {requestItem.returnDate
-                        ? moment(requestItem.returnDate).format("L")
-                        : ""}
-                    </td>
-                    <td className="border-bottom">{requestItem.state}</td>
-                    <td>
-                      <button
-                        className="btn btn-outline-secondary border-0"
-                        id="btnCheck"
-                        disabled={requestItem.state === "Completed"}
-                      >
-                        <CheckIcon />
-                      </button>
-                      <button
-                        className="btn btn-outline-danger border-0"
-                        id="btnClose"
-                      >
-                        <CloseSharpIcon />
-                      </button>{" "}
-                    </td>
-                  </tr>
-                </>
-              )
-            )}
-          </tbody>
-        </table>
+                <th className="border-bottom border-3">
+                  Assigned Date
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("AssignedDate")}
+                    id="sortByAssignedDate"
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
+
+                <th className="border-bottom border-3">
+                  Accepted By
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("acceptedBy")}
+                    id="sortByAcceptedBy"
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
+
+                <th className="border-bottom border-3">
+                  Returned Date
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("returnDate")}
+                    id="sortByReturnDate"
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
+
+                <th className="border-bottom border-3">
+                  State
+                  <button
+                    className="btn border-0"
+                    onClick={() => sortByCol("state")}
+                    id="sortByState"
+                  >
+                    <ArrowDropDownIcon />
+                  </button>
+                </th>
+
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {(requestList.slice((page - 1) * 20, page * 20) || []).map(
+                (requestItem) => (
+                  <>
+                    <tr key={requestItem.id}>
+                      <td className="border-bottom">{requestItem.id}</td>
+                      <td className="border-bottom">{requestItem.assetCode}</td>
+                      <td className="border-bottom">{requestItem.assetName}</td>
+                      <td className="border-bottom">{requestItem.requestBy}</td>
+                      <td className="border-bottom">
+                        {moment(requestItem.assignedDate).format("L")}
+                      </td>
+                      <td className="border-bottom">
+                        {requestItem.acceptedBy}
+                      </td>
+                      <td className="border-bottom">
+                        {requestItem.returnDate
+                          ? moment(requestItem.returnDate).format("L")
+                          : ""}
+                      </td>
+                      <td className="border-bottom">{requestItem.state}</td>
+                      <td>
+                        <button
+                          className="btn btn-outline-secondary border-0"
+                          id="btnCheck"
+                          disabled={requestItem.state === "Completed"}
+                          onClick={() => setCompleteCode(requestItem.id)}
+                        >
+                          <CheckIcon />
+                        </button>
+                        <button
+                          className="btn btn-outline-danger border-0"
+                          id="btnClose"
+                        >
+                          <CloseSharpIcon />
+                        </button>{" "}
+                      </td>
+                    </tr>
+                  </>
+                )
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <Paging numPage={numPage} setPage={setPage} page={page} />
       </div>
-
-      <Paging numPage={numPage} setPage={setPage} page={page} />
-    </div>
+    </>
   );
 };
 

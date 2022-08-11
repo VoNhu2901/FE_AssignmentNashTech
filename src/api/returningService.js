@@ -10,8 +10,8 @@ const returningService = {
   searchReturning: (location, content) => {
     return axiosClient.get(`/api/return/search/${location}/${content}`);
   },
-  updateStatus : (returnId) => {
-    return axiosClient.put(`/api/return/${returnId}`)
+  completeRequest : (returnId, acceptedBy) => {
+    return axiosClient.put(`/api/return/${returnId}/${acceptedBy}`)
   },
   deleteReturning: (returnId) => {
     return axiosClient.delete(`/api/return/${returnId}`);
