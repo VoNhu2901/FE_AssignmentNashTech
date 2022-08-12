@@ -119,6 +119,7 @@ const EditAssignment = () => {
                   setUserId={setUserId}
                   setFullName={setFullName}
                   setIsModalVisibleUser={setIsModalVisibleUser}
+                  staffCode = {userId}
                 />
               </Modal>
             </>

@@ -111,7 +111,6 @@ const ManageAsset = () => {
       .getAllAssets()
       .then((res) => {
         const resData = res.data;
-        console.log(resData);
         if (resData.length === 0) {
           toast.error("No asset founded");
         }
