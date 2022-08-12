@@ -3,12 +3,11 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
 import userService from "./../../api/userService";
-<<<<<<< HEAD
-import { Tooltip } from "antd";
-=======
 import { Tooltip } from 'antd';
 import Paging from "../../components/paging";
->>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
+
+// get user id
+// get user name
 
 const tableHead = [
   {
@@ -41,8 +40,9 @@ const SelectUser = (props) => {
 
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
-  const [saveId, setSaveId] = useState("");
 
+  const [saveId, setSaveId] = useState("");
+  const [oldUserId, setOldUserId] = useState(null);
   const [isChoose, setIsChoose] = useState(false);
 
   const loadData = () => {
@@ -73,6 +73,7 @@ const SelectUser = (props) => {
 
   useEffect(() => {
     loadData();
+    setOldUserId(props.staffCode);
   }, []);
 
   const handleSearch = () => {
@@ -148,13 +149,10 @@ const SelectUser = (props) => {
 
   const handleSelect = (username) => {
     setSaveId(username);
-<<<<<<< HEAD
     setIsChoose(true);
-=======
     props.setUserId(
       userList.find((item) => item.username === username).staffCode
     );
->>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
   };
 
   const handleSave = (username) => {
@@ -169,7 +167,7 @@ const SelectUser = (props) => {
   };
 
   const handleCancel = () => {
-    props.setUserId(null);
+    props.setUserId(oldUserId);
     props.setIsModalVisibleUser(false);
   };
 
@@ -257,10 +255,7 @@ const SelectUser = (props) => {
             className={`form-create-asset__button-item btn btn-danger ${
               isChoose ? "" : "disabled"
             }`}
-            onClick={() => {
-              handleSave(saveId);
-              setIsChoose(true);
-            }}
+            onClick={() => handleSave(saveId)}
           >
             Save
           </button>

@@ -143,11 +143,8 @@ const SelectAsset = (props) => {
 
   const handleSelect = (id) => {
     setSaveId(id);
-<<<<<<< HEAD
     setIsChoose(true);
-=======
-    props.setAssetCode(id)
->>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
+    props.setAssetCode(id);
   };
 
   const handleSave = (id) => {
@@ -157,18 +154,14 @@ const SelectAsset = (props) => {
   };
 
   const handleCancel = () => {
-    props.setAssetCode(null)
+    props.setAssetCode(null);
     props.setIsModalVisible(false);
   };
 
   return (
     <>
       {/* <div className="container dropdown-menu p-3 border border-dark"> */}
-<<<<<<< HEAD
       <div class="d-flex justify-content-between">
-=======
-      <div className="d-flex justify-content-between">
->>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
         <h4 className="form-create-asset__title">Select Asset</h4>
         <div className="search">
           <div className="input">
@@ -210,52 +203,16 @@ const SelectAsset = (props) => {
           <tbody>
             {(
               assetList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
-<<<<<<< HEAD
-            ).map((ele, index) => {
-              return (
-                <>
-                  <tr key={index}>
-=======
             ).map((ele) => {
               return (
                 <>
                   <tr key={ele.id} onClick={() => handleSelect(ele.id)}>
->>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
                     <td>
                       <input
                         className="form-check-input"
                         type="radio"
                         id={ele.id}
                         name="state"
-<<<<<<< HEAD
-                        onClick={() => handleSelect(ele.id)}
-                      ></input>
-                    </td>
-                    <td className="border-bottom">
-                      <label htmlFor={ele.id}>{ele.id}</label>
-                    </td>
-                    <td className="border-bottom">
-                      <label htmlFor={ele.id}>
-                        {ele.name.length > 20 ? (
-                          <Tooltip placement="top" title={ele.name}>
-                            {ele.name.substring(0, 20) + "..."}
-                          </Tooltip>
-                        ) : (
-                          ele.name
-                        )}
-                      </label>
-                    </td>
-                    <td className="border-bottom">
-                      <label htmlFor={ele.id}>
-                        {ele.category.name.length > 20 ? (
-                          <Tooltip placement="top" title={ele.category.name}>
-                            {ele.category.name.substring(0, 20) + "..."}
-                          </Tooltip>
-                        ) : (
-                          ele.category.name
-                        )}
-                      </label>
-=======
                         checked={ele.id === props.assetCode}
                       ></input>
                     </td>
@@ -277,7 +234,25 @@ const SelectAsset = (props) => {
                       ) : (
                         ele.category.name
                       )}
->>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
+                    </td>
+                    <td className="border-bottom">{ele.id}</td>
+                    <td className="border-bottom">
+                      {ele.name.length > 20 ? (
+                        <Tooltip placement="top" title={ele.name}>
+                          {ele.name.substring(0, 20) + "..."}
+                        </Tooltip>
+                      ) : (
+                        ele.name
+                      )}
+                    </td>
+                    <td className="border-bottom">
+                      {ele.category.name.length > 20 ? (
+                        <Tooltip placement="top" title={ele.category.name}>
+                          {ele.category.name.substring(0, 20) + "..."}
+                        </Tooltip>
+                      ) : (
+                        ele.category.name
+                      )}
                     </td>
                   </tr>
                 </>
@@ -290,13 +265,7 @@ const SelectAsset = (props) => {
 
         <div className="d-flex justify-content-end gap-4">
           <button
-<<<<<<< HEAD
-            className={`form-create-asset__button-item btn btn-danger ${
-              isChoose ? "" : "disabled"
-            }`}
-=======
-            className="form-create-asset__button-item btn btn-danger"
->>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
+            className={`form-create-asset__button-item btn btn-danger ${isChoose ? "" : "disabled"}`}
             id="btnSave"
             onClick={() => handleSave(saveId)}
           >

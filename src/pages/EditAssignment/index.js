@@ -3,7 +3,7 @@ import { Loading } from "notiflix/build/notiflix-loading-aio";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
+import { SearchIcon } from "../../components/icon";
 import SelectAsset from "../CreateAssignment/SelectAsset";
 import SelectUser from "../CreateAssignment/SelectUser";
 import assignmentService from "./../../api/assignmentService";
@@ -42,14 +42,12 @@ const EditAssignment = () => {
     assignmentService
       .getAssignmentById(assignmentCode)
       .then((res) => {
-        console.log(res.data);
         setFullName(res.data.fullName);
         setAssetName(res.data.assetName);
         setAssignedDate(res.data.assignedDate);
         setNote(res.data.note);
         setUserId(res.data.assignedToId);
         setAssetCode(res.data.assetCode);
-
         Loading.remove();
       })
       .catch((error) => {
@@ -130,7 +128,7 @@ const EditAssignment = () => {
                   setUserId={setUserId}
                   setFullName={setFullName}
                   setIsModalVisibleUser={setIsModalVisibleUser}
-                  staffCode = {userId}
+                  staffCode={userId}
                 />
               </Modal>
             </>
@@ -158,6 +156,7 @@ const EditAssignment = () => {
                   setAssetCode={setAssetCode}
                   setAssetName={setAssetName}
                   setIsModalVisible={setIsModalVisible}
+                  id={assetCode}
                 />
               </Modal>
             </>
@@ -193,7 +192,7 @@ const EditAssignment = () => {
               id="save"
               className="form-create-asset__button-item"
               onClick={handleEditAssignment}
-              disabled={!(userId && assetCode && assignedDate)}
+              disabled={!(fullName && assetCode && assignedDate)}
             >
               Save
             </button>

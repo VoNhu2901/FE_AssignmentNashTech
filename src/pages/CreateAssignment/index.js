@@ -41,8 +41,6 @@ const CreateAssignment = () => {
       setValidateAssignedDate("");
     }
   };
-<<<<<<< HEAD
-
   const handleNote = () => {
     if (note.length > 255) {
       setValidateNote("Note must be less than 255 characters");
@@ -50,9 +48,6 @@ const CreateAssignment = () => {
       setValidateNote("");
     }
   };
-=======
->>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
-
   const handleCreateNewAssignment = () => {
     if (userName && assetCode && assignedDate) {
       const payload = {
