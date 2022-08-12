@@ -13,10 +13,7 @@ const CreateAssignment = () => {
   const navigate = useNavigate();
   const [assetName, setAssetName] = useState("");
   const [userId, setUserId] = useState("");
-
   const [fullName, setFullName] = useState("");
-  const [validateAssignedDate, setValidateAssignedDate] = useState("");
-
 
   //data
   const [userName, setUserName] = useState("");
@@ -26,8 +23,13 @@ const CreateAssignment = () => {
   );
   const [note, setNote] = useState("");
 
+  //modal
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleUser, setIsModalVisibleUser] = useState(false);
+
+  //validate
+  const [validateAssignedDate, setValidateAssignedDate] = useState("");
+  const [validateNote, setValidateNote] = useState("");
 
   const handleAssignedDate = () => {
     let minDate = new Date().toISOString().split("T")[0];
@@ -39,6 +41,17 @@ const CreateAssignment = () => {
       setValidateAssignedDate("");
     }
   };
+<<<<<<< HEAD
+
+  const handleNote = () => {
+    if (note.length > 255) {
+      setValidateNote("Note must be less than 255 characters");
+    } else {
+      setValidateNote("");
+    }
+  };
+=======
+>>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
 
   const handleCreateNewAssignment = () => {
     if (userName && assetCode && assignedDate) {
@@ -174,7 +187,10 @@ const CreateAssignment = () => {
                 className="form-create-asset__input"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
+                onBlur={handleNote}
+                onFocus={() => setValidateNote(null)}
               ></textarea>
+              {validateNote && <p className="text-danger">{validateNote}</p>}
             </div>
           </div>
 

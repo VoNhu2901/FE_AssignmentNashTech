@@ -12,6 +12,7 @@ const EditAssignment = () => {
   const navigate = useNavigate();
   const { assignmentCode } = useParams();
 
+  //data
   const [userName, setUserName] = useState("");
   const [assetName, setAssetName] = useState("");
   const [assignedDate, setAssignedDate] = useState("");
@@ -20,11 +21,20 @@ const EditAssignment = () => {
   const [assetCode, setAssetCode] = useState("");
   const [fullName, setFullName] = useState("");
 
+  //modal
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleUser, setIsModalVisibleUser] = useState(false);
-  // const [assetCode, setAssetCode] = useState("");
 
+  //validate
+  const [validateNote, setValidateNote] = useState("");
 
+  const handleNote = () => {
+    if (note.length > 255) {
+      setValidateNote("Note must be less than 255 characters");
+    } else {
+      setValidateNote("");
+    }
+  };
 
   useEffect(() => {
     Loading.standard("Loading...");
@@ -32,7 +42,8 @@ const EditAssignment = () => {
     assignmentService
       .getAssignmentById(assignmentCode)
       .then((res) => {
-        setFullName(res.data.assignedTo);
+        console.log(res.data);
+        setFullName(res.data.fullName);
         setAssetName(res.data.assetName);
         setAssignedDate(res.data.assignedDate);
         setNote(res.data.note);
@@ -84,9 +95,9 @@ const EditAssignment = () => {
   const showModal = () => {
     setIsModalVisible(true);
   };
-   const showModalUser = () => {
-     setIsModalVisibleUser(true);
-   };
+  const showModalUser = () => {
+    setIsModalVisibleUser(true);
+  };
 
   return (
     <>
@@ -170,7 +181,10 @@ const EditAssignment = () => {
                 className="form-create-asset__input"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
+                onBlur={handleNote}
+                onFocus={() => setValidateNote(null)}
               ></textarea>
+              {validateNote && <p className="text-danger">{validateNote}</p>}
             </div>
           </div>
 
