@@ -12,11 +12,9 @@ import { Button, Modal } from "antd";
 const CreateAssignment = () => {
   const navigate = useNavigate();
   const [assetName, setAssetName] = useState("");
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState(null);
   const [fullName, setFullName] = useState("");
 
-  //data
-  const [userName, setUserName] = useState("");
   const [assetCode, setAssetCode] = useState("");
   const [assignedDate, setAssignedDate] = useState(
     new Date().toISOString().split("T")[0]
@@ -49,13 +47,14 @@ const CreateAssignment = () => {
     }
   };
   const handleCreateNewAssignment = () => {
-    if (userName && assetCode && assignedDate) {
+    if (userId && assetCode && assignedDate) {
       const payload = {
         asset: assetCode,
-        user: userName,
+        user: userId,
         assignedDate,
         note,
       };
+
 
       Loading.hourglass("Creating assignment...");
       assignmentService
@@ -121,7 +120,6 @@ const CreateAssignment = () => {
               >
                 <SelectUser
                   staffCode={userId}
-                  setUserName={setUserName}
                   setUserId={setUserId}
                   setFullName={setFullName}
                   setIsModalVisibleUser={setIsModalVisibleUser}
@@ -194,7 +192,7 @@ const CreateAssignment = () => {
               id="save"
               className="form-create-asset__button-item"
               onClick={handleCreateNewAssignment}
-              disabled={!(userName && assetCode && assignedDate)}
+              disabled={!(userId && assetCode && assignedDate)}
             >
               Save
             </button>

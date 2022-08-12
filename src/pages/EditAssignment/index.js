@@ -12,8 +12,6 @@ const EditAssignment = () => {
   const navigate = useNavigate();
   const { assignmentCode } = useParams();
 
-  //data
-  const [userName, setUserName] = useState("");
   const [assetName, setAssetName] = useState("");
   const [assignedDate, setAssignedDate] = useState("");
   const [note, setNote] = useState("");
@@ -124,11 +122,10 @@ const EditAssignment = () => {
                 footer={null}
               >
                 <SelectUser
-                  setUserName={setUserName}
+                  staffCode={userId}
                   setUserId={setUserId}
                   setFullName={setFullName}
                   setIsModalVisibleUser={setIsModalVisibleUser}
-                  staffCode={userId}
                 />
               </Modal>
             </>
@@ -156,7 +153,7 @@ const EditAssignment = () => {
                   setAssetCode={setAssetCode}
                   setAssetName={setAssetName}
                   setIsModalVisible={setIsModalVisible}
-                  id={assetCode}
+                  assetCode={assetCode}
                 />
               </Modal>
             </>

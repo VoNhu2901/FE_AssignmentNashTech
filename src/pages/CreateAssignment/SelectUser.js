@@ -41,8 +41,8 @@ const SelectUser = (props) => {
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
 
-  const [saveId, setSaveId] = useState("");
-  const [oldUserId, setOldUserId] = useState(null);
+  const [selectUser, setSelectUser] = useState("");
+  const [oldUserId, setOldUserId] = useState(props.staffCode);
   const [isChoose, setIsChoose] = useState(false);
 
   const loadData = () => {
@@ -73,7 +73,6 @@ const SelectUser = (props) => {
 
   useEffect(() => {
     loadData();
-    setOldUserId(props.staffCode);
   }, []);
 
   const handleSearch = () => {
@@ -147,21 +146,16 @@ const SelectUser = (props) => {
     }
   };
 
-  const handleSelect = (username) => {
-    setSaveId(username);
+  const handleSelect = (staffCode) => {
+    setSelectUser(staffCode);
     setIsChoose(true);
-    props.setUserId(
-      userList.find((item) => item.username === username).staffCode
-    );
+    props.setUserId(staffCode);
   };
 
-  const handleSave = (username) => {
-    props.setUserName(username);
-    props.setUserId(
-      userList.find((item) => item.username === username).staffCode
-    );
+  const handleSave = () => {
+    props.setUserId(selectUser);
     props.setFullName(
-      userList.find((item) => item.username === username).fullName
+      userList.find((item) => item.staffCode === selectUser).fullName
     );
     props.setIsModalVisibleUser(false);
   };
@@ -219,7 +213,7 @@ const SelectUser = (props) => {
                 <>
                   <tr
                     key={ele.staffCode}
-                    onClick={() => handleSelect(ele.username)}
+                    onClick={() => handleSelect(ele.staffCode)}
                   >
                     <td>
                       <input
@@ -227,7 +221,9 @@ const SelectUser = (props) => {
                         type="radio"
                         id={ele.staffCode}
                         name="state"
-                        checked={props.staffCode === ele.staffCode}
+                        checked={
+                          ele.staffCode.localeCompare(props.staffCode) === 0
+                        }
                       ></input>
                     </td>
                     <td className="border-bottom">{ele.staffCode}</td>
@@ -255,7 +251,7 @@ const SelectUser = (props) => {
             className={`form-create-asset__button-item btn btn-danger ${
               isChoose ? "" : "disabled"
             }`}
-            onClick={() => handleSave(saveId)}
+            onClick={handleSave}
           >
             Save
           </button>
