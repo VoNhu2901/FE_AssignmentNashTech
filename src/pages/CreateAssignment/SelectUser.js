@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
 import userService from "./../../api/userService";
-import { Tooltip } from 'antd';
+import { Tooltip } from "antd";
 
 const tableHead = [
   {
@@ -37,6 +37,8 @@ const SelectUser = (props) => {
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
   const [saveId, setSaveId] = useState("");
+
+  const [isChoose, setIsChoose] = useState(false);
 
   const loadData = () => {
     Loading.standard("Loading...");
@@ -153,6 +155,7 @@ const SelectUser = (props) => {
 
   const handleSelect = (username) => {
     setSaveId(username);
+    setIsChoose(true);
   };
 
   const handleSave = (username) => {
@@ -288,8 +291,13 @@ const SelectUser = (props) => {
 
         <div className="d-flex justify-content-end gap-4">
           <button
-            className="form-create-asset__button-item btn btn-danger"
-            onClick={() => handleSave(saveId)}
+            className={`form-create-asset__button-item btn btn-danger ${
+              isChoose ? "" : "disabled"
+            }`}
+            onClick={() => {
+              handleSave(saveId);
+              setIsChoose(true);
+            }}
           >
             Save
           </button>

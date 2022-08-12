@@ -13,10 +13,7 @@ const CreateAssignment = () => {
   const navigate = useNavigate();
   const [assetName, setAssetName] = useState("");
   const [userId, setUserId] = useState("");
-
   const [fullName, setFullName] = useState("");
-  const [validateAssignedDate, setValidateAssignedDate] = useState("");
-
 
   //data
   const [userName, setUserName] = useState("");
@@ -26,17 +23,32 @@ const CreateAssignment = () => {
   );
   const [note, setNote] = useState("");
 
+  //modal
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalVisibleUser, setIsModalVisibleUser] = useState(false);
 
+  //validate
+  const [validateAssignedDate, setValidateAssignedDate] = useState("");
+  const [validateNote, setValidateNote] = useState("");
+
   const handleAssignedDate = () => {
     let minDate = new Date().toISOString().split("T")[0];
-    if(assignedDate < minDate){
-      setValidateAssignedDate("Assigned date must be greater or equal current date");
+    if (assignedDate < minDate) {
+      setValidateAssignedDate(
+        "Assigned date must be greater or equal current date"
+      );
     } else {
       setValidateAssignedDate("");
     }
-  }
+  };
+
+  const handleNote = () => {
+    if (note.length > 255) {
+      setValidateNote("Note must be less than 255 characters");
+    } else {
+      setValidateNote("");
+    }
+  };
 
   const handleCreateNewAssignment = () => {
     if (userName && assetCode && assignedDate) {
@@ -53,8 +65,8 @@ const CreateAssignment = () => {
         .then((res) => {
           if (res.status === 201) {
             toast.success("SUCCESSFULLY ADDED!!");
-            localStorage.setItem("newAssignmentId", res.data.id)
-            
+            localStorage.setItem("newAssignmentId", res.data.id);
+
             navigate("/manage-assignment");
           }
           Loading.remove();
@@ -194,7 +206,9 @@ const CreateAssignment = () => {
                 onBlur={handleAssignedDate}
                 onFocus={() => setValidateAssignedDate(null)}
               ></input>
-              {validateAssignedDate && <p className="text-danger">{validateAssignedDate }</p>}
+              {validateAssignedDate && (
+                <p className="text-danger">{validateAssignedDate}</p>
+              )}
             </div>
 
             <label for="note">Note</label>
@@ -205,7 +219,10 @@ const CreateAssignment = () => {
                 className="form-create-asset__input"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
+                onBlur={handleNote}
+                onFocus={() => setValidateNote(null)}
               ></textarea>
+              {validateNote && <p className="text-danger">{validateNote}</p>}
             </div>
           </div>
 
