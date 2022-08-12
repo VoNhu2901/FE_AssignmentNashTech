@@ -152,7 +152,7 @@ const EditUser = () => {
         <div className="form-edit-user-information__container">
           <h2 className="form-edit-user-information__title">Edit User</h2>
           <div className="form-edit-user-information__input-wrapper">
-            <label for="firstName">First Name</label>
+            <label htmlFor="firstName">First Name</label>
             <input
               type="text"
               id="firstName"
@@ -163,7 +163,7 @@ const EditUser = () => {
               disabled
             ></input>
 
-            <label for="lastName">Last Name</label>
+            <label htmlFor="lastName">Last Name</label>
             <input
               type="text"
               id="lastName"
@@ -174,7 +174,7 @@ const EditUser = () => {
               disabled
             ></input>
 
-            <label for="dateOfBirth">Date Of Birth</label>
+            <label htmlFor="dateOfBirth">Date Of Birth</label>
             <div>
               <input
                 type="date"
@@ -192,7 +192,7 @@ const EditUser = () => {
               {validateDOB && <p className="text-danger fs-6">{validateDOB}</p>}
             </div>
 
-            <label for="gender">Gender</label>
+            <label htmlFor="gender">Gender</label>
             <div className="form-edit-user-information__input--item">
               <div>
                 <input
@@ -217,7 +217,7 @@ const EditUser = () => {
               </div>
             </div>
 
-            <label for="joinedDate">Joined Date</label>
+            <label htmlFor="joinedDate">Joined Date</label>
             <div>
               <input
                 type="date"
@@ -235,7 +235,7 @@ const EditUser = () => {
               {validateJD && <p className="text-danger fs-6">{validateJD}</p>}
             </div>
 
-            <label for="type">Type</label>
+            <label htmlFor="type">Type</label>
             <select
               className="form-edit-user-information__input"
               name="cars"

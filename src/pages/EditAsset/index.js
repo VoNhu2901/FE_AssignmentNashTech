@@ -85,7 +85,7 @@ const EditAsset = () => {
           <h2 className="form-create-asset__title">Edit Asset</h2>
 
           <div className="form-create-asset__input-wrapper">
-            <label for="name">Name</label>
+            <label htmlFor="name">Name</label>
             <div>
               <input
                 type="text"
@@ -96,7 +96,7 @@ const EditAsset = () => {
               ></input>
             </div>
 
-            <label for="category">Category</label>
+            <label htmlFor="category">Category</label>
             <div className="btn-group">
               <button
                 className="btn dropdown-toggle"
@@ -107,7 +107,7 @@ const EditAsset = () => {
               </button>
             </div>
 
-            <label for="specification">Specification</label>
+            <label htmlFor="specification">Specification</label>
             <div>
               <textarea
                 type="text"
@@ -118,7 +118,7 @@ const EditAsset = () => {
               ></textarea>
             </div>
 
-            <label for="installedDate">Installed Date</label>
+            <label htmlFor="installedDate">Installed Date</label>
             <div>
               <input
                 type="date"
@@ -129,7 +129,7 @@ const EditAsset = () => {
               ></input>
             </div>
 
-            <label for="state">State</label>
+            <label htmlFor="state">State</label>
             <div className="form-create-asset__input--item">
               <div className="form-check">
                 <input

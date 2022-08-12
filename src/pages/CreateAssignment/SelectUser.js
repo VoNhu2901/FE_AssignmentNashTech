@@ -3,7 +3,12 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
 import userService from "./../../api/userService";
+<<<<<<< HEAD
 import { Tooltip } from "antd";
+=======
+import { Tooltip } from 'antd';
+import Paging from "../../components/paging";
+>>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
 
 const tableHead = [
   {
@@ -101,18 +106,6 @@ const SelectUser = (props) => {
     }
   };
 
-  const handleNext = () => {
-    if (page < numPage) {
-      setPage(page + 1);
-    }
-  };
-
-  const handlePre = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  };
-
   const sortByCol = (sortBy) => {
     if (sortBy === currentCol) {
       setCurrentCol("");
@@ -155,7 +148,13 @@ const SelectUser = (props) => {
 
   const handleSelect = (username) => {
     setSaveId(username);
+<<<<<<< HEAD
     setIsChoose(true);
+=======
+    props.setUserId(
+      userList.find((item) => item.username === username).staffCode
+    );
+>>>>>>> b7219f8ecb10c58ac7486a4b0676b9385326f46f
   };
 
   const handleSave = (username) => {
@@ -170,13 +169,14 @@ const SelectUser = (props) => {
   };
 
   const handleCancel = () => {
+    props.setUserId(null);
     props.setIsModalVisibleUser(false);
   };
 
   return (
     <>
       {/* <div className="container dropdown-menu p-3 border border-dark"> */}
-      <div class="d-flex justify-content-between">
+      <div className="d-flex justify-content-between">
         <h4 className="form-create-asset__title">Select User</h4>
         <div className="search">
           <div className="input">
@@ -216,36 +216,33 @@ const SelectUser = (props) => {
           <tbody>
             {(
               userList.slice((page - 1) * rowPerPage, page * rowPerPage) || []
-            ).map((ele, index) => {
+            ).map((ele) => {
               return (
                 <>
-                  <tr key={index}>
+                  <tr
+                    key={ele.staffCode}
+                    onClick={() => handleSelect(ele.username)}
+                  >
                     <td>
                       <input
                         className="form-check-input"
                         type="radio"
                         id={ele.staffCode}
                         name="state"
-                        onClick={() => handleSelect(ele.username)}
+                        checked={props.staffCode === ele.staffCode}
                       ></input>
                     </td>
+                    <td className="border-bottom">{ele.staffCode}</td>
                     <td className="border-bottom">
-                      <label htmlFor={ele.staffCode}>{ele.staffCode}</label>
+                      {ele.fullName.length > 20 ? (
+                        <Tooltip placement="top" title={ele.fullName}>
+                          {ele.fullName.substring(0, 20) + "..."}
+                        </Tooltip>
+                      ) : (
+                        ele.fullName
+                      )}
                     </td>
-                    <td className="border-bottom">
-                      <label htmlFor={ele.staffCode}>
-                        {ele.fullName.length > 20 ? (
-                          <Tooltip placement="top" title={ele.fullName}>
-                            {ele.fullName.substring(0, 20) + "..."}
-                          </Tooltip>
-                        ) : (
-                          ele.fullName
-                        )}
-                      </label>
-                    </td>
-                    <td className="border-bottom">
-                      <label htmlFor={ele.staffCode}>{ele.role}</label>
-                    </td>
+                    <td className="border-bottom">{ele.role}</td>
                   </tr>
                 </>
               );
@@ -253,41 +250,7 @@ const SelectUser = (props) => {
           </tbody>
         </table>
 
-        {/* start Pagination */}
-        <div className="paging">
-          {numPage > 1 ? (
-            <div className="paging text-end">
-              <button
-                type="button"
-                className="btn btn-outline-secondary"
-                onClick={handlePre}
-              >
-                Previous
-              </button>
-              {Array.from({ length: numPage }, (_, i) => (
-                <button
-                  type="button"
-                  onClick={() => setPage(i + 1)}
-                  className={
-                    page === i + 1 ? "btn btn-danger" : "btn btn-outline-danger"
-                  }
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={handleNext}
-              >
-                Next
-              </button>
-            </div>
-          ) : (
-            <></>
-          )}
-        </div>
-        {/* end Pagination */}
+        <Paging numPage={numPage} setPage={setPage} page={page} />
 
         <div className="d-flex justify-content-end gap-4">
           <button
