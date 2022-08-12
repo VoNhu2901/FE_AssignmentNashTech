@@ -31,12 +31,14 @@ const CreateAssignment = () => {
 
   const handleAssignedDate = () => {
     let minDate = new Date().toISOString().split("T")[0];
-    if(assignedDate < minDate){
-      setValidateAssignedDate("Assigned date must be greater or equal current date");
+    if (assignedDate < minDate) {
+      setValidateAssignedDate(
+        "Assigned date must be greater or equal current date"
+      );
     } else {
       setValidateAssignedDate("");
     }
-  }
+  };
 
   const handleCreateNewAssignment = () => {
     if (userName && assetCode && assignedDate) {
@@ -53,8 +55,8 @@ const CreateAssignment = () => {
         .then((res) => {
           if (res.status === 201) {
             toast.success("SUCCESSFULLY ADDED!!");
-            localStorage.setItem("newAssignmentId", res.data.id)
-            
+            localStorage.setItem("newAssignmentId", res.data.id);
+
             navigate("/manage-assignment");
           }
           Loading.remove();
@@ -62,7 +64,6 @@ const CreateAssignment = () => {
         .catch((error) => {
           Loading.remove();
           if (error.response.data) {
-            // toast.error(error.response.data.message);
             toast.error("This user is not active yet");
           } else {
             toast.error("ERROR SERVER");
@@ -90,21 +91,7 @@ const CreateAssignment = () => {
           <h2 className="form-create-asset__title">Create New Assignment</h2>
 
           <div className="form-create-asset__input-wrapper">
-            <label for="user">User</label>
-            {/* <div>
-              <button
-                id="user"
-                className="btn border w-100 d-flex justify-content-between"
-                type="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                data-bs-target="#selectUserModal"
-              >
-                {userName ? userName : "Select User"}
-                <SearchIcon />
-              </button>
-              <SelectUser setUserName={setUserName} setUserId={setUserId} />
-            </div> */}
+            <label htmlFor="user">User</label>
 
             <>
               <Button
@@ -125,6 +112,7 @@ const CreateAssignment = () => {
                 footer={null}
               >
                 <SelectUser
+                  staffCode={userId}
                   setUserName={setUserName}
                   setUserId={setUserId}
                   setFullName={setFullName}
@@ -133,25 +121,7 @@ const CreateAssignment = () => {
               </Modal>
             </>
 
-            <label for="user">Asset</label>
-            {/* <div>
-              <button
-                id="user"
-                className="btn border w-100 d-flex justify-content-between"
-                type="button"
-                data-bs-toggle="dropdown"
-                data-bs-auto-close="outside"
-                data-bs-target="#selectUserModal"
-              >
-                {assetName ? assetName : "Select Asset"}
-                <SearchIcon />
-              </button>
-              <SelectAsset
-                setAssetCode={setAssetCode}
-                setAssetName={setAssetName}
-              />
-            </div> */}
-
+            <label htmlFor="user">Asset</label>
             <>
               <Button
                 type="text"
@@ -174,30 +144,29 @@ const CreateAssignment = () => {
                   setAssetCode={setAssetCode}
                   setAssetName={setAssetName}
                   setIsModalVisible={setIsModalVisible}
+                  assetCode={assetCode}
                 />
               </Modal>
             </>
 
-            <label for="assignedDate">Assignment Date</label>
+            <label htmlFor="assignedDate">Assignment Date</label>
             <div>
               <input
                 type="date"
                 id="assignedDate"
                 className="form-create-asset__input"
                 min={new Date().toISOString().split("T")[0]}
-                value={
-                  assignedDate
-                    ? assignedDate
-                    : new Date().toISOString().split("T")[0]
-                }
+                value={assignedDate}
                 onChange={(e) => setAssignedDate(e.target.value)}
                 onBlur={handleAssignedDate}
                 onFocus={() => setValidateAssignedDate(null)}
               ></input>
-              {validateAssignedDate && <p className="text-danger">{validateAssignedDate }</p>}
+              {validateAssignedDate && (
+                <p className="text-danger">{validateAssignedDate}</p>
+              )}
             </div>
 
-            <label for="note">Note</label>
+            <label htmlFor="note">Note</label>
             <div>
               <textarea
                 type="text"

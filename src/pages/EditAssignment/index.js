@@ -95,7 +95,7 @@ const EditAssignment = () => {
           <h2 className="form-create-asset__title">Edit Assignment</h2>
 
           <div className="form-create-asset__input-wrapper">
-            <label for="user">User</label>
+            <label htmlFor="user">User</label>
             <>
               <Button
                 type="text"
@@ -123,7 +123,7 @@ const EditAssignment = () => {
               </Modal>
             </>
 
-            <label for="asset">Asset</label>
+            <label htmlFor="asset">Asset</label>
             <>
               <Button
                 type="text"
@@ -150,7 +150,7 @@ const EditAssignment = () => {
               </Modal>
             </>
 
-            <label for="assignedDate">Assignment Date</label>
+            <label htmlFor="assignedDate">Assignment Date</label>
             <div>
               <input
                 type="date"
@@ -161,7 +161,7 @@ const EditAssignment = () => {
               ></input>
             </div>
 
-            <label for="note">Note</label>
+            <label htmlFor="note">Note</label>
             <div>
               <textarea
                 type="text"

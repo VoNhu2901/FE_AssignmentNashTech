@@ -104,7 +104,7 @@ const Header = ({ header }) => {
           <div className="btn-group">
             <button
               type="button"
-              class="btn btn-error dropdown-toggle dropdown-toggle-split my-auto"
+              className="btn btn-error dropdown-toggle dropdown-toggle-split my-auto"
               id="dropdownMenuReference"
               data-bs-toggle="dropdown"
               aria-expanded="false"
@@ -247,7 +247,7 @@ const Header = ({ header }) => {
                     <br />
                     <div className="btn-group-footer d-flex justify-content-end">
                       <button
-                      id="btnSave"
+                        id="btnSave"
                         type="button "
                         className="btn btn-danger"
                         onClick={handleChangePassword}

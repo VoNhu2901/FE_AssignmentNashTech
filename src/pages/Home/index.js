@@ -237,12 +237,12 @@ const HomePage = () => {
         tabIndex="-1"
         role="dialog"
       >
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title text-danger">Change Password</h5>
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-danger">Change Password</h5>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <div className="text">
                 <h6>
                   This is a first time you logged in. <br /> You have to change
@@ -297,7 +297,11 @@ const HomePage = () => {
               {tableHeader.map((item) => (
                 <th className="border-bottom border-3" key={item.id}>
                   {item.name}
-                  <button className="btn border-0" id={`sortBy${item.name}`} onClick={()=>sortByCol(item.id)}>
+                  <button
+                    className="btn border-0"
+                    id={`sortBy${item.name}`}
+                    onClick={() => sortByCol(item.id)}
+                  >
                     {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
                   </button>
                 </th>
@@ -466,14 +470,14 @@ const HomePage = () => {
                       role="dialog"
                       id={"modalAccept" + ele.id}
                     >
-                      <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title text-danger">
+                      <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                          <div className="modal-header">
+                            <h5 className="modal-title text-danger">
                               Are you sure?
                             </h5>
                           </div>
-                          <div class="modal-body">
+                          <div className="modal-body">
                             <div className="text">
                               <h6>Do you want to accept this assignment?</h6>
                             </div>
@@ -508,14 +512,14 @@ const HomePage = () => {
                       role="dialog"
                       id={"modalDecline" + ele.id}
                     >
-                      <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title text-danger">
+                      <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                          <div className="modal-header">
+                            <h5 className="modal-title text-danger">
                               Are you sure?
                             </h5>
                           </div>
-                          <div class="modal-body">
+                          <div className="modal-body">
                             <div className="text">
                               <h6>Do you want to decline this assignment?</h6>
                             </div>

@@ -113,7 +113,7 @@ const CreateAsset = () => {
           <h2 className="form-create-asset__title">Create New Asset</h2>
 
           <div className="form-create-asset__input-wrapper">
-            <label for="name">Name</label>
+            <label htmlFor="name">Name</label>
             <div>
               <input
                 type="text"
@@ -124,7 +124,7 @@ const CreateAsset = () => {
               ></input>
             </div>
 
-            <label for="category">Category</label>
+            <label htmlFor="category">Category</label>
             <div className="btn-group">
               <button
                 className="btn border dropdown-toggle w-100"
@@ -210,7 +210,7 @@ const CreateAsset = () => {
               </ul>
             </div>
 
-            <label for="specification">Specification</label>
+            <label htmlFor="specification">Specification</label>
             <div>
               <textarea
                 type="text"
@@ -221,7 +221,7 @@ const CreateAsset = () => {
               ></textarea>
             </div>
 
-            <label for="installedDate">Installed Date</label>
+            <label htmlFor="installedDate">Installed Date</label>
             <div>
               <input
                 type="date"
@@ -232,7 +232,7 @@ const CreateAsset = () => {
               ></input>
             </div>
 
-            <label for="state">State</label>
+            <label htmlFor="state">State</label>
             <div className="form-create-asset__input--item">
               <div className="form-check">
                 <input
@@ -264,13 +264,7 @@ const CreateAsset = () => {
               className="form-create-asset__button-item"
               onClick={handleCreateNewAsset}
               disabled={
-                !(
-                  name &&
-                  category &&
-                  specification &&
-                  installedDate &&
-                  state
-                )
+                !(name && category && specification && installedDate && state)
               }
             >
               Save

@@ -163,7 +163,7 @@ const CreateUser = () => {
         <div className="form-create-user__container">
           <h2 className="form-create-user__title">Create New User</h2>
           <div className="form-create-user__input-wrapper">
-            <label for="firstName">First Name</label>
+            <label htmlFor="firstName">First Name</label>
             <div>
               <input
                 type="text"
@@ -179,10 +179,12 @@ const CreateUser = () => {
                 onBlur={handleCheckFirstName}
                 onFocus={() => setvalidateFirstName(null)}
               ></input>
-              {validateFirstName && <p className="text-danger fs-6">{validateFirstName}</p>}
+              {validateFirstName && (
+                <p className="text-danger fs-6">{validateFirstName}</p>
+              )}
             </div>
 
-            <label for="lastName">Last Name</label>
+            <label htmlFor="lastName">Last Name</label>
             <div>
               <input
                 type="text"
@@ -197,12 +199,13 @@ const CreateUser = () => {
                 onChange={(e) => setLastName(e.target.value)}
                 onBlur={handleCheckLastName}
                 onFocus={() => setvalidateLastName(null)}
-              >
-              </input>
-              {validateLastName && <p className="text-danger fs-6">{validateLastName}</p>}
+              ></input>
+              {validateLastName && (
+                <p className="text-danger fs-6">{validateLastName}</p>
+              )}
             </div>
 
-            <label for="dateOfBirth">Date Of Birth</label>
+            <label htmlFor="dateOfBirth">Date Of Birth</label>
             <div>
               <input
                 type="date"
@@ -220,7 +223,7 @@ const CreateUser = () => {
               {validateDOB && <p className="text-danger fs-6">{validateDOB}</p>}
             </div>
 
-            <label for="gender">Gender</label>
+            <label htmlFor="gender">Gender</label>
             <div className="form-create-user__input--item">
               <div>
                 <input
@@ -243,7 +246,7 @@ const CreateUser = () => {
               </div>
             </div>
 
-            <label for="joinedDate">Joined Date</label>
+            <label htmlFor="joinedDate">Joined Date</label>
             <div>
               <input
                 type="date"
@@ -261,7 +264,7 @@ const CreateUser = () => {
               {validateJD && <p className="text-danger fs-6">{validateJD}</p>}
             </div>
 
-            <label for="type">Type</label>
+            <label htmlFor="type">Type</label>
             <select
               className="form-create-user__input"
               name="cars"
@@ -279,7 +282,7 @@ const CreateUser = () => {
 
             {openLocation && (
               <>
-                <label for="type">Location</label>
+                <label htmlFor="type">Location</label>
                 <select
                   className="form-create-user__input"
                   name="cars"
