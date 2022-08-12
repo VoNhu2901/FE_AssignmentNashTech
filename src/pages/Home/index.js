@@ -82,6 +82,7 @@ const HomePage = () => {
       .getListAssignments(userId)
       .then((res) => {
         const resData = res.data;
+        console.log(resData);
         if (resData.length === 0 && role === "STAFF") {
           toast.info("No assignment found!");
         }
@@ -389,7 +390,7 @@ const HomePage = () => {
                         <button
                           className="btn btn-outline-primary border-0"
                           onClick={() => setCreateReturn(ele.id)}
-                          disabled={ele.state === "Waiting for acceptance"}
+                          disabled={ele.state === "Waiting for acceptance" || ele.hasReturning}
                         >
                           <RestartAltSharpIcon />
                         </button>
