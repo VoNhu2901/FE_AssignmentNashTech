@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowDropDownIcon,
+  ArrowDropUpIcon,
   CloseIcon,
   EditIcon,
   FilterAltIcon,
@@ -25,32 +26,32 @@ const state = ["All", "Accepted", "Waiting for acceptance", "Declined"];
 
 const tableHead = [
   {
-    id: "no",
+    id: "id",
     name: "No.",
     isDropdown: true,
   },
   {
-    id: "assetcode",
+    id: "assetCode",
     name: "Asset Code",
     isDropdown: true,
   },
   {
-    id: "assetname",
+    id: "assetName",
     name: "Asset Name",
     isDropdown: true,
   },
   {
-    id: "assignedto",
+    id: "assignedTo",
     name: "Assigned To",
     isDropdown: true,
   },
   {
-    id: "assignedby",
+    id: "assignedBy",
     name: "Assigned By",
     isDropdown: true,
   },
   {
-    id: "assigneddate",
+    id: "assignedDate",
     name: "Assigned Date",
     isDropdown: true,
   },
@@ -64,6 +65,8 @@ const tableHead = [
 const ManageAssignment = () => {
   const navigate = useNavigate();
   const [currentCol, setCurrentCol] = useState("");
+  const [isSortDown, setIsSortDown] = useState(true);
+
   const [assignmentList, setAssignmentList] = useState([]);
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -158,98 +161,14 @@ const ManageAssignment = () => {
   };
 
   const sortByCol = (col) => {
-    if (col === currentCol) {
-      setCurrentCol(""); // reset currentCol
+    if (currentCol === col) {
+      setAssignmentList(data.reverse());
+      setCurrentCol("");
     } else {
-      setCurrentCol(col); // set currentCol
+      setAssignmentList(data.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+      setCurrentCol(col);
     }
-    const _data = [...assignmentList];
-
-    switch (col) {
-      case "no":
-        col === currentCol
-          ? setAssignmentList(_data.sort((a, b) => a.id - b.id))
-          : setAssignmentList(_data.sort((a, b) => b.id - a.id));
-        break;
-      case "assetcode":
-        col === currentCol
-          ? setAssignmentList(
-              _data.sort((a, b) => a.assetCode.localeCompare(b.assetCode))
-            )
-          : setAssignmentList(
-              _data.sort((a, b) => b.assetCode.localeCompare(a.assetCode))
-            );
-        break;
-      case "assetname":
-        col === currentCol
-          ? setAssignmentList(
-              _data.sort((a, b) => a.assetName.localeCompare(b.assetName))
-            )
-          : setAssignmentList(
-              _data.sort((a, b) => b.assetName.localeCompare(a.assetName))
-            );
-        break;
-      case "assignedto":
-        col === currentCol
-          ? setAssignmentList(
-              _data.sort((a, b) => a.assignedTo.localeCompare(b.assignedTo))
-            )
-          : setAssignmentList(
-              _data.sort((a, b) => b.assignedTo.localeCompare(a.assignedTo))
-            );
-        break;
-      case "assignedby":
-        col === currentCol
-          ? setAssignmentList(
-              _data.sort((a, b) => a.assignedBy.localeCompare(b.assignedBy))
-            )
-          : setAssignmentList(
-              _data.sort((a, b) => b.assignedBy.localeCompare(a.assignedBy))
-            );
-        break;
-      case "assigneddate":
-        col === currentCol
-          ? setAssignmentList(
-              _data.sort((a, b) => a.assignedDate.localeCompare(b.assignedDate))
-            )
-          : setAssignmentList(
-              _data.sort((a, b) => b.assignedDate.localeCompare(a.assignedDate))
-            );
-        break;
-      case "state":
-        col === currentCol
-          ? setAssignmentList(
-              _data.sort((a, b) => a.state.localeCompare(b.state))
-            )
-          : setAssignmentList(
-              _data.sort((a, b) => b.state.localeCompare(a.state))
-            );
-        break;
-      case "specification":
-        col === currentCol
-          ? setAssignmentList(
-              _data.sort((a, b) =>
-                a.specification.localeCompare(b.specification)
-              )
-            )
-          : setAssignmentList(
-              _data.sort((a, b) =>
-                b.specification.localeCompare(a.specification)
-              )
-            );
-        break;
-      case "note":
-        col === currentCol
-          ? setAssignmentList(
-              _data.sort((a, b) => a.note.localeCompare(b.note))
-            )
-          : setAssignmentList(
-              _data.sort((a, b) => b.note.localeCompare(a.note))
-            );
-        break;
-      default:
-        break;
-    }
+    setIsSortDown(!isSortDown);
   };
 
   const handleSearch = () => {
@@ -519,7 +438,7 @@ const ManageAssignment = () => {
                       onClick={() => sortByCol(item.id)}
                       id={`sortBy${item.name}`}
                     >
-                      {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
+                      {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
                     </button>
                   </th>
                 ))}

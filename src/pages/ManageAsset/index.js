@@ -3,6 +3,7 @@ import moment from "moment";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowDropDownIcon,
+  ArrowDropUpIcon,
   CloseIcon,
   EditIcon,
   FilterAltIcon,
@@ -62,17 +63,17 @@ const state = [
 
 const tableHead = [
   {
-    id: "assetcode",
+    id: "id",
     name: "Asset Code",
     isDropdown: true,
   },
   {
-    id: "assetname",
+    id: "name",
     name: "Asset Name",
     isDropdown: true,
   },
   {
-    id: "category",
+    id: "category.name",
     name: "Category",
     isDropdown: true,
   },
@@ -99,6 +100,7 @@ const ManageAsset = () => {
   const [code, setCode] = useState(null);
   const [history, setHistory] = useState([]);
   const [historyId, setHistoryId] = useState(null);
+  const [isSortDown, setIsSortDown] = useState(true);
 
   const location = localStorage.getItem("location");
   const newAssetId = localStorage.getItem("newAsset");
@@ -221,49 +223,17 @@ const ManageAsset = () => {
     }
   };
 
-  const sortByCol = (col) => {
-    if (col === currentCol) {
-      // if click same column
-      setCurrentCol(""); // reset currentCol
-    } else {
-      // if click new column
-      setCurrentCol(col); // set currentCol
-    }
-    const _data = [...assetList];
 
-    switch (col) {
-      case "assetcode":
-        col === currentCol
-          ? setAssetList(_data.sort((a, b) => a.id.localeCompare(b.id)))
-          : setAssetList(_data.sort((a, b) => b.id.localeCompare(a.id)));
-        break;
-      case "assetname":
-        col === currentCol
-          ? setAssetList(_data.sort((a, b) => a.name.localeCompare(b.name)))
-          : setAssetList(_data.sort((a, b) => b.name.localeCompare(a.name)));
-        break;
-      case "category":
-        col === currentCol
-          ? setAssetList(
-              _data.sort((a, b) =>
-                a.category.name.localeCompare(b.category.name)
-              )
-            )
-          : setAssetList(
-              _data.sort((a, b) =>
-                b.category.name.localeCompare(a.category.name)
-              )
-            );
-        break;
-      case "state":
-        col === currentCol
-          ? setAssetList(_data.sort((a, b) => a.state.localeCompare(b.state)))
-          : setAssetList(_data.sort((a, b) => b.state.localeCompare(a.state)));
-        break;
-      default:
-        break;
-    }
-  };
+   const sortByCol = (col) => {
+     if (currentCol === col) {
+       setAssetList(data.reverse());
+       setCurrentCol("");
+     } else {
+       setAssetList(data.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+       setCurrentCol(col);
+     }
+     setIsSortDown(!isSortDown);
+   };
 
   const handleSearch = () => {
     setPage(1);
@@ -587,7 +557,7 @@ const ManageAsset = () => {
                       onClick={() => sortByCol(item.id)}
                       id={`sortBy${item.name}`}
                     >
-                      {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
+                      {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
                     </button>
                   </th>
                 ))}
@@ -600,7 +570,7 @@ const ManageAsset = () => {
               ).map((ele) => {
                 return (
                   <>
-                    <tr key={ele.id} onClick={()=>setHistoryId(ele.id)}>
+                    <tr key={ele.id} onClick={() => setHistoryId(ele.id)}>
                       <td
                         className="border-bottom"
                         data-bs-toggle="modal"

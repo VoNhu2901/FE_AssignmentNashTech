@@ -5,7 +5,7 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import SearchIcon from "@mui/icons-material/Search";
 import moment from "moment";
-import {Tooltip } from "antd";
+import { Tooltip } from "antd";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,35 @@ import { toast } from "react-toastify";
 import userService from "../../api/userService";
 import Paging from "../../components/paging";
 import "./style.scss";
+import { ArrowDropUpIcon } from "../../components/icon";
+
+const tableHeader = [
+  {
+    id: "staffCode",
+    name: "Staff Code",
+    isDropdown: true,
+  },
+  {
+    id: "fullName",
+    name: "Full Name",
+    isDropdown: true,
+  },
+  {
+    id: "username",
+    name: "Username",
+    isDropdown: false,
+  },
+  {
+    id: "joinedDate",
+    name: "Joined Date",
+    isDropdown: true,
+  },
+  {
+    id: "role",
+    name: "Type",
+    isDropdown: true,
+  },
+];
 
 const ManageUser = () => {
   const navigate = useNavigate();
@@ -23,6 +52,7 @@ const ManageUser = () => {
   const [filterBy, setFilterBy] = useState("ALL");
   const [numPage, setNumPage] = useState(0);
   const [currentCol, setCurrentCol] = useState("");
+  const [isSortDown, setIsSortDown] = useState(true);
   const [content, setContent] = useState("");
   const rowPerPage = 20;
   const [disable, setDisable] = useState(null);
@@ -88,54 +118,15 @@ const ManageUser = () => {
     }
   };
 
-  const sortByCol = (sortBy) => {
-    const _data = [...userList];
-    switch (sortBy) {
-      case "code":
-        sortBy === currentCol
-          ? setUserList(
-              _data.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
-            )
-          : setUserList(
-              _data.sort((a, b) => b.staffCode.localeCompare(a.staffCode))
-            );
-
-        break;
-
-      case "name":
-        sortBy === currentCol
-          ? setUserList(
-              _data.sort((a, b) => a.fullName.localeCompare(b.fullName))
-            )
-          : setUserList(
-              _data.sort((a, b) => b.fullName.localeCompare(a.fullName))
-            );
-        break;
-
-      case "date":
-        sortBy === currentCol
-          ? setUserList(
-              _data.sort((a, b) => a.joinedDate.localeCompare(b.joinedDate))
-            )
-          : setUserList(
-              _data.sort((a, b) => b.joinedDate.localeCompare(a.joinedDate))
-            );
-        break;
-
-      case "type":
-        sortBy === currentCol
-          ? setUserList(_data.sort((a, b) => a.role.localeCompare(b.role)))
-          : setUserList(_data.sort((a, b) => b.role.localeCompare(a.role)));
-        break;
-
-      default:
-        break;
-    }
-    if (sortBy === currentCol) {
+  const sortByCol = (col) => {
+    if (currentCol === col) {
+      setUserList(data.reverse());
       setCurrentCol("");
     } else {
-      setCurrentCol(sortBy);
+      setUserList(data.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+      setCurrentCol(col);
     }
+    setIsSortDown(!isSortDown);
   };
 
   // handle delete user here
@@ -210,9 +201,7 @@ const ManageUser = () => {
         })
         .catch((err) => {
           console.log(err);
-          toast.info(
-            `No user match with "${content}". Try again.`
-          );
+          toast.info(`No user match with "${content}". Try again.`);
         });
     }
   };
@@ -396,47 +385,18 @@ const ManageUser = () => {
           <table>
             <thead>
               <tr>
-                <th className="border-bottom border-3">
-                  Staff Code{" "}
-                  <button
-                    className="btn border-0"
-                    id="sortByCode"
-                    onClick={() => sortByCol("code")}
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-                <th className="border-bottom border-3">
-                  Full Name{" "}
-                  <button
-                    id="sortByName"
-                    className="btn border-0"
-                    onClick={() => sortByCol("name")}
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-                <th className="border-bottom border-3">Username</th>
-                <th className="border-bottom border-3">
-                  Joined Date{" "}
-                  <button
-                    id="sortByDate"
-                    className="btn border-0"
-                    onClick={() => sortByCol("date")}
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-                <th className="border-bottom border-3">
-                  Type{" "}
-                  <button
-                    id="sortByType"
-                    className="btn border-0"
-                    onClick={() => sortByCol("type")}
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
+                {tableHeader.map((item) => (
+                  <th className="border-bottom border-3">
+                    {item.name}
+                    <button
+                      className="btn border-0"
+                      id={`sortBy${item.name}`}
+                      onClick={() => sortByCol(item.id)}
+                    >
+                      {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                    </button>
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -507,7 +467,7 @@ const ManageUser = () => {
                         }
                       >
                         <HighlightOffIcon />
-                      </button>{" "}
+                      </button>
                     </td>
                   </tr>
 
