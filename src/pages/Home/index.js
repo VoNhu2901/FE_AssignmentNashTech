@@ -134,13 +134,14 @@ const HomePage = () => {
   const handleSavePassword = () => {
     if (newPassword) {
       // send to backend test
-      const userId = localStorage.getItem("userId");
+      const userId = localStorage.getItem("userId")
 
       axios({
         headers: {
           "content-type": "application/json",
         },
-        url: `https://backend05.azurewebsites.net/api/auth/user/${userId}/${newPassword}`,
+        url: `https://localhost:8080/api/auth/user/${userId}/${newPassword}`,
+        // url: `https://backend05.azurewebsites.net/api/auth/user/${userId}/${newPassword}`,
         method: "PUT",
       })
         .then(() => {

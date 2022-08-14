@@ -58,7 +58,7 @@ const ManageUser = () => {
   const [disable, setDisable] = useState(null);
 
   /**
-   * Handle when init page and when page change
+   * Handle when init page and when page change 
    */
 
   // get data from backend
@@ -72,19 +72,16 @@ const ManageUser = () => {
       .then((res) => {
         const resData = res.data;
         let newUser = resData.filter((user) => user.staffCode === newUserId);
-        if (resData.length === 0) {
+        if (resData.length === 1) {
           toast.error("No user founded");
         }
 
-        let _data = [];
+        let _data = resData.filter((user) => user.staffCode !== userId);
 
         if (newUserId) {
-          _data = resData.filter(
-            (user) => user.staffCode !== newUserId || user.staffCode !== userId
-          );
-        } else {
-          _data = resData.filter((user) => user.staffCode !== userId);
+          _data = _data.filter((user) => user.staffCode !== newUserId);
         }
+
         let sorted = _data.sort((a, b) => a.fullName.localeCompare(b.fullName));
 
         const finalList = [...newUser, ...sorted];

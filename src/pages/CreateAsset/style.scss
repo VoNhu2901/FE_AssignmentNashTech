@@ -89,3 +89,8 @@ button#dropdownMenuLink.btn.border.dropdown-toggle {
 button#dropdownMenuLink.btn.border.dropdown-toggle::after {
   margin-left: auto !important;
 }
+
+#drop-list-cate{
+  max-height: 15rem;
+  overflow-y: scroll;
+}

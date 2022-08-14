@@ -137,7 +137,7 @@ const CreateAsset = () => {
                 {categoryName}
               </button>
 
-              <ul className="dropdown-menu bg-light w-100">
+              <ul className="dropdown-menu bg-light w-100" id="drop-list-cate">
                 {listCategory.map((category) => (
                   <li>
                     <span
