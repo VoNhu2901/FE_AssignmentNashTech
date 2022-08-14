@@ -133,7 +133,7 @@ const HomePage = () => {
   const handleSavePassword = () => {
     if (newPassword) {
       // send to backend test
-      const userId = localStorage.getItem("userId")
+      const userId = localStorage.getItem("userId");
 
       axios({
         headers: {
@@ -181,7 +181,7 @@ const HomePage = () => {
       setData(data.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol("");
     } else {
-      setData(data.sort((a,b)=>(b[col].localeCompare(a[col]))));
+      setData(data.sort((a, b) => b[col].localeCompare(a[col])));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);
@@ -292,13 +292,23 @@ const HomePage = () => {
               {tableHeader.map((item) => (
                 <th className="border-bottom border-3" key={item.id}>
                   {item.name}
-                  <button
-                    className="btn border-0"
-                    id={`sortBy${item.name}`}
-                    onClick={() => sortByCol(item.id)}
-                  >
-                    {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-                  </button>
+                  {currentCol === item.id || currentCol === "" ? (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      <ArrowDropDownIcon />
+                    </button>
+                  )}
                 </th>
               ))}
             </tr>

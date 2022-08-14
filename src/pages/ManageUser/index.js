@@ -384,15 +384,29 @@ const ManageUser = () => {
             <thead>
               <tr>
                 {tableHeader.map((item) => (
-                  <th className="border-bottom border-3">
+                  <th className="border-bottom border-3" key={item.id}>
                     {item.name}
-                    <button
-                      className="btn border-0"
-                      id={`sortBy${item.name}`}
-                      onClick={() => sortByCol(item.id)}
-                    >
-                      {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-                    </button>
+                    {currentCol === item.id || currentCol === "" ? (
+                      <button
+                        className="btn border-0"
+                        onClick={() => sortByCol(item.id)}
+                        id={`sortBy${item.name}`}
+                      >
+                        {isSortDown ? (
+                          <ArrowDropDownIcon />
+                        ) : (
+                          <ArrowDropUpIcon />
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        className="btn border-0"
+                        onClick={() => sortByCol(item.id)}
+                        id={`sortBy${item.name}`}
+                      >
+                        <ArrowDropDownIcon />
+                      </button>
+                    )}
                   </th>
                 ))}
               </tr>

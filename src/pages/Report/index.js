@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { ArrowDropDownIcon } from "../../components/icon";
+import { ArrowDropDownIcon, ArrowDropUpIcon } from "../../components/icon";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import reportService from "../../api/reportService";
 import { toast } from "react-toastify";
 import FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import Paging from "../../components/paging";
-import { Tooltip } from 'antd';
+import { Tooltip } from "antd";
 
 const tableHead = [
   {
-    id: "category",
+    id: "name",
     name: "Category",
     isDropdown: true,
   },
@@ -48,6 +48,7 @@ const tableHead = [
 ];
 
 const Report = () => {
+  const [isSortDown, setIsSortDown] = useState(true);
   const [currentCol, setCurrentCol] = useState("");
   const [reportList, setReportList] = useState([]);
 
@@ -63,7 +64,6 @@ const Report = () => {
         const resData = res.data;
         setReportList(resData);
         setNumPage(Math.ceil(resData.length / rowPerPage)); // get number of page
-
         Loading.remove();
       })
       .catch((error) => {
@@ -89,58 +89,21 @@ const Report = () => {
     loadReportList();
   }, []);
 
-  const sortByCol = (col) => {
-    if (col === currentCol) {
-      // if click same column
-      setCurrentCol(""); // reset currentCol
-    } else {
-      // if click new column
-      setCurrentCol(col); // set currentCol
-    }
-    const _data = [...reportList];
-
-    switch (col) {
-      case "category":
-        col === currentCol
-          ? setReportList(_data.sort((a, b) => a.name.localeCompare(b.name)))
-          : setReportList(_data.sort((a, b) => b.name.localeCompare(a.name)));
-        break;
-      case "total":
-        col === currentCol
-          ? setReportList(_data.sort((a, b) => a.total - b.total))
-          : setReportList(_data.sort((a, b) => b.total - a.total));
-        break;
-      case "assigned":
-        col === currentCol
-          ? setReportList(_data.sort((a, b) => a.assigned - b.assigned))
-          : setReportList(_data.sort((a, b) => b.assigned - a.assigned));
-        break;
-      case "available":
-        col === currentCol
-          ? setReportList(_data.sort((a, b) => a.available - b.available))
-          : setReportList(_data.sort((a, b) => b.available - a.available));
-        break;
-      case "notAvailable":
-        col === currentCol
-          ? setReportList(_data.sort((a, b) => a.notAvailable - b.notAvailable))
-          : setReportList(
-              _data.sort((a, b) => b.notAvailable - a.notAvailable)
-            );
-        break;
-      case "waitingForRecycling":
-        col === currentCol
-          ? setReportList(_data.sort((a, b) => a.waitingForRecycling - b.waitingForRecycling))
-          : setReportList(_data.sort((a, b) => b.waitingForRecycling - a.waitingForRecycling));
-        break;
-      case "recycled":
-        col === currentCol
-          ? setReportList(_data.sort((a, b) => a.recycled - b.recycled))
-          : setReportList(_data.sort((a, b) => b.recycled - a.recycled));
-        break;
-      default:
-        break;
-    }
-  };
+const sortByCol = (col) => {
+  let _data = [...reportList];
+  if (currentCol === col) {
+    col === "name"
+      ? setReportList(_data.sort((a, b) => a[col].localeCompare(b[col])))
+      : setReportList(_data.sort((a, b) => a[col] - b[col]));
+    setCurrentCol("");
+  } else {
+    col === "name"
+      ? setReportList(_data.sort((a, b) => b[col].localeCompare(a[col])))
+      : setReportList(_data.sort((a, b) => b[col] - a[col]));
+    setCurrentCol(col);
+  }
+  setIsSortDown(!isSortDown);
+};
 
   return (
     <div className="user-list">
@@ -149,7 +112,12 @@ const Report = () => {
       </div>
 
       <div className="button d-flex justify-content-end mb-4">
-        <button type="button" className="btn btn-danger" id="btnExport" onClick={exportToXLSX}>
+        <button
+          type="button"
+          className="btn btn-danger"
+          id="btnExport"
+          onClick={exportToXLSX}
+        >
           Export
         </button>
       </div>
@@ -162,13 +130,23 @@ const Report = () => {
               {tableHead.map((item, index) => (
                 <th className="border-bottom border-3" key={item.id}>
                   {item.name}
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol(item.id)}
-                    id={`sortBy${item.name}`}
-                  >
-                    {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
-                  </button>
+                  {currentCol === item.id || currentCol === "" ? (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      <ArrowDropDownIcon />
+                    </button>
+                  )}
                 </th>
               ))}
             </tr>

@@ -145,14 +145,20 @@ const RequestPage = () => {
   const sortByCol = (col) => {
     let list = [...requestList];
     if (currentCol === col) {
-      col!== "id" ? setRequestList(list.sort((a, b) => a[col]?.localeCompare(b[col]))) : setRequestList(list.sort((a, b) => a[col] - b[col]));
+      col !== "id"
+        ? setRequestList(list.sort((a, b) => a[col]?.localeCompare(b[col])))
+        : setRequestList(list.sort((a, b) => a[col] - b[col]));
       setCurrentCol("");
     } else {
-      col!== "id" ? setRequestList(list.sort((a, b) => b[col]?.localeCompare(a[col]))) : setRequestList(list.sort((a, b) => b[col] - a[col]));
+      col !== "id"
+        ? setRequestList(list.sort((a, b) => b[col]?.localeCompare(a[col])))
+        : setRequestList(list.sort((a, b) => b[col] - a[col]));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);
   };
+
+  
 
   const handleCompleteRequest = () => {
     const acceptUserId = localStorage.getItem("userId");
@@ -360,13 +366,27 @@ const RequestPage = () => {
                 {tableHeader.map((item) => (
                   <th className="border-bottom border-3">
                     {item.name}
-                    <button
-                      className="btn border-0"
-                      id={`sortBy${item.name}`}
-                      onClick={() => sortByCol(item.id)}
-                    >
-                      {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-                    </button>
+                    {currentCol === item.id || currentCol === "" ? (
+                      <button
+                        className="btn border-0"
+                        onClick={() => sortByCol(item.id)}
+                        id={`sortBy${item.name}`}
+                      >
+                        {isSortDown ? (
+                          <ArrowDropDownIcon />
+                        ) : (
+                          <ArrowDropUpIcon />
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        className="btn border-0"
+                        onClick={() => sortByCol(item.id)}
+                        id={`sortBy${item.name}`}
+                      >
+                        <ArrowDropDownIcon />
+                      </button>
+                    )}
                   </th>
                 ))}
 

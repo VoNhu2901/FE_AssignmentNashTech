@@ -471,7 +471,7 @@ const ManageAsset = () => {
                 <ul
                   className="dropdown-menu form-check w-100 text-break"
                   aria-labelledby="dropMenuFilterType"
-                  style={{ height: "200px", overflowY: "scroll" }}
+                  style={{ maxHeight: "200px", overflowY: "scroll" }}
                 >
                   <li>
                     <div>
@@ -559,13 +559,27 @@ const ManageAsset = () => {
                 {tableHead.map((item) => (
                   <th className="border-bottom border-3" key={item.id}>
                     {item.name}
-                    <button
-                      className="btn border-0"
-                      onClick={() => sortByCol(item.id)}
-                      id={`sortBy${item.name}`}
-                    >
-                      {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-                    </button>
+                    {currentCol === item.id || currentCol === "" ? (
+                      <button
+                        className="btn border-0"
+                        onClick={() => sortByCol(item.id)}
+                        id={`sortBy${item.name}`}
+                      >
+                        {isSortDown ? (
+                          <ArrowDropDownIcon />
+                        ) : (
+                          <ArrowDropUpIcon />
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        className="btn border-0"
+                        onClick={() => sortByCol(item.id)}
+                        id={`sortBy${item.name}`}
+                      >
+                        <ArrowDropDownIcon />
+                      </button>
+                    )}
                   </th>
                 ))}
               </tr>
