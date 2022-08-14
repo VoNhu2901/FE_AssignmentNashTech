@@ -35,3 +35,16 @@ input::-webkit-calendar-picker-indicator {
     }
   }
 }
+
+//custom datepicker antd
+
+.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+  background-color: red !important;
+}
+.ant-picker-cell-today {
+  .ant-picker-cell-inner {
+    &::before {
+      border-color: red !important;
+    }
+  }
+}

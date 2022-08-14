@@ -6,7 +6,8 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-import DatePicker from "react-datepicker";
+import { DatePicker } from "antd";
+// import DatePicker from "react-datepicker";
 import Paging from "../../components/paging";
 import "./index.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -306,7 +307,7 @@ const RequestPage = () => {
         <div className="board">
           <div className="board-left">
             <div className="filterByState">
-              <div className="dropdown">
+              <div className="dropdown me-3">
                 <button
                   className="btn btn-outline-secondary dropdown-toggle"
                   type="button"
@@ -370,19 +371,14 @@ const RequestPage = () => {
                   </li>
                 </ul>
               </div>
-            </div>
-
-            <div className="filterByDate rounded">
-              <div>
-                <DatePicker
-                  selected={filterByDate}
-                  placeholderText="Return Date"
-                  onChange={(date) => setFilterByDate(date)}
-                />
-              </div>
-              <div className="iconDate border-start border-dark">
-                <DateRangeIcon />
-              </div>
+              <DatePicker
+                selected={filterByDate}
+                onChange={(date) => setFilterByDate(date)}
+                className="border border-secondary rounded text-secondary"
+                suffixIcon={<DateRangeIcon />}
+                placeholder="Returned Date"
+                format={moment().format("MM/DD/YYYY")}
+              />
             </div>
           </div>
 

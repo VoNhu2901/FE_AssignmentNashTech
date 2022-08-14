@@ -15,12 +15,13 @@ import assignmentService from "./../../api/assignmentService";
 import { toast } from "react-toastify";
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
+import { DatePicker } from "antd";
 import "react-datepicker/dist/react-datepicker.css";
 import returningService from "../../api/returningService";
 import Paging from "../../components/paging";
 
-const state = ["All", "Accepted", "Waiting for acceptance"];
+const state = ["All", "Accepted", "Waiting for acceptance", "Declined"];
 
 const tableHead = [
   {
@@ -453,20 +454,15 @@ const ManageAssignment = () => {
               {/* end filter State*/}
 
               {/* start filter Assigned Date*/}
-
-              <div className="filterDate border border-secondary">
-                <div>
-                  <DatePicker
-                    placeholderText="Assigned Date"
-                    selected={filterByDate}
-                    onChange={(date) => handleFilterByDate(date)}
-                  />
-                </div>
-                <div className="iconDate border-start border-secondary text-secondary">
-                  <DateRangeIcon />
-                </div>
-                {/* end filter Assigned Date*/}
-              </div>
+              <DatePicker
+                selected={filterByDate}
+                onChange={(date) => handleFilterByDate(date)}
+                className="border border-secondary rounded text-secondary"
+                suffixIcon={<DateRangeIcon />}
+                placeholder="Assigned Date"
+                format={moment().format("MM/DD/YYYY")}
+              />
+              {/* end filter Assigned Date*/}
             </div>
           </div>
 
