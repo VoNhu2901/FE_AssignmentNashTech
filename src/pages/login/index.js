@@ -23,8 +23,7 @@ const Login = () => {
         headers: {
           "content-type": "application/json",
         },
-        // url: "https://backend05.azurewebsites.net/api/auth/login",
-        url: "http://localhost:8080/api/auth/login",
+        url: "https://backend05.azurewebsites.net/api/auth/login",
         data: payload,
         method: "POST",
       })
@@ -40,13 +39,7 @@ const Login = () => {
           Loading.remove();
           toast.success("Login success!!!");
 
-          // const checkRole = localStorage.getItem("role");
-          // if (checkRole === "ADMIN") {
-          //   navigate("/manage-user");
-          // } else {
-          //   navigate("/");
-          // }
-            navigate("/");
+          navigate("/");
         })
         .catch((err) => {
           Loading.remove();

@@ -5,14 +5,48 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SearchIcon from "@mui/icons-material/Search";
 import { DatePicker } from "antd";
-import moment from "moment";
-import { useEffect, useState } from "react";
-import { Loading } from "notiflix/build/notiflix-loading-aio";
-import "react-datepicker/dist/react-datepicker.css";
-import { toast } from "react-toastify";
-import returningService from "../../api/returningService";
 import Paging from "../../components/paging";
 import "./index.scss";
+import "react-datepicker/dist/react-datepicker.css";
+import returningService from "../../api/returningService";
+import { toast } from "react-toastify";
+import { Loading } from "notiflix/build/notiflix-loading-aio";
+import { ArrowDropUpIcon } from "../../components/icon";
+
+const tableHeader = [
+  {
+    id: "id",
+    name: "No.",
+  },
+  {
+    id: "assetCode",
+    name: "Asset Code",
+  },
+  {
+    id: "assetName",
+    name: "Asset Name",
+  },
+  {
+    id: "requestBy",
+    name: "Requested By",
+  },
+  {
+    id: "assignedDate",
+    name: "Assigned Date",
+  },
+  {
+    id: "acceptedBy",
+    name: "Accepted By",
+  },
+  {
+    id: "returnDate",
+    name: "Returned Date",
+  },
+  {
+    id: "state",
+    name: "State",
+  },
+];
 
 const RequestPage = () => {
   const [filterByState, setFilterByState] = useState("ALL");
@@ -23,16 +57,15 @@ const RequestPage = () => {
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(1);
   const [currentCol, setCurrentCol] = useState("");
+  const [isSortDown, setIsSortDown] = useState(true);
 
   const [id, setId] = useState(null);
   const [action, setAction] = useState(null);
 
   const initData = () => {
     Loading.standard("Loading...");
-
-    const location = localStorage.getItem("location");
     returningService
-      .getAllReturning(location)
+      .getAllReturning()
       .then((res) => {
         const result = [...res.data];
 
@@ -55,9 +88,8 @@ const RequestPage = () => {
 
   const handleSearch = () => {
     if (searchContent) {
-      const location = localStorage.getItem("location");
       returningService
-        .searchReturning(location, searchContent)
+        .searchReturning(searchContent)
         .then((res) => {
           const result = [...res.data];
           if (result.length !== 0) {
@@ -109,100 +141,22 @@ const RequestPage = () => {
   };
 
   const sortByCol = (col) => {
-    const _data = [...requestList];
-    switch (col) {
-      case "No":
-        col === currentCol
-          ? setRequestList(_data.sort((a, b) => a.id - b.id))
-          : setRequestList(_data.sort((a, b) => b.id - a.id));
-        break;
-
-      case "assetCode":
-        col === currentCol
-          ? setRequestList(
-              _data.sort((a, b) => a.assetCode.localeCompare(b.assetCode))
-            )
-          : setRequestList(
-              _data.sort((a, b) => b.assetCode.localeCompare(a.assetCode))
-            );
-        break;
-
-      case "assetName":
-        col === currentCol
-          ? setRequestList(
-              _data.sort((a, b) => a.assetName.localeCompare(b.assetName))
-            )
-          : setRequestList(
-              _data.sort((a, b) => b.assetName.localeCompare(a.assetName))
-            );
-        break;
-
-      case "requestedBy":
-        col === currentCol
-          ? setRequestList(
-              _data.sort((a, b) => a.requestBy.localeCompare(b.requestBy))
-            )
-          : setRequestList(
-              _data.sort((a, b) => b.requestBy.localeCompare(a.requestBy))
-            );
-        break;
-
-      case "AssignedDate":
-        col === currentCol
-          ? setRequestList(
-              _data.sort((a, b) => a.assignedDate.localeCompare(b.assignedDate))
-            )
-          : setRequestList(
-              _data.sort((a, b) => b.assignedDate.localeCompare(a.assignedDate))
-            );
-        break;
-
-      case "acceptedBy":
-        col === currentCol
-          ? setRequestList(
-              _data.sort((a, b) => a.acceptedBy.localeCompare(b.acceptedBy))
-            )
-          : setRequestList(
-              _data.sort((a, b) => b.acceptedBy.localeCompare(a.acceptedBy))
-            );
-        break;
-
-      case "returnDate":
-        col === currentCol
-          ? setRequestList(
-              _data.sort((a, b) =>
-                moment(a.returnDate)
-                  .format("L")
-                  .localeCompare(moment(b.returnDate).format("L"))
-              )
-            )
-          : setRequestList(
-              _data.sort((a, b) =>
-                moment(b.returnDate)
-                  .format("L")
-                  .localeCompare(moment(a.returnDate).format("L"))
-              )
-            );
-        break;
-
-      case "state":
-        col === currentCol
-          ? setRequestList(_data.sort((a, b) => a.state.localeCompare(b.state)))
-          : setRequestList(
-              _data.sort((a, b) => b.state.localeCompare(a.state))
-            );
-        break;
-
-      default:
-        break;
-    }
-
-    if (col === currentCol) {
+    let list = [...requestList];
+    if (currentCol === col) {
+      col !== "id"
+        ? setRequestList(list.sort((a, b) => a[col]?.localeCompare(b[col])))
+        : setRequestList(list.sort((a, b) => a[col] - b[col]));
       setCurrentCol("");
     } else {
+      col !== "id"
+        ? setRequestList(list.sort((a, b) => b[col]?.localeCompare(a[col])))
+        : setRequestList(list.sort((a, b) => b[col] - a[col]));
       setCurrentCol(col);
     }
+    setIsSortDown(!isSortDown);
   };
+
+  
 
   const handleCompleteRequest = () => {
     const acceptUserId = localStorage.getItem("userId");
@@ -376,7 +330,7 @@ const RequestPage = () => {
                 className="border border-secondary rounded text-secondary"
                 suffixIcon={<DateRangeIcon />}
                 placeholder="Returned Date"
-                format={moment().format("MM/DD/YYYY")}
+                format={moment.localeData().longDateFormat("L")}
               />
             </div>
           </div>
@@ -407,92 +361,32 @@ const RequestPage = () => {
           <table className="w-100 returningList">
             <thead>
               <tr>
-                <th className="border-bottom border-3">
-                  No.
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol("No")}
-                    id="sortByNo"
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-
-                <th className="border-bottom border-3">
-                  Asset Code
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol("assetCode")}
-                    id="sortByCode"
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-
-                <th className="border-bottom border-3">
-                  Asset Name
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol("assetName")}
-                    id="sortByAssetName"
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-                <th className="border-bottom border-3">
-                  Requested By
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol("requestedBy")}
-                    id="sortByRequestBy"
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-
-                <th className="border-bottom border-3">
-                  Assigned Date
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol("AssignedDate")}
-                    id="sortByAssignedDate"
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-
-                <th className="border-bottom border-3">
-                  Accepted By
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol("acceptedBy")}
-                    id="sortByAcceptedBy"
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-
-                <th className="border-bottom border-3">
-                  Returned Date
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol("returnDate")}
-                    id="sortByReturnDate"
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
-
-                <th className="border-bottom border-3">
-                  State
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol("state")}
-                    id="sortByState"
-                  >
-                    <ArrowDropDownIcon />
-                  </button>
-                </th>
+                {tableHeader.map((item) => (
+                  <th className="border-bottom border-3">
+                    {item.name}
+                    {currentCol === item.id || currentCol === "" ? (
+                      <button
+                        className="btn border-0"
+                        onClick={() => sortByCol(item.id)}
+                        id={`sortBy${item.name}`}
+                      >
+                        {isSortDown ? (
+                          <ArrowDropDownIcon />
+                        ) : (
+                          <ArrowDropUpIcon />
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        className="btn border-0"
+                        onClick={() => sortByCol(item.id)}
+                        id={`sortBy${item.name}`}
+                      >
+                        <ArrowDropDownIcon />
+                      </button>
+                    )}
+                  </th>
+                ))}
 
                 <th></th>
               </tr>

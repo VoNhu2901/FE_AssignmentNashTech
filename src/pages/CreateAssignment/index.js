@@ -55,7 +55,6 @@ const CreateAssignment = () => {
         note,
       };
 
-
       Loading.hourglass("Creating assignment...");
       assignmentService
         .createAssignment(payload)

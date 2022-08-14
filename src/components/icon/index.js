@@ -12,6 +12,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import ReplayIcon from "@mui/icons-material/Replay";
 import HighlightOffTwoToneIcon from "@mui/icons-material/HighlightOffTwoTone";
 import RestartAltSharpIcon from "@mui/icons-material/RestartAltSharp";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 
 export {
   IconEyeOpen,
@@ -28,4 +29,5 @@ export {
   ClearIcon,
   CheckIcon,
   ReplayIcon,
+  ArrowDropUpIcon,
 };

@@ -227,25 +227,6 @@ const SelectAsset = (props) => {
                         ele.category.name
                       )}
                     </td>
-                    <td className="border-bottom">{ele.id}</td>
-                    <td className="border-bottom">
-                      {ele.name.length > 20 ? (
-                        <Tooltip placement="top" title={ele.name}>
-                          {ele.name.substring(0, 20) + "..."}
-                        </Tooltip>
-                      ) : (
-                        ele.name
-                      )}
-                    </td>
-                    <td className="border-bottom">
-                      {ele.category.name.length > 20 ? (
-                        <Tooltip placement="top" title={ele.category.name}>
-                          {ele.category.name.substring(0, 20) + "..."}
-                        </Tooltip>
-                      ) : (
-                        ele.category.name
-                      )}
-                    </td>
                   </tr>
                 </>
               );

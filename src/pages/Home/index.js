@@ -5,10 +5,11 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
   ArrowDropDownIcon,
+  ArrowDropUpIcon,
   CheckIcon,
   ClearIcon,
   CloseIcon,
-  RestartAltSharpIcon
+  RestartAltSharpIcon,
 } from "../../components/icon";
 import IconEyeClose from "../../components/icon/IconEyeClose";
 import Paging from "../../components/paging";
@@ -21,37 +22,30 @@ const tableHeader = [
   {
     id: "assetCode",
     name: "Asset Code",
-    isDropdown: true,
   },
   {
     id: "assetName",
     name: "Asset Name",
-    isDropdown: true,
   },
   {
     id: "specification",
     name: "Specification",
-    isDropdown: true,
   },
   {
     id: "assignTo",
     name: "Assigned To",
-    isDropdown: true,
   },
   {
     id: "assignBy",
     name: "Assigned By",
-    isDropdown: true,
   },
   {
     id: "assignedDate",
     name: "Assigned Date",
-    isDropdown: true,
   },
   {
     id: "state",
     name: "State",
-    isDropdown: true,
   },
 ];
 
@@ -64,8 +58,8 @@ const HomePage = () => {
   const [numPage, setNumPage] = useState(0);
   const [page, setPage] = useState(1);
   const [currentCol, setCurrentCol] = useState("");
-
   const [createReturn, setCreateReturn] = useState();
+  const [isSortDown, setIsSortDown] = useState(true);
 
   useEffect(() => {
     let status = localStorage.getItem("status");
@@ -82,7 +76,6 @@ const HomePage = () => {
       .getListAssignments(userId)
       .then((res) => {
         const resData = res.data;
-        console.log(resData);
         if (resData.length === 0 && role === "STAFF") {
           toast.info("No assignment found!");
         }
@@ -185,13 +178,14 @@ const HomePage = () => {
 
   const sortByCol = (col) => {
     if (currentCol === col) {
-      setData(data.reverse());
+      setData(data.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol("");
     } else {
-      setData(data.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+      setData(data.sort((a, b) => b[col].localeCompare(a[col])));
       setCurrentCol(col);
     }
-  }
+    setIsSortDown(!isSortDown);
+  };
 
   return (
     <>
@@ -298,13 +292,23 @@ const HomePage = () => {
               {tableHeader.map((item) => (
                 <th className="border-bottom border-3" key={item.id}>
                   {item.name}
-                  <button
-                    className="btn border-0"
-                    id={`sortBy${item.name}`}
-                    onClick={() => sortByCol(item.id)}
-                  >
-                    {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
-                  </button>
+                  {currentCol === item.id || currentCol === "" ? (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      {isSortDown ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      <ArrowDropDownIcon />
+                    </button>
+                  )}
                 </th>
               ))}
             </tr>
@@ -390,7 +394,10 @@ const HomePage = () => {
                         <button
                           className="btn btn-outline-primary border-0"
                           onClick={() => setCreateReturn(ele.id)}
-                          disabled={ele.state === "Waiting for acceptance" || ele.hasReturning}
+                          disabled={
+                            ele.state === "Waiting for acceptance" ||
+                            ele.hasReturning
+                          }
                         >
                           <RestartAltSharpIcon />
                         </button>
