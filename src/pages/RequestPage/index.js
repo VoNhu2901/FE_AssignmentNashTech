@@ -7,7 +7,6 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import { DatePicker } from "antd";
-// import DatePicker from "react-datepicker";
 import Paging from "../../components/paging";
 import "./index.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -67,10 +66,8 @@ const RequestPage = () => {
 
   const initData = () => {
     Loading.standard("Loading...");
-
-    const location = localStorage.getItem("location");
     returningService
-      .getAllReturning(location)
+      .getAllReturning()
       .then((res) => {
         const result = [...res.data];
 
@@ -93,9 +90,8 @@ const RequestPage = () => {
 
   const handleSearch = () => {
     if (searchContent) {
-      const location = localStorage.getItem("location");
       returningService
-        .searchReturning(location, searchContent)
+        .searchReturning(searchContent)
         .then((res) => {
           const result = [...res.data];
           if (result.length !== 0) {
@@ -146,7 +142,6 @@ const RequestPage = () => {
     return d1.localeCompare(d2) === 0;
   };
 
- 
   const sortByCol = (col) => {
     let list = [...requestList];
     if (currentCol === col) {
@@ -158,7 +153,6 @@ const RequestPage = () => {
     }
     setIsSortDown(!isSortDown);
   };
-
 
   const handleCompleteRequest = () => {
     const acceptUserId = localStorage.getItem("userId");

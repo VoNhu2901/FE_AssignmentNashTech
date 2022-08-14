@@ -34,12 +34,9 @@ const SelectAsset = (props) => {
   const [page, setPage] = useState(1);
   const [numPage, setNumPage] = useState(0);
   const rowPerPage = 10;
-
   const [currentCol, setCurrentCol] = useState("");
   const [content, setContent] = useState("");
-  const [saveId, setSaveId] = useState("");
-
-  const [isChoose, setIsChoose] = useState(false);
+  const [selectAsset, setSelectAsset] = useState(props.assetCode);
 
   const loadData = () => {
     Loading.standard("Loading...");
@@ -53,7 +50,7 @@ const SelectAsset = (props) => {
         }
 
         let sorted = resData.sort((a, b) => a.name.localeCompare(b.name));
-
+        console.log(sorted);
         const finalList = [...sorted];
         setAssetList(finalList); // get data to display (have change)
         setNumPage(Math.ceil(finalList.length / rowPerPage)); // get number of page
@@ -141,20 +138,15 @@ const SelectAsset = (props) => {
     }
   };
 
-  const handleSelect = (id) => {
-    setSaveId(id);
-    setIsChoose(true);
-    props.setAssetCode(id);
-  };
-
-  const handleSave = (id) => {
-    props.setAssetCode(id);
-    props.setAssetName(assetList.find((item) => item.id === id).name);
+  const handleSave = () => {
+    props.setAssetCode(selectAsset);
+    props.setAssetName(assetList.find((item) => item.id === selectAsset).name);
     props.setIsModalVisible(false);
   };
 
   const handleCancel = () => {
-    props.setAssetCode(null);
+    props.setAssetCode(props.assetCode);
+    setSelectAsset(props.assetCode);
     props.setIsModalVisible(false);
   };
 
@@ -206,14 +198,14 @@ const SelectAsset = (props) => {
             ).map((ele) => {
               return (
                 <>
-                  <tr key={ele.id} onClick={() => handleSelect(ele.id)}>
+                  <tr key={ele.id} onClick={() => setSelectAsset(ele.id)}>
                     <td>
                       <input
                         className="form-check-input"
                         type="radio"
                         id={ele.id}
                         name="state"
-                        checked={ele.id === props.assetCode}
+                        checked={ele.id === selectAsset}
                       ></input>
                     </td>
                     <td className="border-bottom">{ele.id}</td>
@@ -265,9 +257,11 @@ const SelectAsset = (props) => {
 
         <div className="d-flex justify-content-end gap-4">
           <button
-            className={`form-create-asset__button-item btn btn-danger ${isChoose ? "" : "disabled"}`}
+            className={`form-create-asset__button-item btn btn-danger ${
+              selectAsset ? "" : "disabled"
+            }`}
             id="btnSave"
-            onClick={() => handleSave(saveId)}
+            onClick={handleSave}
           >
             Save
           </button>
