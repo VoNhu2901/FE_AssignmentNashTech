@@ -162,10 +162,10 @@ const ManageAssignment = () => {
   const sortByCol = (col) => {
     let _data = [...assignmentList];
     if (currentCol === col) {
-      setAssignmentList(_data.sort((a, b) => a[col].localeCompare(b[col])));
+      col!== "id" ? setAssignmentList(_data.sort((a, b) => a[col].localeCompare(b[col]))) : setAssignmentList(_data.sort((a, b) => a[col] - b[col]));
       setCurrentCol("");
     } else {
-      setAssignmentList(_data.sort((a, b) => b[col].localeCompare(a[col])));
+      col!== "id" ? setAssignmentList(_data.sort((a, b) => b[col].localeCompare(a[col]))) : setAssignmentList(_data.sort((a, b) => b[col] - a[col]));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);
