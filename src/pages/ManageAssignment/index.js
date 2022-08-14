@@ -161,11 +161,12 @@ const ManageAssignment = () => {
   };
 
   const sortByCol = (col) => {
+    let _data = [...assignmentList];
     if (currentCol === col) {
-      setAssignmentList(data.sort((a, b) => a[col].localeCompare(b[col])));
+      setAssignmentList(_data.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol("");
     } else {
-      setAssignmentList(data.sort((a, b) => b[col].localeCompare(a[col])));
+      setAssignmentList(_data.sort((a, b) => b[col].localeCompare(a[col])));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);

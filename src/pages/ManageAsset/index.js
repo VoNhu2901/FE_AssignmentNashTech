@@ -223,17 +223,25 @@ const ManageAsset = () => {
     }
   };
 
-
-   const sortByCol = (col) => {
-     if (currentCol === col) {
-       setAssetList(data.sort((a, b) => a[col].localeCompare(b[col])));
-       setCurrentCol("");
-     } else {
-       setAssetList(data.sort((a, b) => b[col].localeCompare(a[col])));
-       setCurrentCol(col);
-     }
-     setIsSortDown(!isSortDown);
-   };
+  const sortByCol = (col) => {
+    let _sorted = [...assetList];
+    if (currentCol === col) {
+      col !== "category.name"
+        ? setAssetList(_sorted.sort((a, b) => a[col].localeCompare(b[col])))
+        : setAssetList(
+            _sorted.sort((a, b) => a.category.name.localeCompare(b.category.name))
+          );
+      setCurrentCol("");
+    } else {
+      col !== "category.name"
+        ? setAssetList(_sorted.sort((a, b) => b[col].localeCompare(a[col])))
+        : setAssetList(
+            _sorted.sort((a, b) => b.category.name.localeCompare(a.category.name))
+          );
+      setCurrentCol(col);
+    }
+    setIsSortDown(!isSortDown);
+  };
 
   const handleSearch = () => {
     setPage(1);
@@ -320,7 +328,6 @@ const ManageAsset = () => {
         Loading.remove();
       });
   }, [historyId]);
-
 
   return (
     <>
