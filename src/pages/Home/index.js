@@ -76,7 +76,6 @@ const HomePage = () => {
       .getListAssignments(userId)
       .then((res) => {
         const resData = res.data;
-        console.log(resData);
         if (resData.length === 0 && role === "STAFF") {
           toast.info("No assignment found!");
         }
@@ -180,10 +179,10 @@ const HomePage = () => {
 
   const sortByCol = (col) => {
     if (currentCol === col) {
-      setData(data.reverse());
+      setData(data.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol("");
     } else {
-      setData(data.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+      setData(data.sort((a,b)=>(b[col].localeCompare(a[col]))));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);

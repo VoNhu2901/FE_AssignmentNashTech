@@ -117,10 +117,10 @@ const ManageUser = () => {
 
   const sortByCol = (col) => {
     if (currentCol === col) {
-      setUserList(data.reverse());
+      setUserList(data.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol("");
     } else {
-      setUserList(data.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+      setUserList(data.sort((a, b) => b[col].localeCompare(a[col])));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);
