@@ -150,10 +150,10 @@ const RequestPage = () => {
   const sortByCol = (col) => {
     let list = [...requestList];
     if (currentCol === col) {
-      setRequestList(list.sort((a, b) => a[col].localeCompare(b[col])));
+      col!== "id" ? setRequestList(list.sort((a, b) => a[col]?.localeCompare(b[col]))) : setRequestList(list.sort((a, b) => a[col] - b[col]));
       setCurrentCol("");
     } else {
-      setRequestList(list.sort((a, b) => a[col].localeCompare(b[col])));
+      col!== "id" ? setRequestList(list.sort((a, b) => b[col]?.localeCompare(a[col]))) : setRequestList(list.sort((a, b) => b[col] - a[col]));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);
