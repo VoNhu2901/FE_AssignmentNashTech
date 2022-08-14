@@ -244,10 +244,10 @@ const RequestPage = () => {
 
   const sortByCol = (col) => {
     if (currentCol === col) {
-      setRequestList(rawData.reverse());
+      setRequestList(rawData.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol("");
     } else {
-      setRequestList(rawData.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+      setRequestList(rawData.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);
@@ -426,7 +426,7 @@ const RequestPage = () => {
                 className="border border-secondary rounded text-secondary"
                 suffixIcon={<DateRangeIcon />}
                 placeholder="Returned Date"
-                format={moment().format("MM/DD/YYYY")}
+                format={moment.localeData().longDateFormat("L")}
               />
             </div>
           </div>

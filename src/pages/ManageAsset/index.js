@@ -226,10 +226,10 @@ const ManageAsset = () => {
 
    const sortByCol = (col) => {
      if (currentCol === col) {
-       setAssetList(data.reverse());
+       setAssetList(data.sort((a, b) => a[col].localeCompare(b[col])));
        setCurrentCol("");
      } else {
-       setAssetList(data.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+       setAssetList(data.sort((a, b) => b[col].localeCompare(a[col])));
        setCurrentCol(col);
      }
      setIsSortDown(!isSortDown);

@@ -162,10 +162,10 @@ const ManageAssignment = () => {
 
   const sortByCol = (col) => {
     if (currentCol === col) {
-      setAssignmentList(data.reverse());
+      setAssignmentList(data.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol("");
     } else {
-      setAssignmentList(data.sort((a, b) => (a[col] > b[col] ? 1 : -1)));
+      setAssignmentList(data.sort((a, b) => b[col].localeCompare(a[col])));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);
@@ -379,7 +379,7 @@ const ManageAssignment = () => {
                 className="border border-secondary rounded text-secondary"
                 suffixIcon={<DateRangeIcon />}
                 placeholder="Assigned Date"
-                format={moment().format("MM/DD/YYYY")}
+                format={moment.localeData().longDateFormat("L")}
               />
               {/* end filter Assigned Date*/}
             </div>
