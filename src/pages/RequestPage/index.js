@@ -146,108 +146,14 @@ const RequestPage = () => {
     return d1.localeCompare(d2) === 0;
   };
 
-  // const sortByCol = (col) => {
-  //   const _data = [...requestList];
-  //   switch (col) {
-  //     case "id":
-  //       col === currentCol
-  //         ? setRequestList(_data.sort((a, b) => a.id - b.id))
-  //         : setRequestList(_data.sort((a, b) => b.id - a.id));
-  //       break;
-
-  //     case "assetCode":
-  //       col === currentCol
-  //         ? setRequestList(
-  //             _data.sort((a, b) => a.assetCode.localeCompare(b.assetCode))
-  //           )
-  //         : setRequestList(
-  //             _data.sort((a, b) => b.assetCode.localeCompare(a.assetCode))
-  //           );
-  //       break;
-
-  //     case "assetName":
-  //       col === currentCol
-  //         ? setRequestList(
-  //             _data.sort((a, b) => a.assetName.localeCompare(b.assetName))
-  //           )
-  //         : setRequestList(
-  //             _data.sort((a, b) => b.assetName.localeCompare(a.assetName))
-  //           );
-  //       break;
-
-  //     case "requestedBy":
-  //       col === currentCol
-  //         ? setRequestList(
-  //             _data.sort((a, b) => a.requestBy.localeCompare(b.requestBy))
-  //           )
-  //         : setRequestList(
-  //             _data.sort((a, b) => b.requestBy.localeCompare(a.requestBy))
-  //           );
-  //       break;
-
-  //     case "AssignedDate":
-  //       col === currentCol
-  //         ? setRequestList(
-  //             _data.sort((a, b) => a.assignedDate.localeCompare(b.assignedDate))
-  //           )
-  //         : setRequestList(
-  //             _data.sort((a, b) => b.assignedDate.localeCompare(a.assignedDate))
-  //           );
-  //       break;
-
-  //     case "acceptedBy":
-  //       col === currentCol
-  //         ? setRequestList(
-  //             _data.sort((a, b) => a.acceptedBy.localeCompare(b.acceptedBy))
-  //           )
-  //         : setRequestList(
-  //             _data.sort((a, b) => b.acceptedBy.localeCompare(a.acceptedBy))
-  //           );
-  //       break;
-
-  //     case "returnDate":
-  //       col === currentCol
-  //         ? setRequestList(
-  //             _data.sort((a, b) =>
-  //               moment(a.returnDate)
-  //                 .format("L")
-  //                 .localeCompare(moment(b.returnDate).format("L"))
-  //             )
-  //           )
-  //         : setRequestList(
-  //             _data.sort((a, b) =>
-  //               moment(b.returnDate)
-  //                 .format("L")
-  //                 .localeCompare(moment(a.returnDate).format("L"))
-  //             )
-  //           );
-  //       break;
-
-  //     case "state":
-  //       col === currentCol
-  //         ? setRequestList(_data.sort((a, b) => a.state.localeCompare(b.state)))
-  //         : setRequestList(
-  //             _data.sort((a, b) => b.state.localeCompare(a.state))
-  //           );
-  //       break;
-
-  //     default:
-  //       break;
-  //   }
-
-  //   if (col === currentCol) {
-  //     setCurrentCol("");
-  //   } else {
-  //     setCurrentCol(col);
-  //   }
-  // };
-
+ 
   const sortByCol = (col) => {
+    let list = [...requestList];
     if (currentCol === col) {
-      setRequestList(rawData.sort((a, b) => a[col].localeCompare(b[col])));
+      setRequestList(list.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol("");
     } else {
-      setRequestList(rawData.sort((a, b) => a[col].localeCompare(b[col])));
+      setRequestList(list.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol(col);
     }
     setIsSortDown(!isSortDown);
