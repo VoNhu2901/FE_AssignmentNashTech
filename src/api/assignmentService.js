@@ -4,9 +4,6 @@ const assignmentService = {
   getAllAssignments: () => {
     return axiosClient.get(`/api/assignment/getAll`);
   },
-  getAllAssetsByAvailable: () => {
-    return axiosClient.get(`/api/assignment/getAsset`);
-  },
   searchAssignment: (content) => {
     return axiosClient.get(`/api/assignment/search/${content}`);
   },
@@ -22,11 +19,18 @@ const assignmentService = {
   getAssignmentById: (id) => {
     return axiosClient.get(`/api/assignment/getAssignment/${id}`);
   },
-  searchAssetByAvailable: (content) => {
-    return axiosClient.get(
-      `/api/assignment/searchAsset/${content}`
-    );
+  getAllAssetsByAvailable: () => {
+    return axiosClient.get(`/api/assignment/getAsset`);
   },
+  searchAssetByAvailable: (content) => {
+    return axiosClient.get(`/api/assignment/searchAsset/${content}`);
+  },
+  getAllUsersByAvailable: () => {
+    return axiosClient.get(`/api/assignment/getUser`);
+  },
+  searchUserByAvailable: (content) => {
+    return axiosClient.get(`/api/assignment/searchUser/${content}`);
+  }
 };
 
 export default assignmentService;

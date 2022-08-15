@@ -1,10 +1,15 @@
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
+import {
+  ArrowDropDownIcon,
+  ArrowDropUpIcon,
+  SearchIcon,
+} from "../../components/icon";
 import userService from "./../../api/userService";
 import { Tooltip } from "antd";
 import Paging from "../../components/paging";
+import assignmentService from "./../../api/assignmentService";
 
 const tableHead = [
   {
@@ -13,17 +18,17 @@ const tableHead = [
     isDropdown: false,
   },
   {
-    id: "staffcode",
+    id: "staffCode",
     name: "Staff Code",
     isDropdown: true,
   },
   {
-    id: "fullname",
+    id: "fullName",
     name: "Full Name",
     isDropdown: true,
   },
   {
-    id: "type",
+    id: "role",
     name: "Type",
     isDropdown: true,
   },
@@ -35,13 +40,14 @@ const SelectUser = (props) => {
   const [page, setPage] = useState(1);
   const rowPerPage = 10;
   const [currentCol, setCurrentCol] = useState("");
+  const [isSortDown, setIsSortDown] = useState(true);
   const [content, setContent] = useState("");
   const [selectUser, setSelectUser] = useState(props.staffCode);
 
   const loadData = () => {
     Loading.standard("Loading...");
-    userService
-      .getAllUsers()
+    assignmentService
+      .getAllUsersByAvailable()
       .then((res) => {
         const resData = res.data;
         if (resData.length === 0) {
@@ -73,8 +79,8 @@ const SelectUser = (props) => {
       loadData();
     } else {
       Loading.standard("Searching...");
-      userService
-        .searchUser(content)
+      assignmentService
+        .searchUserByAvailable(content)
         .then((res) => {
           console.log(res);
           if (res.data.length === 0) {
@@ -99,44 +105,16 @@ const SelectUser = (props) => {
     }
   };
 
-  const sortByCol = (sortBy) => {
-    if (sortBy === currentCol) {
+  const sortByCol = (col) => {
+    let _sorted = [...userList];
+    if (currentCol === col) {
+      setUserList(_sorted.sort((a, b) => a[col].localeCompare(b[col])));
       setCurrentCol("");
     } else {
-      setCurrentCol(sortBy);
+      setUserList(_sorted.sort((a, b) => b[col].localeCompare(a[col])));
+      setCurrentCol(col);
     }
-    const _data = [...userList];
-    switch (sortBy) {
-      case "staffcode":
-        sortBy === currentCol
-          ? setUserList(
-              _data.sort((a, b) => a.staffCode.localeCompare(b.staffCode))
-            )
-          : setUserList(
-              _data.sort((a, b) => b.staffCode.localeCompare(a.staffCode))
-            );
-
-        break;
-
-      case "fullname":
-        sortBy === currentCol
-          ? setUserList(
-              _data.sort((a, b) => a.fullName.localeCompare(b.fullName))
-            )
-          : setUserList(
-              _data.sort((a, b) => b.fullName.localeCompare(a.fullName))
-            );
-        break;
-
-      case "type":
-        sortBy === currentCol
-          ? setUserList(_data.sort((a, b) => a.role.localeCompare(b.role)))
-          : setUserList(_data.sort((a, b) => b.role.localeCompare(a.role)));
-        break;
-
-      default:
-        break;
-    }
+    setIsSortDown(!isSortDown);
   };
 
   const handleSave = () => {
@@ -183,12 +161,28 @@ const SelectUser = (props) => {
               {tableHead.map((item) => (
                 <th className="border-bottom border-3" key={item.id}>
                   {item.name}
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol(item.id)}
-                  >
-                    {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
-                  </button>
+                  {currentCol === item.id || currentCol === "" ? (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      {item.isDropdown &&
+                        (isSortDown ? (
+                          <ArrowDropDownIcon />
+                        ) : (
+                          <ArrowDropUpIcon />
+                        ))}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      {item.isDropdown && <ArrowDropDownIcon />}
+                    </button>
+                  )}
                 </th>
               ))}
             </tr>

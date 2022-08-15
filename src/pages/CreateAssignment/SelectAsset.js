@@ -1,7 +1,11 @@
 import { Loading } from "notiflix/build/notiflix-loading-aio";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { ArrowDropDownIcon, SearchIcon } from "../../components/icon";
+import {
+  ArrowDropDownIcon,
+  ArrowDropUpIcon,
+  SearchIcon,
+} from "../../components/icon";
 import Paging from "../../components/paging";
 import assignmentService from "./../../api/assignmentService";
 import { Tooltip } from "antd";
@@ -18,12 +22,12 @@ const tableHead = [
     isDropdown: true,
   },
   {
-    id: "assetname",
+    id: "name",
     name: "Asset Name",
     isDropdown: true,
   },
   {
-    id: "category",
+    id: "category.name",
     name: "Category",
     isDropdown: true,
   },
@@ -35,6 +39,7 @@ const SelectAsset = (props) => {
   const [numPage, setNumPage] = useState(0);
   const rowPerPage = 10;
   const [currentCol, setCurrentCol] = useState("");
+  const [isSortDown, setIsSortDown] = useState(true);
   const [content, setContent] = useState("");
   const [selectAsset, setSelectAsset] = useState(props.assetCode);
 
@@ -100,42 +105,27 @@ const SelectAsset = (props) => {
   };
 
   const sortByCol = (col) => {
-    if (col === currentCol) {
-      // if click same column
-      setCurrentCol(""); // reset currentCol
-    } else {
-      // if click new column
-      setCurrentCol(col); // set currentCol
-    }
-    const _data = [...assetList];
-
-    switch (col) {
-      case "id":
-        col === currentCol
-          ? setAssetList(_data.sort((a, b) => a.id.localeCompare(b.id)))
-          : setAssetList(_data.sort((a, b) => b.id.localeCompare(a.id)));
-        break;
-      case "assetname":
-        col === currentCol
-          ? setAssetList(_data.sort((a, b) => a.name.localeCompare(b.name)))
-          : setAssetList(_data.sort((a, b) => b.name.localeCompare(a.name)));
-        break;
-      case "category":
-        col === currentCol
-          ? setAssetList(
-              _data.sort((a, b) =>
-                a.category.name.localeCompare(b.category.name)
-              )
+    let _sorted = [...assetList];
+    if (currentCol === col) {
+      col !== "category.name"
+        ? setAssetList(_sorted.sort((a, b) => a[col].localeCompare(b[col])))
+        : setAssetList(
+            _sorted.sort((a, b) =>
+              a.category.name.localeCompare(b.category.name)
             )
-          : setAssetList(
-              _data.sort((a, b) =>
-                b.category.name.localeCompare(a.category.name)
-              )
-            );
-        break;
-      default:
-        break;
+          );
+      setCurrentCol("");
+    } else {
+      col !== "category.name"
+        ? setAssetList(_sorted.sort((a, b) => b[col].localeCompare(a[col])))
+        : setAssetList(
+            _sorted.sort((a, b) =>
+              b.category.name.localeCompare(a.category.name)
+            )
+          );
+      setCurrentCol(col);
     }
+    setIsSortDown(!isSortDown);
   };
 
   const handleSave = () => {
@@ -181,13 +171,28 @@ const SelectAsset = (props) => {
               {tableHead.map((item) => (
                 <th className="border-bottom border-3" key={item.id}>
                   {item.name}
-                  <button
-                    className="btn border-0"
-                    onClick={() => sortByCol(item.id)}
-                    id={`sortBy${item.name}`}
-                  >
-                    {item.isDropdown ? <ArrowDropDownIcon /> : <></>}
-                  </button>
+                  {currentCol === item.id || currentCol === "" ? (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      {item.isDropdown &&
+                        (isSortDown ? (
+                          <ArrowDropDownIcon />
+                        ) : (
+                          <ArrowDropUpIcon />
+                        ))}
+                    </button>
+                  ) : (
+                    <button
+                      className="btn border-0"
+                      onClick={() => sortByCol(item.id)}
+                      id={`sortBy${item.name}`}
+                    >
+                      {item.isDropdown && <ArrowDropDownIcon />}
+                    </button>
+                  )}
                 </th>
               ))}
             </tr>

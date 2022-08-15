@@ -58,7 +58,7 @@ const ManageUser = () => {
   const [disable, setDisable] = useState(null);
 
   /**
-   * Handle when init page and when page change 
+   * Handle when init page and when page change
    */
 
   // get data from backend
@@ -392,11 +392,12 @@ const ManageUser = () => {
                         onClick={() => sortByCol(item.id)}
                         id={`sortBy${item.name}`}
                       >
-                        {isSortDown ? (
-                          <ArrowDropDownIcon />
-                        ) : (
-                          <ArrowDropUpIcon />
-                        )}
+                        {item.isDropdown &&
+                          (isSortDown ? (
+                            <ArrowDropDownIcon />
+                          ) : (
+                            <ArrowDropUpIcon />
+                          ))}
                       </button>
                     ) : (
                       <button
@@ -404,7 +405,7 @@ const ManageUser = () => {
                         onClick={() => sortByCol(item.id)}
                         id={`sortBy${item.name}`}
                       >
-                        <ArrowDropDownIcon />
+                       {item.isDropdown && <ArrowDropDownIcon />}
                       </button>
                     )}
                   </th>
