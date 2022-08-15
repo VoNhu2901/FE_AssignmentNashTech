@@ -64,7 +64,7 @@ const EditUser = () => {
         location,
       };
 
-      Loading.hourglass("Editing asset...");
+      Loading.hourglass("Editing user...");
 
       userService
         .editUser(staffCode, payload)

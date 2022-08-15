@@ -70,7 +70,7 @@ const CreateAssignment = () => {
         .catch((error) => {
           Loading.remove();
           if (error.response.data) {
-            toast.error("This user is not active yet");
+            toast.error(error.response.data);
           } else {
             toast.error("ERROR SERVER");
           }
