@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import moment from "moment";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseSharpIcon from "@mui/icons-material/CloseSharp";
 import DateRangeIcon from "@mui/icons-material/DateRange";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import SearchIcon from "@mui/icons-material/Search";
 import { DatePicker } from "antd";
 import Paging from "../../components/paging";
 import "./index.scss";
@@ -155,8 +157,6 @@ const RequestPage = () => {
     }
     setIsSortDown(!isSortDown);
   };
-
-  
 
   const handleCompleteRequest = () => {
     const acceptUserId = localStorage.getItem("userId");
