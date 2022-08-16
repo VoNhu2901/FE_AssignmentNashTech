@@ -91,7 +91,7 @@ const ManageUser = () => {
         Loading.remove();
       })
       .catch((err) => {
-        Loading.remove();
+        Loading.remove(); 
         console.log(err);
         toast.info("No User Found");
       });

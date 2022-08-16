@@ -105,7 +105,7 @@ const CreateUser = () => {
       setvalidateLastName("Last name is required");
     }
     if (lastName.length >= 128) {
-      setvalidateFirstName("Last name max length 128 character");
+      setvalidateLastName("Last name max length 128 character");
     }
   };
 
