@@ -137,27 +137,29 @@ const CreateAsset = () => {
                 {categoryName}
               </button>
 
-              <ul className="dropdown-menu bg-light w-100" id="drop-list-cate">
-                {listCategory.map((category) => (
-                  <li>
-                    <span
-                      className="dropdown-item"
-                      onClick={() => {
-                        setCategoryName(category.name);
-                        setCategoryPrefix(category.id);
-                        setCategory(category.id);
-                      }}
-                    >
-                      {category.name}
-                    </span>
-                  </li>
-                ))}
+              <div className="dropdown-menu bg-light w-100">
+                <ul id="drop-list-cate">
+                  {listCategory.map((category) => (
+                    <li>
+                      <span
+                        className="dropdown-item"
+                        onClick={() => {
+                          setCategoryName(category.name);
+                          setCategoryPrefix(category.id);
+                          setCategory(category.id);
+                        }}
+                      >
+                        {category.name}
+                      </span>
+                    </li>
+                  ))}
 
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                </ul>
                 {!isOpen ? (
-                  <>
+                  <div>
                     <li>
                       <span
                         id="add-new-category"
@@ -169,7 +171,7 @@ const CreateAsset = () => {
                         Add new category
                       </span>
                     </li>
-                  </>
+                  </div>
                 ) : (
                   <>
                     <li>
@@ -207,7 +209,7 @@ const CreateAsset = () => {
                     </li>
                   </>
                 )}
-              </ul>
+              </div>
             </div>
 
             <label htmlFor="specification">Specification</label>

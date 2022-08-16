@@ -201,7 +201,11 @@ const ManageAssignment = () => {
         .catch((err) => {
           Loading.remove();
           console.log(err);
-          toast.info("No Assignment Found");
+           if (err.response.status === 401) {
+             toast.error("You are not authorized to access this page");
+           } else {
+             toast.info("No Assignment Found");
+           }
         });
     }
   };

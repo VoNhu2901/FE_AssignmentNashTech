@@ -58,7 +58,7 @@ const ManageUser = () => {
   const [disable, setDisable] = useState(null);
 
   /**
-   * Handle when init page and when page change 
+   * Handle when init page and when page change
    */
 
   // get data from backend
@@ -93,7 +93,11 @@ const ManageUser = () => {
       .catch((err) => {
         Loading.remove();
         console.log(err);
-        toast.info("No User Found");
+        if (err.response.status === 401) {
+          toast.error("You are not authorized to access this page");
+        } else {
+          toast.info("No User Found");
+        }
       });
 
     localStorage.removeItem("newUser");

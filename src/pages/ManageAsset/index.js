@@ -139,7 +139,11 @@ const ManageAsset = () => {
       .catch((err) => {
         Loading.remove();
         console.log(err);
-        toast.info("No Asset Found");
+         if (err.response.status === 401) {
+           toast.error("You are not authorized to access this page");
+         } else {
+           toast.info("No Asset Found");
+         }
       });
 
     //category

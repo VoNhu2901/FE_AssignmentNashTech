@@ -47,25 +47,6 @@ const list = [
   },
 ];
 
-const createList = [
-  {
-    id: 2,
-    name: "Create New User",
-    link: "/create-user",
-    role: "ADMIN",
-  },
-  {
-    id: 3,
-    name: "Create New Asset",
-    link: "/create-asset",
-  },
-  {
-    id: 4,
-    name: "Create New Assignment",
-    link: "/create-assignment",
-  },
-];
-
 //Page dùng chung cho các Route
 const Main = () => {
   const [menu, setMenu] = useState([]);
@@ -82,11 +63,6 @@ const Main = () => {
     }
     if (checkUser && checkRole === "ADMIN") {
       setMenu(list.filter((item) => item.role === "ADMIN"));
-      const header = createList.find((item) => item.link === currentPath);
-      // const headerId = header.id;
-      // const headerName = header.name;
-      // setHeader(list.find((item) => item.id === headerId).name + " - " + headerName);
-      
     } else {
       setMenu(list.filter((item) => item.role === "STAFF"));
     }
@@ -96,21 +72,11 @@ const Main = () => {
     setHeader(list.find((item) => item.id === id).name);
   };
 
-  // useEffect(() => {
-  //   subList.map((item) => {
-  //     if (item.link === currentPath) {
-  //       setHeader(list[1].name + " > " + item.name);
-  //     }
-  //   });
-  // }, [currentPath]);
-
   return (
     <>
       <Header header={header}></Header>
       <div style={{ display: "flex" }}>
         <Sidebar menu={menu} handleClick={handleClick}></Sidebar>
-
-        {/* Outlet dùng để nested những cái nằm trong Main (để muốn Route nào cũng có Header nên phải dùng Outlet như này) */}
         <Outlet></Outlet>
       </div>
     </>

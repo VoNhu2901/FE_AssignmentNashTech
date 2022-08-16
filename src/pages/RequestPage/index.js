@@ -79,7 +79,11 @@ const RequestPage = () => {
       .catch((error) => {
         Loading.remove();
         console.log(error);
-        toast.info("No request found. Try later");
+        if (error.response.status === 401) {
+          toast.error("You are not authorized to access this page");
+        } else {
+          toast.info("No request found. Try later");
+        }
         setRawData([]);
       });
   };
@@ -157,8 +161,6 @@ const RequestPage = () => {
     }
     setIsSortDown(!isSortDown);
   };
-
-  
 
   const handleCompleteRequest = () => {
     const acceptUserId = localStorage.getItem("userId");
