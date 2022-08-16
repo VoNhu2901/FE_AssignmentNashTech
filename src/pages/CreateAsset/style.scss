@@ -74,7 +74,7 @@
   border-color: red !important;
 }
 
-#add-new-category{
+#add-new-category {
   color: red;
   text-decoration: underline;
   font-style: italic;
@@ -90,7 +90,11 @@ button#dropdownMenuLink.btn.border.dropdown-toggle::after {
   margin-left: auto !important;
 }
 
-#drop-list-cate{
+#drop-list-cate {
   max-height: 15rem;
   overflow-y: scroll;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
 }

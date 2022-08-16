@@ -21,6 +21,8 @@ const CreateAsset = () => {
   const [specification, setSpecification] = useState("");
   const [installedDate, setInstalledDate] = useState("");
   const [state, setState] = useState("");
+  const [validateSpecification, setValidateSpecification] = useState("");
+  const [validateName, setValidateName] = useState("");
 
   const loadCategory = () => {
     Loading.standard("Loading...");
@@ -106,6 +108,21 @@ const CreateAsset = () => {
     navigate("/manage-asset");
   };
 
+  const handleCheckSpecification = () => {
+    if (specification.length >= 255) {
+      setValidateSpecification(
+        "Specification should be less than 255 characters"
+      );
+    }
+  };
+  const handleCheckName = () => {
+    if (name.length >= 128) {
+      setValidateName(
+        "Name should be less than 128 characters"
+      );
+    }
+  };
+
   return (
     <>
       <div className="form-create-asset">
@@ -121,7 +138,12 @@ const CreateAsset = () => {
                 className="form-create-asset__input"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                onBlur={handleCheckName}
+                onFocus={() => setValidateName(null)}
               ></input>
+              {validateName && (
+                <p className="text-danger fs-6">{validateName}</p>
+              )}
             </div>
 
             <label htmlFor="category">Category</label>
@@ -137,27 +159,26 @@ const CreateAsset = () => {
                 {categoryName}
               </button>
 
-              <ul className="dropdown-menu bg-light w-100" id="drop-list-cate">
-                {listCategory.map((category) => (
-                  <li>
-                    <span
-                      className="dropdown-item"
-                      onClick={() => {
-                        setCategoryName(category.name);
-                        setCategoryPrefix(category.id);
-                        setCategory(category.id);
-                      }}
-                    >
-                      {category.name}
-                    </span>
-                  </li>
-                ))}
-
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
+              <div className="dropdown-menu bg-light w-100">
+                <ul id="drop-list-cate">
+                  {listCategory.map((category) => (
+                    <li>
+                      <span
+                        className="dropdown-item"
+                        onClick={() => {
+                          setCategoryName(category.name);
+                          setCategoryPrefix(category.id);
+                          setCategory(category.id);
+                        }}
+                      >
+                        {category.name}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
                 {!isOpen ? (
-                  <>
+                  <div>
+                    <hr className="dropdown-divider" />
                     <li>
                       <span
                         id="add-new-category"
@@ -169,7 +190,7 @@ const CreateAsset = () => {
                         Add new category
                       </span>
                     </li>
-                  </>
+                  </div>
                 ) : (
                   <>
                     <li>
@@ -207,7 +228,7 @@ const CreateAsset = () => {
                     </li>
                   </>
                 )}
-              </ul>
+              </div>
             </div>
 
             <label htmlFor="specification">Specification</label>
@@ -218,7 +239,12 @@ const CreateAsset = () => {
                 className="form-create-asset__input"
                 value={specification}
                 onChange={(e) => setSpecification(e.target.value)}
+                onBlur={handleCheckSpecification}
+                onFocus={() => setValidateSpecification(null)}
               ></textarea>
+              {validateSpecification && (
+                <p className="text-danger fs-6">{validateSpecification}</p>
+              )}
             </div>
 
             <label htmlFor="installedDate">Installed Date</label>

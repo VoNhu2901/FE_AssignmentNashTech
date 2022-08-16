@@ -91,9 +91,13 @@ const ManageUser = () => {
         Loading.remove();
       })
       .catch((err) => {
-        Loading.remove();
+        Loading.remove(); 
         console.log(err);
-        toast.info("No User Found");
+        if (err.response.status === 401) {
+          toast.error("You are not authorized to access this page");
+        } else {
+          toast.info("No User Found");
+        }
       });
 
     localStorage.removeItem("newUser");

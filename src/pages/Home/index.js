@@ -65,6 +65,8 @@ const HomePage = () => {
     let status = localStorage.getItem("status");
     if (status === "NEW") {
       setIsNew(true);
+    } else {
+      loadData();
     }
   }, []);
 
@@ -91,10 +93,6 @@ const HomePage = () => {
         }
       });
   };
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const handleAccept = (id) => {
     const state = "Accepted";
@@ -286,8 +284,11 @@ const HomePage = () => {
       </div>
 
       {/* Table list */}
-      <div className="table-assignments w-100">
-        <div className="title">
+      <div
+        className="table-assignments w-100"
+        style={{ marginTop: "70px", marginLeft: "25rem" }}
+      >
+        <div className="title" style={{ color: "#000" }}>
           <h3>My Assignment</h3>
         </div>
         <table className="w-100">
