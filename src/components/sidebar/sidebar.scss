@@ -2,20 +2,14 @@
 
 .sidebar {
   margin-right: 4rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  background-color: #fff;
 }
 
 .logo {
-  margin-top: 5rem;
+  color: $header-bg;
   &__image {
     width: 150px;
   }
   &__title {
-    color: $header-bg;
     font-size: 1.5em;
     font-weight: bold;
     margin-left: 18px;
