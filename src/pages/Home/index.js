@@ -132,7 +132,7 @@ const HomePage = () => {
     if (newPassword) {
       // send to backend test
       const userId = localStorage.getItem("userId");
-
+      Loading.standard("Changing password...");
       axios({
         headers: {
           "content-type": "application/json",
@@ -143,13 +143,16 @@ const HomePage = () => {
         .then(() => {
           setIsNew(false);
           localStorage.removeItem("status");
+          Loading.remove();
           toast.success("Change Password success!!!");
         })
         .catch((err) => {
           console.log(err);
+          Loading.remove();
           toast.error("Can't change password");
         });
     } else {
+      Loading.remove();
       toast.error("New Password not Empty.");
     }
   };
@@ -231,7 +234,7 @@ const HomePage = () => {
         role="dialog"
       >
         <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
+          <div className="modal-content modal-sm">
             <div className="modal-header">
               <h5 className="modal-title text-danger">Change Password</h5>
             </div>
@@ -242,8 +245,8 @@ const HomePage = () => {
                   password to continue.
                 </h6>
               </div>
-              <div className="change-password">
-                <label htmlFor="pass" className="pe-1">
+              <div className="change-password mt-2 ms-3">
+                <label htmlFor="pass" className="pe-2">
                   New Password
                 </label>
                 <input
@@ -251,6 +254,7 @@ const HomePage = () => {
                   id="pass"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
+                  className="rounded"
                 />
                 {!togglePassword ? (
                   <IconEyeClose
@@ -264,10 +268,10 @@ const HomePage = () => {
                   ></IconEyeOpen>
                 )}
               </div>
-              <div className="button-save">
+              <div className="button-save d-flex justify-content-center mt-2 ms-5">
                 <button
                   type="button"
-                  className="btn btn-danger"
+                  className="btn btn-danger "
                   onClick={handleSavePassword}
                   id="btnSave"
                 >
