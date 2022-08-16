@@ -43,29 +43,34 @@ const CreateAsset = () => {
   }, []);
 
   const handleCreateNewCategory = () => {
-    const payload = {
-      id: categoryPrefix,
-      name: categoryName,
-    };
+    if (categoryName.length >= 64) {
+      toast.info("Category name must have less than 64 character");
+    } else {
+      const payload = {
+        id: categoryPrefix,
+        name: categoryName,
+      };
 
-    categoryService
-      .createCategory(payload)
-      .then((res) => {
-        if (res.status === 201) {
-          toast.success("SUCCESSFULLY ADDED!!");
-          loadCategory();
-          setCategoryPrefix(res.data.id);
-          setCategory(payload.id);
-        }
-      })
-      .catch((error) => {
-        if (error.response.data) {
-          toast.error("ERROR: " + error.response.data.message);
-        } else if (error) {
-          toast.error("ADD NEW CATEGORY FAILED");
-        }
-      });
-    setCategoryName(categoryName);
+      categoryService
+        .createCategory(payload)
+        .then((res) => {
+          if (res.status === 201) {
+            toast.success("SUCCESSFULLY ADDED!!");
+            loadCategory();
+            setCategoryPrefix(res.data.id);
+            setCategory(payload.id);
+          }
+        })
+        .catch((error) => {
+          if (error.response.data) {
+            toast.error("ERROR: " + error.response.data.message);
+          } else if (error) {
+            toast.error("ADD NEW CATEGORY FAILED");
+          }
+        });
+      setCategoryName(categoryName);
+    }
+    
   };
 
   const handleCreateNewAsset = () => {
