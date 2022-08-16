@@ -48,7 +48,7 @@ const CreateUser = () => {
         location,
       };
 
-    Loading.pulse("Creating...");
+      Loading.pulse("Creating...");
 
       userService
         .createUser(payload)
@@ -58,16 +58,11 @@ const CreateUser = () => {
             localStorage.setItem("newUser", res.data.userId);
             navigate("/manage-user");
           }
-        Loading.remove();
+          Loading.remove();
         })
         .catch((error) => {
-        Loading.remove();
-          console.log(error);
-          if (error.response.data) {
-            toast.error("ERROR: " + error.response.data.message);
-          } else if (error) {
-            toast.error("CREATE NEW USER FAILED!!");
-          }
+          Loading.remove();
+          toast.error("CREATE NEW USER FAILED!!");
         });
     } else {
       toast.error("ALL FIELDS ARE REQUIRE");
@@ -96,8 +91,10 @@ const CreateUser = () => {
     if (!firstName) {
       setvalidateFirstName("First Name is required");
     }
-
-  }
+    if (firstName.length >= 128) {
+      setvalidateFirstName("First name max length 128 character");
+    }
+  };
 
   const handleCheckLastName = () => {
     let regex = /^[A-Za-z0-9 ]+$/;
@@ -107,7 +104,10 @@ const CreateUser = () => {
     if (!lastName) {
       setvalidateLastName("Last name is required");
     }
-  }
+    if (lastName.length >= 128) {
+      setvalidateLastName("Last name max length 128 character");
+    }
+  };
 
   const calculateAge = (date, dob) => {
     let today = new Date(date);

@@ -91,7 +91,7 @@ const ManageUser = () => {
         Loading.remove();
       })
       .catch((err) => {
-        Loading.remove();
+        Loading.remove(); 
         console.log(err);
         if (err.response.status === 401) {
           toast.error("You are not authorized to access this page");

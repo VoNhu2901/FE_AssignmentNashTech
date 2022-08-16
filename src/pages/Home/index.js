@@ -65,6 +65,8 @@ const HomePage = () => {
     let status = localStorage.getItem("status");
     if (status === "NEW") {
       setIsNew(true);
+    } else {
+      loadData();
     }
   }, []);
 
@@ -91,10 +93,6 @@ const HomePage = () => {
         }
       });
   };
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const handleAccept = (id) => {
     const state = "Accepted";
